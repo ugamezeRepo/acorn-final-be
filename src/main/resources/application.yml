@@ -23,7 +23,7 @@ mybatis:
     map-underscore-to-camel-case: true
   type-aliases-package: com.acorn.finals.**
   mapper-locations:
-  - classpath:mapper/*.xml
+    - classpath:mapper/*.xml
 
 springdoc:
   swagger-ui:
