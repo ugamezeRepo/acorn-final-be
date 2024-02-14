@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="channel">
-    <select id="selectAll" resultType="channelEntity">
+<mapper namespace="com.acorn.finals.mapper.ChannelMapper">
+    <select id="findAll" resultType="channelEntity">
         select * from channel
     </select>
 
-    <select id="selectOne" parameterType="channelEntity" resultType="channelEntity">
+    <select id="findOneById" parameterType="channelEntity" resultType="channelEntity">
         select * from channel
         where id = #{id}
     </select>
 
-    <select id="getNextSequence" resultType="int">
-        select channel_seq.nextval from dual
-    </select>
-
     <insert id="insert" parameterType="channelEntity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select channel_seq.nextval from dual
+        </selectKey>
         insert into channel (id, name, thumbnail)
         values (#{id}, #{name}, #{thumbnail})
     </insert>
@@ -25,7 +24,7 @@
         where id = #{id}
     </update>
 
-    <delete id="delete" parameterType="channelEntity">
+    <delete id="deleteById" parameterType="channelEntity">
         delete from channel
         where id = #{id}
     </delete>

@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="topic">
-    <select id="selectAll" resultType="topicEntity">
+<mapper namespace="com.acorn.finals.mapper.TopicMapper">
+    <select id="findAll" resultType="topicEntity">
         select * from topic
     </select>
 
-    <select id="selectOne" resultType="topicEntity" parameterType="topicEntity">
+    <select id="findOneById" resultType="topicEntity" parameterType="int">
         select * from topic
         where id = #{id}
     </select>
 
-    <select id="getNextSequence" resultType="int">
-        select topic_seq.nextval from dual
+    <select id="findAllTopicByChannelId" resultType="topicEntity" parameterType="int">
+        select * from topic
+        where channel_id = #{channelId}
     </select>
 
     <insert id="insert" parameterType="topicEntity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select topic_seq.nextval from dual
+        </selectKey>
         insert into topic (id, title, channel_id)
         values (#{id}, #{title}, #{channelId})
     </insert>
@@ -25,7 +29,7 @@
         where id = #{id}
     </update>
 
-    <delete id="delete" parameterType="topicEntity">
+    <delete id="deleteById" parameterType="int">
         delete from topic
         where id = #{id}
     </delete>

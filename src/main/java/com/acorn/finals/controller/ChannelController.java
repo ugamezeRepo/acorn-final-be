@@ -6,27 +6,33 @@ import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.dto.TopicDto;
 import com.acorn.finals.service.ChannelService;
+import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/channel")
 @RequiredArgsConstructor
 public class ChannelController {
     private final ChannelService channelService;
+    private final TopicService topicService;
+    private final MessageService messageService;
 
     /**
      * create a new channel
      * @param channelCreateRequest channel create request with channel name
      * @return created channel
      */
-    @PostMapping("/")
-    public UrlResponse<ChannelDto> createNewChannel(ChannelDto channelCreateRequest) {
-        return new UrlResponse<>("/channel/dummyNewChannelId", channelCreateRequest);
+    @PostMapping("")
+    public UrlResponse<ChannelDto> createNewChannel(@RequestBody ChannelDto channelCreateRequest) {
+        return channelService.createNewChannel(channelCreateRequest);
     }
 
     /**
@@ -35,8 +41,8 @@ public class ChannelController {
      * @return updated channel
      */
     @PatchMapping("/{channelId}")
-    public ChannelDto updateChannel(ChannelDto channelUpdateRequest) {
-        return channelUpdateRequest;
+    public ResponseEntity<ChannelDto> updateChannel(@PathVariable int channelId, @RequestBody ChannelDto channelUpdateRequest) {
+        return ResponseEntity.ok(channelService.updateChannel(channelId, channelUpdateRequest));
     }
 
     /**
@@ -45,14 +51,8 @@ public class ChannelController {
      * @return list of members of the channel
      */
     @GetMapping("/{channelId}/member")
-    public List<MemberDto> listAllMembers(@PathVariable String channelId) {
-        return List.of(
-            new MemberDto("dummy1@mail.com", "user1", 7777),
-            new MemberDto("dummy2@mail.com", "user2", 7778),
-            new MemberDto("dummy3@mail.com", "user3", 7779),
-            new MemberDto("dummy4@mail.com", "user4", 7780),
-            new MemberDto("dummy5@mail.com", "user5", 7781)
-        );
+    public List<MemberDto> listAllMembers(@PathVariable int channelId) {
+        return channelService.listChannelMembers(channelId);
     }
 
     /**
@@ -61,15 +61,8 @@ public class ChannelController {
      * @return list of topics of channel
      */
     @GetMapping("/{channelId}/topic")
-    public List<UrlResponse<TopicDto>> listAllTopics(@PathVariable String channelId) {
-        return List.of(
-                new UrlResponse<>("/" + channelId + "/topic/dummyTopicId1", new TopicDto("topic1")),
-                new UrlResponse<>("/" + channelId + "/topic/dummyTopicId2", new TopicDto("topic2")),
-                new UrlResponse<>("/" + channelId + "/topic/dummyTopicId3", new TopicDto("topic3")),
-                new UrlResponse<>("/" + channelId + "/topic/dummyTopicId4", new TopicDto("topic4")),
-                new UrlResponse<>("/" + channelId + "/topic/dummyTopicId5", new TopicDto("topic5")),
-                new UrlResponse<>("/" + channelId + "/topic/dummyTopicId6", new TopicDto("topic6"))
-        );
+    public List<UrlResponse<TopicDto>> listAllTopics(@PathVariable int channelId) {
+        return topicService.findAllByChannelId(channelId);
     }
 
     /**
@@ -79,8 +72,8 @@ public class ChannelController {
      * @return created topic with title and url
      */
     @PostMapping("/{channelId}/topic")
-    public UrlResponse<TopicDto> createNewTopic(@PathVariable String channelId, @RequestBody TopicDto topicCreateRequest) {
-        return new UrlResponse<>("/" + channelId + "/dummyTopicId", topicCreateRequest);
+    public UrlResponse<TopicDto> createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest) {
+        return topicService.createNewTopic(channelId, topicCreateRequest);
     }
 
 
@@ -90,9 +83,15 @@ public class ChannelController {
      * @param topicDeleteRequest topic delete request with url
      * @return HTTP STATUS 200 on success
      */
-    @DeleteMapping("/{channelId}/topic")
-    public ResponseEntity<Void> removeTopic(@PathVariable String channelId, @RequestBody TopicDto topicDeleteRequest) {
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{channelId}/topic/{topicId}")
+    public ResponseEntity<Void> removeTopic(
+            @PathVariable int channelId,
+            @PathVariable int topicId,
+            @RequestBody TopicDto topicDeleteRequest) {
+        if (!topicService.removeTopic(topicId, topicDeleteRequest)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(null);
     }
 
     /**
@@ -100,11 +99,17 @@ public class ChannelController {
      * @param channelId id of the channel that references topic
      * @param topicId id of the topic that will be updated
      * @param topicUpdateRequest topic update request with existing url and new title
-     * @return update topic
+     * @return on success, updated topic data with HTTP STATUS 200
      */
     @PatchMapping("/{channelId}/topic/{topicId}")
-    public TopicDto updateTopic(@PathVariable String channelId, @PathVariable String topicId, @RequestBody TopicDto topicUpdateRequest) {
-        return topicUpdateRequest;
+    public ResponseEntity<TopicDto> updateTopic(
+            @PathVariable int channelId,
+            @PathVariable int topicId,
+            @RequestBody TopicDto topicUpdateRequest) {
+        if (!topicService.updateTopic(channelId, topicId, topicUpdateRequest)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(topicUpdateRequest);
     }
 
     /**
@@ -115,13 +120,8 @@ public class ChannelController {
      * @return list of the messages of the topic
      */
     @GetMapping("/{channelId}/topic/{topicId}/message")
-    public List<MessageDto> listAllMessages(@PathVariable String channelId, @PathVariable String topicId) {
-        return List.of(
-                new MessageDto(new MemberDto("dummy@email.com", "user", 8888), "hello world", LocalDateTime.now()),
-                new MessageDto(new MemberDto("dummy@email.com", "user", 8888), "hello world", LocalDateTime.now()),
-                new MessageDto(new MemberDto("dummy@email.com", "user", 8888), "hello world", LocalDateTime.now()),
-                new MessageDto(new MemberDto("dummy@email.com", "user", 8888), "hello world", LocalDateTime.now())
-        );
+    public List<MessageDto> listAllMessages(@PathVariable int channelId, @PathVariable int topicId) {
+        return messageService.findAllByChannelIdAndTopicId(channelId, topicId);
     }
 
     /**

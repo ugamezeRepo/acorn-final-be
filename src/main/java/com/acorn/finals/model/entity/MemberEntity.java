@@ -1,5 +1,6 @@
 package com.acorn.finals.model.entity;
 
+import com.acorn.finals.model.dto.MemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +17,8 @@ public class MemberEntity {
     String email;
     String nickname;
     Integer hashtag;
+
+    public MemberDto toDto() {
+        return new MemberDto(email, nickname, hashtag);
+    }
 }

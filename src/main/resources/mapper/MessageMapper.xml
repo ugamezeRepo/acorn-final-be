@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="message">
-    <select id="selectAll" resultType="messageEntity">
+<mapper namespace="com.acorn.finals.mapper.MessageMapper">
+    <select id="findAll" resultType="messageEntity">
         select * from message
     </select>
 
-    <select id="selectOne" resultType="messageEntity" parameterType="messageEntity">
+    <select  id="findOneById" resultType="messageEntity" parameterType="int">
         select * from message
         where id = #{id}
     </select>
-
-    <select id="getNextSequence" resultType="int">
-        select message_seq.nextval from dual
+    
+    <select id="findAllMessageByChannelIdAndTopicId" resultType="messageEntity">
+        select * from message
+        where channel_id = #{channelId} and topic_id = #{topicId}
     </select>
 
-    <insert id="insert" parameterType="messageEntity">
+    <insert id="insert" parameterType="messageEntity" useGeneratedKeys="true" keyColumn="id">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select message_seq.nextval from dual
+        </selectKey>
         insert into message (id, author_id, content, send_date, channel_id,  topic_id)
         values (#{id}, #{authorId}, #{content}, #{sendDate}, #{channelId}, #{topicId})
     </insert>
@@ -25,7 +29,7 @@
         where id = #{id}
     </update>
 
-    <delete id="delete" parameterType="messageEntity">
+    <delete id="deleteById" parameterType="int">
         delete from message
         where id = #{id}
     </delete>

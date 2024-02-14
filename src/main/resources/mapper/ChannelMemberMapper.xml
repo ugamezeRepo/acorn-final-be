@@ -1,20 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="channel_member">
-    <select id="selectAll" resultType="channelMemberEntity">
+<mapper namespace="com.acorn.finals.mapper.ChannelMemberMapper">
+    <select id="findAll" resultType="channelMemberEntity">
         select * from channel_member
     </select>
 
-    <select id="selectOne" resultType="channelMemberEntity" parameterType="channelMemberEntity">
+    <select id="findOneById" resultType="channelMemberEntity" parameterType="int">
         select * from channel_member
         where id = #{id}
     </select>
 
-    <select id="getNextSequence" resultType="int">
-        select * from channel_member_seq.nextval from dual
+    <select id="findAllChannelByMemberId" parameterType="int" resultType="channelEntity">
+        (select * from channel)
+        join
+        (select channel_id as id from channel_member where member_id = #{memberId})
+        using(id)
+        order by id
+    </select>
+
+    <select id="findAllMemberByChannelId" parameterType="int" resultType="memberEntity">
+        (select * from member)
+        join
+        (select member_id as id from channel_member where channel_id = #{channelId})
+        using(id)
+        order by id
     </select>
 
     <insert id="insert" parameterType="channelMemberEntity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select channel_member_seq.nextval from dual
+        </selectKey>
         insert into channel_member (id, channel_id, member_id)
         values (#{id}, #{channelId}, #{memberId})
     </insert>
@@ -25,7 +40,7 @@
         where id = #{id}
     </update>
 
-    <delete id="delete" parameterType="channelMemberEntity">
+    <delete id="deleteById" parameterType="int">
         delete from channel_member
         where id = #{id}
     </delete>

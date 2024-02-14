@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="member">
-    <select id="selectAll" resultType="memberEntity">
+<mapper namespace="com.acorn.finals.mapper.MemberMapper">
+    <select id="findAll" resultType="memberEntity">
         select * from member
     </select>
     
-    <select id="selectOne" resultType="memberEntity" parameterType="memberEntity">
+    <select id="findOneById" resultType="memberEntity" parameterType="int">
         select * from member
         where id = #{id}
     </select>
 
-    <select id="getNextSequence" resultType="int">
-        select member_seq.nextval from dual
-    </select>
-
     <insert id="insert" parameterType="memberEntity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select member_seq.nextval from dual
+        </selectKey>
         insert into member (id, email, nickname, hashtag)
         values (#{id}, #{email}, #{nickname}, #{hashtag})
     </insert>
@@ -25,7 +24,7 @@
         where id = #{id}
     </update>
     
-    <delete id="delete" parameterType="memberEntity">
+    <delete id="deleteById" parameterType="int">
         delete from member
         where id = #{id}
     </delete>
