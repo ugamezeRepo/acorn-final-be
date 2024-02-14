@@ -10,14 +10,18 @@
         where id = #{id}
     </select>
 
+    <select id="getNextSequence" resultType="int">
+        select channel_seq.nextval from dual
+    </select>
+
     <insert id="insert" parameterType="channelEntity">
-        insert into channel (id, channel_name, channel_thumbnail)
-        values (#{id}, #{channelName}, #{channelThumbnail})
+        insert into channel (id, name, thumbnail)
+        values (#{id}, #{name}, #{thumbnail})
     </insert>
     
     <update id="update" parameterType="channelEntity">
         update channel
-        set channel_name = #{channelName}, channel_thumbnail = #{channelThumbnail}
+        set name = #{name}, thumbnail = #{thumbnail}
         where id = #{id}
     </update>
 

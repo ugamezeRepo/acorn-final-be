@@ -5,6 +5,8 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.dto.TopicDto;
+import com.acorn.finals.service.ChannelService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/channel")
+@RequiredArgsConstructor
 public class ChannelController {
+    private final ChannelService channelService;
+
     /**
      * create a new channel
      * @param channelCreateRequest channel create request with channel name

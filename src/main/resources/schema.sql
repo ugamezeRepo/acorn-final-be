@@ -7,8 +7,8 @@ create table member (
 
 create table channel (
     id number primary key,
-    channel_name varchar2(10) not null,
-    channel_thumbnail clob null
+    name varchar2(10) not null,
+    thumbnail clob null
 );
 
 create table channel_member (
@@ -39,4 +39,3 @@ create sequence channel_seq start with 1000 increment by 7;
 create sequence channel_member_seq;
 create sequence topic_seq start with 10000 increment by 13;
 create sequence message_seq start with 100 increment by 17;
-

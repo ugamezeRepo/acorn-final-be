@@ -21,7 +21,7 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-  type-aliases-package: com.acorn.finals.**
+  type-aliases-package: com.acorn.finals.model.entity.**
   mapper-locations:
     - classpath:mapper/*.xml
 
@@ -34,6 +34,6 @@ springdoc:
 logging:
   level:
     org.springframework.web: INFO
-    org.mybatis: TRACE
-    org.springframework.core.env.PropertySourcesPropertyResolver: TRACE
+    org.mybatis: INFO
+    org.springframework.core.env.PropertySourcesPropertyResolver: INFO
 

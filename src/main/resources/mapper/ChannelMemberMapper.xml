@@ -10,6 +10,10 @@
         where id = #{id}
     </select>
 
+    <select id="getNextSequence" resultType="int">
+        select * from channel_member_seq.nextval from dual
+    </select>
+
     <insert id="insert" parameterType="channelMemberEntity">
         insert into channel_member (id, channel_id, member_id)
         values (#{id}, #{channelId}, #{memberId})

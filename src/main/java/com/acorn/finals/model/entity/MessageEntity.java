@@ -1,6 +1,7 @@
 package com.acorn.finals.model.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
@@ -8,6 +9,7 @@ import org.apache.ibatis.type.Alias;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Alias("messageEntity")

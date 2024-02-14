@@ -10,6 +10,10 @@
         where id = #{id}
     </select>
 
+    <select id="getNextSequence" resultType="int">
+        select member_seq.nextval from dual
+    </select>
+
     <insert id="insert" parameterType="memberEntity">
         insert into member (id, email, nickname, hashtag)
         values (#{id}, #{email}, #{nickname}, #{hashtag})

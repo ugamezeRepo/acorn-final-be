@@ -20,8 +20,15 @@ public class TopicRepository {
         return sqlSession.selectOne("topic.selectOne", topicEntity);
     }
 
-    public boolean insert(TopicEntity topicEntity) {
-        return sqlSession.insert("topic.insert", topicEntity) > 0;
+    public int getNextVal() {
+        return sqlSession.insert("topic.getNextVal");
+    }
+
+    public int insert(TopicEntity topicEntity) {
+        int id = getNextVal();
+        topicEntity.setId(id);
+        sqlSession.insert("topic.insert", topicEntity);
+        return id;
     }
 
     public boolean update(TopicEntity topicEntity) {

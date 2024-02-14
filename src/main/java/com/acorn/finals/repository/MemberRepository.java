@@ -20,8 +20,15 @@ public class MemberRepository {
         return sqlSession.selectOne("member.selectOne", memberEntity);
     }
 
-    public boolean insert(MemberEntity memberEntity) {
-        return sqlSession.insert("member.insert", memberEntity) > 0;
+    public int getNextSequence() {
+        return sqlSession.selectOne("member.getNextSequence");
+    }
+
+    public int insert(MemberEntity memberEntity) {
+        int id = getNextSequence();
+        memberEntity.setId(id);
+        sqlSession.insert("member.insert", memberEntity);
+        return id;
     }
 
     public boolean update(MemberEntity memberEntity) {

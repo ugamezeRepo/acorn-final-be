@@ -21,8 +21,15 @@ public class ChannelRepository {
         return sqlSession.selectOne("channel.selectOne", channelEntity);
     }
 
-    public boolean insert(ChannelEntity channelEntity) {
-        return sqlSession.insert("channel.insert", channelEntity) > 0;
+    public int getNextSequence() {
+        return sqlSession.selectOne("channel.getNextSequence");
+    }
+
+    public int insert(ChannelEntity channelEntity) {
+        int id = getNextSequence();
+        channelEntity.setId(id);
+        sqlSession.insert("channel.insert", channelEntity);
+        return id;
     }
 
     public boolean update(ChannelEntity channelEntity) {

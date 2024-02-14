@@ -10,9 +10,13 @@
         where id = #{id}
     </select>
 
+    <select id="getNextSequence" resultType="int">
+        select topic_seq.nextval from dual
+    </select>
+
     <insert id="insert" parameterType="topicEntity">
         insert into topic (id, title, channel_id)
-        values (#{id}, #{title}, #{channelId}
+        values (#{id}, #{title}, #{channelId})
     </insert>
 
     <update id="update" parameterType="topicEntity">

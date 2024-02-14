@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChannelDto {
-    String channelId;
     String name;
     String thumbnail;
 }

@@ -20,8 +20,15 @@ public class MessageRepository {
         return sqlSession.selectOne("message.selectOne", messageEntity);
     }
 
-    public boolean insert(MessageEntity messageEntity) {
-        return sqlSession.insert("message.insert", messageEntity) > 0;
+    public int getNextVal() {
+        return sqlSession.insert("message.getNextVal");
+    }
+
+    public int insert(MessageEntity messageEntity) {
+        int id = getNextVal();
+        messageEntity.setId(id);
+        sqlSession.insert("message.insert", messageEntity);
+        return id;
     }
 
     public boolean update(MessageEntity messageEntity) {
