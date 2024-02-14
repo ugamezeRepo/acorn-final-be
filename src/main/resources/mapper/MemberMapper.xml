@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="member">
+    <select id="selectAll" resultType="memberEntity">
+        select * from member
+    </select>
+    
+    <select id="selectOne" resultType="memberEntity" parameterType="memberEntity">
+        select * from member
+        where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="memberEntity">
+        insert into member (id, email, nickname, hashtag)
+        values (#{id}, #{email}, #{nickname}, #{hashtag})
+    </insert>
+
+    <update id="update" parameterType="memberEntity">
+        update member
+        set email = #{email}, nickname = #{nickname}, hashtag = #{hashtag}
+        where id = #{id}
+    </update>
+    
+    <delete id="delete" parameterType="memberEntity">
+        delete from member
+        where id = #{id}
+    </delete>
+</mapper>

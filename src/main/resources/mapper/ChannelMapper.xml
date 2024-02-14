@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="channel">
+    <select id="selectAll" resultType="channelEntity">
+        select * from channel
+    </select>
+
+    <select id="selectOne" parameterType="channelEntity" resultType="channelEntity">
+        select * from channel
+        where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="channelEntity">
+        insert into channel (id, channel_name, channel_thumbnail)
+        values (#{id}, #{channelName}, #{channelThumbnail})
+    </insert>
+    
+    <update id="update" parameterType="channelEntity">
+        update channel
+        set channel_name = #{channelName}, channel_thumbnail = #{channelThumbnail}
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="channelEntity">
+        delete from channel
+        where id = #{id}
+    </delete>
+</mapper>

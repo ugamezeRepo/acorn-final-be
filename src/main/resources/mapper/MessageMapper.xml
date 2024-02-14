@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mapper xmlns="http://mybatis.org/schema/mybatis-mapper" namespace="message">
+    <select id="selectAll" resultType="messageEntity">
+        select * from message
+    </select>
+
+    <select id="selectOne" resultType="messageEntity" parameterType="messageEntity">
+        select * from message
+        where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="messageEntity">
+        insert into message (id, author_id, content, send_date, channel_id,  topic_id)
+        values (#{id}, #{authorId}, #{content}, #{sendDate}, #{channelId}, #{topicId})
+    </insert>
+
+    <update id="update" parameterType="messageEntity">
+        update message
+        set author_id = #{authorId}, content = #{content}, send_date = #{sendDate}, channel_id = #{channelId}, topic_id = #{topicId}
+        where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="messageEntity">
+        delete from message
+        where id = #{id}
+    </delete>
+</mapper>

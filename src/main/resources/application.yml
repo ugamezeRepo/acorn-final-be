@@ -1,0 +1,39 @@
+server:
+  port: 9000
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    username: acorn
+    password: acorn
+  jpa: # using jpa only for schema.sql & data.sql
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  type-aliases-package: com.acorn.finals.**
+  mapper-locations:
+  - classpath:mapper/*.xml
+
+springdoc:
+  swagger-ui:
+    path: /
+    csrf:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.mybatis: TRACE
+    org.springframework.core.env.PropertySourcesPropertyResolver: TRACE
+
