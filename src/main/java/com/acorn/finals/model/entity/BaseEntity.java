@@ -23,6 +23,7 @@ public class BaseEntity {
         createdAt = creationTime;
         updatedAt = creationTime;
     }
+
     public void initDate() {
         initDate(LocalDateTime.now());
     }

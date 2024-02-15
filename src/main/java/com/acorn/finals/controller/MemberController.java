@@ -17,6 +17,7 @@ public class MemberController {
 
     /**
      * list all another user joined channel
+     *
      * @param memberId id of the another member
      * @return list of channel
      */
@@ -27,6 +28,7 @@ public class MemberController {
 
     /**
      * query my information
+     *
      * @return
      */
     @GetMapping("/@me")
@@ -36,6 +38,7 @@ public class MemberController {
 
     /**
      * list all channel
+     *
      * @return list of channel
      */
     @GetMapping("/@me/channel")
@@ -45,6 +48,7 @@ public class MemberController {
 
     /**
      * list all friends of another user
+     *
      * @param memberId
      * @return list of friend
      */
@@ -56,6 +60,7 @@ public class MemberController {
 
     /**
      * change my nickname
+     *
      * @param updateMemberRequest new nickname
      * @return HTTP STATUS 200 on successful
      */

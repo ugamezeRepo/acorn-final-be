@@ -3,7 +3,9 @@ package com.acorn.finals.mapper;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Mapper;
 
 
@@ -14,6 +16,7 @@ public interface ChannelMemberMapper {
     ChannelMemberEntity findOneById(int id);
 
     List<ChannelEntity> findAllChannelByMemberId(int memberId);
+
     List<MemberEntity> findAllMemberByChannelId(int channelId);
 
     int insert(ChannelMemberEntity entity);

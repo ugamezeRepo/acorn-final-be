@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -27,6 +28,7 @@ public class ChannelController {
 
     /**
      * create a new channel
+     *
      * @param channelCreateRequest channel create request with channel name
      * @return created channel
      */
@@ -37,6 +39,7 @@ public class ChannelController {
 
     /**
      * update channel
+     *
      * @param channelUpdateRequest channel update request with new channel name, or thumbnail url
      * @return updated channel
      */
@@ -47,6 +50,7 @@ public class ChannelController {
 
     /**
      * list all members of channel
+     *
      * @param channelId id of the channel
      * @return list of members of the channel
      */
@@ -57,6 +61,7 @@ public class ChannelController {
 
     /**
      * list all topics of channel
+     *
      * @param channelId id of the channel
      * @return list of topics of channel
      */
@@ -67,7 +72,8 @@ public class ChannelController {
 
     /**
      * create new topic
-     * @param channelId id of the channel that references topic
+     *
+     * @param channelId          id of the channel that references topic
      * @param topicCreateRequest topic create request with title
      * @return created topic with title and url
      */
@@ -79,7 +85,8 @@ public class ChannelController {
 
     /**
      * remove topic
-     * @param channelId id of the channel that references topic
+     *
+     * @param channelId          id of the channel that references topic
      * @param topicDeleteRequest topic delete request with url
      * @return HTTP STATUS 200 on success
      */
@@ -96,8 +103,9 @@ public class ChannelController {
 
     /**
      * update topic
-     * @param channelId id of the channel that references topic
-     * @param topicId id of the topic that will be updated
+     *
+     * @param channelId          id of the channel that references topic
+     * @param topicId            id of the topic that will be updated
      * @param topicUpdateRequest topic update request with existing url and new title
      * @return on success, updated topic data with HTTP STATUS 200
      */
@@ -116,7 +124,7 @@ public class ChannelController {
      * list all messages of the topic
      *
      * @param channelId id of the channel that references topic
-     * @param topicId id of the topic that references message
+     * @param topicId   id of the topic that references message
      * @return list of the messages of the topic
      */
     @GetMapping("/{channelId}/topic/{topicId}/message")
@@ -126,8 +134,9 @@ public class ChannelController {
 
     /**
      * delete message
+     *
      * @param channelId id of the channel that references topic
-     * @param topicId id of the topic that references message
+     * @param topicId   id of the topic that references message
      * @param messageId id of the message that will be deleted
      * @return HTTP STATUS 200 on success
      */
@@ -138,9 +147,10 @@ public class ChannelController {
 
     /**
      * update message
-     * @param channelId id of the channel that references topic
-     * @param topicId id of the channel that references message
-     * @param messageId id of the message will be updated
+     *
+     * @param channelId            id of the channel that references topic
+     * @param topicId              id of the channel that references message
+     * @param messageId            id of the message will be updated
      * @param updateMessageRequest update message request with new content
      * @return updated message
      */

@@ -5,6 +5,7 @@ import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDateTime;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder

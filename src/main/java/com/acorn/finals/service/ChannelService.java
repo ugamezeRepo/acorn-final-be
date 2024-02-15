@@ -5,8 +5,10 @@ import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.model.UrlResponse;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class ChannelService {
     String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
     }
+
     public UrlResponse<ChannelDto> createNewChannel(ChannelDto channelCreateRequest) {
         var channelEntity = channelCreateRequest.toEntity(null);
         channelMapper.insert(channelEntity);
