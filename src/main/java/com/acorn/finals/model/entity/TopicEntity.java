@@ -1,17 +1,15 @@
 package com.acorn.finals.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Alias("topicEntity")
-public class TopicEntity {
+public class TopicEntity extends BaseEntity {
     Integer id;
     String title;
     Integer channelId;

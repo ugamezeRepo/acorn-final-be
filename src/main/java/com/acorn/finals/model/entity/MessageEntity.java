@@ -1,23 +1,20 @@
 package com.acorn.finals.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.ser.Serializers;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.time.LocalDateTime;
-
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Alias("messageEntity")
-public class MessageEntity {
+public class MessageEntity extends BaseEntity {
     Integer id;
     Integer authorId;
     String content;
-    LocalDateTime sendDate;
     Integer channelId;
     Integer topicId;
 }

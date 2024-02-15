@@ -9,10 +9,6 @@ spring:
     url: jdbc:oracle:thin:@localhost:1521:xe
     username: acorn
     password: acorn
-  jpa: # using jpa only for schema.sql & data.sql
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: none
   sql:
     init:
       mode: always
@@ -33,9 +29,9 @@ springdoc:
 
 logging:
   level:
+    com.acorn.finals: DEBUG
     org.springframework.web: INFO
-    org.mybatis: INFO
-    org.apache.ibatis: INFO
     org.springframework.core.env.PropertySourcesPropertyResolver: INFO
+    com.acorn.finals.mapper: DEBUG
 
 

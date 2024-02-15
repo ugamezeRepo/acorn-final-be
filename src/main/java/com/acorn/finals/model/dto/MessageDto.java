@@ -12,5 +12,5 @@ import java.time.LocalDateTime;
 public class MessageDto {
     MemberDto author;
     String content;
-    LocalDateTime sendDate;
+    LocalDateTime createdAt;
 }

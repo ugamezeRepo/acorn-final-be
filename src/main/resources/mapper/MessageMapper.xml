@@ -19,13 +19,13 @@
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select message_seq.nextval from dual
         </selectKey>
-        insert into message (id, author_id, content, send_date, channel_id,  topic_id)
-        values (#{id}, #{authorId}, #{content}, #{sendDate}, #{channelId}, #{topicId})
+        insert into message (id, author_id, content, channel_id,  topic_id, created_at, updated_at)
+        values (#{id}, #{authorId}, #{content}, #{channelId}, #{topicId}, #{createdAt}, #{updatedAt})
     </insert>
 
     <update id="update" parameterType="messageEntity">
         update message
-        set author_id = #{authorId}, content = #{content}, send_date = #{sendDate}, channel_id = #{channelId}, topic_id = #{topicId}
+        set author_id = #{authorId}, content = #{content}, send_date = #{sendDate}, channel_id = #{channelId}, topic_id = #{topicId}, updated_at = #{updatedAt}
         where id = #{id}
     </update>
 

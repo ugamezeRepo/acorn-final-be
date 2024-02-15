@@ -20,7 +20,7 @@ public class MessageService {
         return entities.stream()
                 .map(entity -> {
                     MemberDto author = memberMapper.findOneById(entity.getAuthorId()).toDto();
-                    return new MessageDto(author, entity.getContent(), entity.getSendDate());
+                    return new MessageDto(author, entity.getContent(), entity.getCreatedAt());
                 })
                 .collect(Collectors.toList());
     }

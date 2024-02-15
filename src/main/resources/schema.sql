@@ -28,10 +28,12 @@ create table message (
     id number primary key,
     author_id number not null,
     content varchar2(1000) not null,
-    send_date date not null,
 
     channel_id number not null, -- id of the channel that references message
-    topic_id number not null -- id of the topic that references message
+    topic_id number not null,  -- id of the topic that references message
+
+    created_at date not null,
+    updated_at date not null
 );
 
 create sequence member_seq;
