@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.acorn.finals.config.AmqpConfig;
 
-@Component
+//@Component
 public class Runner implements CommandLineRunner {
 
 
