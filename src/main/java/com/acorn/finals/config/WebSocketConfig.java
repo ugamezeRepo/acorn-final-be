@@ -55,7 +55,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                     Class<?> parameterType = method.getParameterCount() == 1 ? method.getParameterTypes()[0] : Void.class;
 
                     var currentWebSocketInfo = websocketMappings.computeIfAbsent(fullPath, k -> new WebSocketMappingInfo());
-                    assert (currentWebSocketInfo != null);
                     currentWebSocketInfo.addOnMessage(method, parameterType, returnType, bean);
                 }
                 if (method.isAnnotationPresent(WebSocketOnConnect.class)) {
@@ -63,7 +62,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                     String fullPath = basePath + additionalPath;
 
                     var currentWebSocketInfo = websocketMappings.computeIfAbsent(fullPath, k -> new WebSocketMappingInfo());
-                    assert (currentWebSocketInfo != null);
                     currentWebSocketInfo.addOnConnect(method, bean);
                 }
                 if (method.isAnnotationPresent(WebSocketOnClose.class)) {
@@ -71,7 +69,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                     String fullPath = basePath + additionalPath;
 
                     var currentWebSocketInfo = websocketMappings.computeIfAbsent(fullPath, k -> new WebSocketMappingInfo());
-                    assert (currentWebSocketInfo != null);
                     currentWebSocketInfo.addOnClose(method, bean);
                 }
             }
@@ -119,13 +116,11 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                         result = mapper.writeValueAsString(castedInvokeResult);
                     } catch (Exception e) {
                     }
-
                     if (result != null) {
                         session.sendMessage(new TextMessage(result));
                     }
                 }
             }
-
         }
 
         @Override
@@ -177,16 +172,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
             onMessageReturnTypes.add(returnType);
             onMessageObject.add(obj);
             return this;
-        }
-
-        public List<Integer> findMatchingIndexes(Class<?> parameterType, Class<?> returnType) {
-            List<Integer> result = new ArrayList<>();
-            for (int i = 0; i < onMessage.size(); i++) {
-                if (onMessageParamTypes.get(i).equals(parameterType) && onMessageReturnTypes.get(i).equals(returnType)) {
-                    result.add(i);
-                }
-            }
-            return result;
         }
     }
 }
