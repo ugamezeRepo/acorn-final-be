@@ -30,7 +30,7 @@ public class ChannelController {
      * @param channelCreateRequest channel create request with channel name
      * @return created channel
      */
-    @PostMapping("")
+    @PostMapping
     public UrlResponse<ChannelDto> createNewChannel(@RequestBody ChannelDto channelCreateRequest) {
         return channelService.createNewChannel(channelCreateRequest);
     }
