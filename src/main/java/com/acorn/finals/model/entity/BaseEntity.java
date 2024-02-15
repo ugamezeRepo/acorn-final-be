@@ -29,7 +29,7 @@ public class BaseEntity {
     }
 
     public void updateDate(LocalDateTime updateTime) {
-        updateTime = updateTime;
+        updatedAt = updateTime;
     }
 
     public void updateDate() {
