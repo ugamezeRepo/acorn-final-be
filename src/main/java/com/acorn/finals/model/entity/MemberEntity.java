@@ -4,7 +4,7 @@ import com.acorn.finals.model.dto.MemberDto;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @NoArgsConstructor
