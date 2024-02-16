@@ -5,7 +5,7 @@ import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @NoArgsConstructor

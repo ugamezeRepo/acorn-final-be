@@ -3,7 +3,7 @@ package com.acorn.finals.model.entity;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Builder
 @NoArgsConstructor
