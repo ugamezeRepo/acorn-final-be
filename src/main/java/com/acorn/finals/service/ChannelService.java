@@ -17,12 +17,23 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 @RequiredArgsConstructor
 public class ChannelService {
-    private final CryptoService cryptoService;
     private final ChannelMapper channelMapper;
     private final ChannelMemberMapper channelMemberMapper;
 
     String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
+    }
+
+    public List<ChannelDto> listAllChannels() {
+        var entities = channelMapper.findAll();
+        return entities.stream()
+            .map(entity -> new ChannelDto(entity.getName(), entity.getThumbnail()))
+            .collect(Collectors.toList());
+    }
+
+    public ChannelDto findChannelById(int channelId) {
+        var entity = channelMapper.findOneById(channelId);
+        return new ChannelDto(entity.getName(), entity.getThumbnail());
     }
 
     public UrlResponse<ChannelDto> createNewChannel(ChannelDto channelCreateRequest) {
@@ -39,6 +50,10 @@ public class ChannelService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return channelUpdateRequest;
+    }
+
+    public boolean deleteChannel(int channelId) {
+        return channelMapper.deleteById(channelId) > 0;
     }
 
     public List<MemberDto> listChannelMembers(int channelId) {
