@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +24,27 @@ public class ChannelController {
     private final ChannelService channelService;
     private final TopicService topicService;
     private final MessageService messageService;
+
+    /**
+     * find list all channels
+     *
+     * @return list of the channels
+     */
+    @GetMapping
+    public List<ChannelDto> listAllChannels() {
+        return channelService.listAllChannels();
+    }
+
+    /**
+     * find a channel by id
+     *
+     * @param channelId id of the channel
+     * @return found channel
+     */
+    @GetMapping("/{channelId}")
+    public ChannelDto findChannelById(@PathVariable int channelId) {
+        return channelService.findChannelById(channelId);
+    }
 
     /**
      * create a new channel
@@ -48,6 +68,19 @@ public class ChannelController {
         return ResponseEntity.ok(channelService.updateChannel(channelId, channelUpdateRequest));
     }
 
+    /**
+     * delete channel
+     *
+     * @param channelId id of the channel
+     * @return HTTP STATUS 200 on success
+     */
+    @DeleteMapping("/{channelId}")
+    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId) {
+        if (!channelService.deleteChannel(channelId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().build();
+    }
     /**
      * list all members of channel
      *
