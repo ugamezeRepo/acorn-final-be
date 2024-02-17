@@ -4,8 +4,17 @@ import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
 import com.acorn.finals.annotation.WebSocketOnClose;
 import com.acorn.finals.annotation.WebSocketOnConnect;
+import com.acorn.finals.util.PathUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletContext;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -21,12 +30,6 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Configuration
 @EnableWebSocket
@@ -135,16 +138,75 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
     }
 
     private class WebSocketMappingHandler extends TextWebSocketHandler {
+        private static Map<URI, Set<WebSocketSession>> sessionInfo;
         WebSocketMappingInfo mappingInfo;
 
         private WebSocketMappingHandler(WebSocketMappingInfo mappingInfo) {
             this.mappingInfo = mappingInfo;
+            sessionInfo = new HashMap<>();
         }
 
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+            var sessionSet = sessionInfo.computeIfAbsent(session.getUri(), uri -> new HashSet<>());
+            sessionSet.add(session);
+
+            ObjectMapper mapper = new ObjectMapper();
+            var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
+            mappingLoop:
             for (int i = 0; i < mappingInfo.onConnect.size(); i++) {
-                mappingInfo.onConnect.get(i).invoke(mappingInfo.onConnectObject.get(i));
+                var methodInfo = mappingInfo.onConnect.get(i);
+                var methodSubject = mappingInfo.onConnectObject.get(i);
+                var pathPattern = mappingInfo.onConnectPath.get(i);
+
+                var methodParameters = methodInfo.getParameters();
+                var returnType = methodInfo.getReturnType();
+
+                var pathMap = PathUtils.extractPath(pathPattern, requestPath);
+
+                List<Object> params = new ArrayList<>();
+                for (var parameter : methodParameters) {
+                    if (!parameter.isAnnotationPresent(PathVariable.class)) {
+                        continue mappingLoop;
+                    }
+                    try {
+                        var pathAnnotation = parameter.getAnnotation(PathVariable.class);
+                        var pathIdentifier = pathAnnotation.value().isEmpty()
+                                ? parameter.getName()
+                                : pathAnnotation.value();
+
+                        String pathValue = pathMap.get(pathIdentifier);
+                        if (parameter.getType().equals(String.class)) {
+                            pathValue = "\"" + pathValue + "\"";
+                        }
+                        var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                        params.add(serializedPathValue);
+
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        continue mappingLoop;
+                    }
+                }
+
+                var invokeResult = methodInfo.invoke(methodSubject, params.toArray());
+                if (returnType.isInstance(invokeResult)) {
+                    String result = null;
+                    try {
+                        var castedInvokeResult = returnType.cast(invokeResult);
+                        result = mapper.writeValueAsString(castedInvokeResult);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                    }
+                    if (result != null) {
+                        var resultMessage = new TextMessage(result);
+                        var sessions = sessionInfo.get(session.getUri());
+                        if (sessions != null) {
+                            for (var sess : sessions) {
+                                sess.sendMessage(resultMessage);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -154,18 +216,16 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
             String payload = message.getPayload();
 
             var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
-            log.debug(requestPath);
-
             mappingLoop:
             for (int i = 0; i < mappingInfo.onMessage.size(); i++) {
                 var methodInfo = mappingInfo.onMessage.get(i);
                 var methodSubject = mappingInfo.onMessageObject.get(i);
+                var pathPattern = mappingInfo.onMessagePath.get(i);
 
                 var methodParameters = methodInfo.getParameters();
                 var returnType = methodInfo.getReturnType();
 
-
-                var pathMap = new HashMap<String, String>();
+                var pathMap = PathUtils.extractPath(pathPattern, requestPath);
 
                 // create params
                 List<Object> params = new ArrayList<>();
@@ -187,6 +247,9 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                                     : pathAnnotation.value();
 
                             String pathValue = pathMap.get(pathIdentifier);
+                            if (parameter.getType().equals(String.class)) {
+                                pathValue = "\"" + pathValue + "\"";
+                            }
                             var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
                             params.add(serializedPathValue);
                         } catch (Exception e) {
@@ -198,8 +261,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                     }
                 }
 
-
-                var invokeResult = methodInfo.invoke(methodSubject, params);
+                var invokeResult = methodInfo.invoke(methodSubject, params.toArray());
                 if (returnType.isInstance(invokeResult)) {
                     String result = null;
                     try {
@@ -209,7 +271,13 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                         log.error(e.getMessage());
                     }
                     if (result != null) {
-                        session.sendMessage(new TextMessage(result));
+                        var resultMessage = new TextMessage(result);
+                        var sessions = sessionInfo.get(session.getUri());
+                        if (sessions != null) {
+                            for (var sess : sessions) {
+                                sess.sendMessage(resultMessage);
+                            }
+                        }
                     }
                 }
             }
@@ -217,8 +285,65 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
         @Override
         public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+            var sessionSet = sessionInfo.computeIfAbsent(session.getUri(), uri -> new HashSet<>());
+            sessionSet.remove(session);
+
+            ObjectMapper mapper = new ObjectMapper();
+            var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
+            mappingLoop:
             for (int i = 0; i < mappingInfo.onClose.size(); i++) {
-                mappingInfo.onClose.get(i).invoke(mappingInfo.onCloseObject.get(i));
+                var methodInfo = mappingInfo.onClose.get(i);
+                var methodSubject = mappingInfo.onCloseObject.get(i);
+                var pathPattern = mappingInfo.onClosePath.get(i);
+
+                var methodParameters = methodInfo.getParameters();
+                var returnType = methodInfo.getReturnType();
+
+                var pathMap = PathUtils.extractPath(pathPattern, requestPath);
+
+                List<Object> params = new ArrayList<>();
+                for (var parameter : methodParameters) {
+                    if (!parameter.isAnnotationPresent(PathVariable.class)) {
+                        continue mappingLoop;
+                    }
+                    try {
+                        var pathAnnotation = parameter.getAnnotation(PathVariable.class);
+                        var pathIdentifier = pathAnnotation.value().isEmpty()
+                                ? parameter.getName()
+                                : pathAnnotation.value();
+
+                        String pathValue = pathMap.get(pathIdentifier);
+                        if (parameter.getType().equals(String.class)) {
+                            pathValue = "\"" + pathValue + "\"";
+                        }
+                        var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                        params.add(serializedPathValue);
+
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                        continue mappingLoop;
+                    }
+                }
+
+                var invokeResult = methodInfo.invoke(methodSubject, params.toArray());
+                if (returnType.isInstance(invokeResult)) {
+                    String result = null;
+                    try {
+                        var castedInvokeResult = returnType.cast(invokeResult);
+                        result = mapper.writeValueAsString(castedInvokeResult);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                    }
+                    if (result != null) {
+                        var resultMessage = new TextMessage(result);
+                        var sessions = sessionInfo.get(session.getUri());
+                        if (sessions != null) {
+                            for (var sess : sessions) {
+                                sess.sendMessage(resultMessage);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

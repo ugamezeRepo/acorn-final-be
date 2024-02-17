@@ -6,7 +6,7 @@ import org.springframework.web.util.pattern.PathPatternParser;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PathUtil {
+public class PathUtils {
     public static Map<String, String> extractPath(String pattern, String input) {
         var result = new HashMap<String, String>();
         var parser = new PathPatternParser();
