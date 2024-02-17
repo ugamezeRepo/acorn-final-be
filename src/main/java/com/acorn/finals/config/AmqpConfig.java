@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.acorn.finals.listener.Receiver;
 
-@Configuration
+//@Configuration
 public class AmqpConfig {
 	@Bean
 	public TopicExchange exchange() {
