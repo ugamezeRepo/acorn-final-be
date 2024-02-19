@@ -6,15 +6,8 @@ import com.acorn.finals.annotation.WebSocketOnClose;
 import com.acorn.finals.annotation.WebSocketOnConnect;
 import com.acorn.finals.util.PathUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.ServletContext;
-import java.lang.reflect.Method;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -30,6 +23,10 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.*;
 
 @Configuration
 @EnableWebSocket
@@ -212,7 +209,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             String payload = message.getPayload();
 
             var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
@@ -342,7 +339,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                                 sess.sendMessage(resultMessage);
                             }
                         }
-                    }
+                     }
                 }
             }
         }

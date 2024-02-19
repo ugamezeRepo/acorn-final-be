@@ -20,9 +20,10 @@ create table channel_member (
 create table topic (
     id number primary key,
     title varchar2(100) not null,
-
+    topic_group varchar2(100) ,
     channel_id number not null -- id of the channel that references topic
 );
+
 
 create table message (
     id number primary key,
