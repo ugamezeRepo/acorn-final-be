@@ -20,7 +20,7 @@ create table channel_member (
 create table topic (
     id number primary key,
     title varchar2(100) not null,
-    topic_group varchar2(100) ,
+--     topic_group varchar2(100),
     channel_id number not null -- id of the channel that references topic
 );
 
@@ -37,9 +37,17 @@ create table message (
     updated_at date not null
 );
 
-create sequence member_seq;
-create sequence channel_seq start with 1000 increment by 7;
-create sequence channel_member_seq;
-create sequence topic_seq start with 10000 increment by 13;
-create sequence message_seq start with 100 increment by 17;
 
+create table member_connection (
+    id number primary key,
+    nickname varchar2(100) not null,
+    hashtag number(4) not null,
+    status varchar2(100) not null
+);
+
+create sequence member_seq start with 10000;
+create sequence channel_seq start with 10000;
+create sequence channel_member_seq start with 10000;
+create sequence topic_seq start with 10000;
+create sequence message_seq start with 10000;
+create sequence member_connection_seq start with 10000;
