@@ -163,24 +163,26 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
                 List<Object> params = new ArrayList<>();
                 for (var parameter : methodParameters) {
-                    if (!parameter.isAnnotationPresent(PathVariable.class)) {
-                        continue mappingLoop;
-                    }
-                    try {
-                        var pathAnnotation = parameter.getAnnotation(PathVariable.class);
-                        var pathIdentifier = pathAnnotation.value().isEmpty()
-                                ? parameter.getName()
-                                : pathAnnotation.value();
+                    if (parameter.getType().equals(WebSocketSession.class)) {
+                        params.add(session);
+                    } else if (parameter.isAnnotationPresent(PathVariable.class)) {
+                        try {
+                            var pathAnnotation = parameter.getAnnotation(PathVariable.class);
+                            var pathIdentifier = pathAnnotation.value().isEmpty()
+                                    ? parameter.getName()
+                                    : pathAnnotation.value();
 
-                        String pathValue = pathMap.get(pathIdentifier);
-                        if (parameter.getType().equals(String.class)) {
-                            pathValue = "\"" + pathValue + "\"";
+                            String pathValue = pathMap.get(pathIdentifier);
+                            if (parameter.getType().equals(String.class)) {
+                                pathValue = "\"" + pathValue + "\"";
+                            }
+                            var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                            params.add(serializedPathValue);
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            continue mappingLoop;
                         }
-                        var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
-                        params.add(serializedPathValue);
-
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
+                    } else {
                         continue mappingLoop;
                     }
                 }
@@ -253,6 +255,8 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                             log.error(e.getMessage());
                             continue mappingLoop;
                         }
+                    } else if (parameter.getType().equals(WebSocketSession.class)) {
+                        params.add(session);
                     } else {
                         continue mappingLoop;
                     }
@@ -300,24 +304,26 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
                 List<Object> params = new ArrayList<>();
                 for (var parameter : methodParameters) {
-                    if (!parameter.isAnnotationPresent(PathVariable.class)) {
-                        continue mappingLoop;
-                    }
-                    try {
-                        var pathAnnotation = parameter.getAnnotation(PathVariable.class);
-                        var pathIdentifier = pathAnnotation.value().isEmpty()
-                                ? parameter.getName()
-                                : pathAnnotation.value();
+                    if (parameter.getType().equals(WebSocketSession.class)) {
+                        params.add(session);
+                    } else if (parameter.isAnnotationPresent(PathVariable.class)) {
+                        try {
+                            var pathAnnotation = parameter.getAnnotation(PathVariable.class);
+                            var pathIdentifier = pathAnnotation.value().isEmpty()
+                                    ? parameter.getName()
+                                    : pathAnnotation.value();
 
-                        String pathValue = pathMap.get(pathIdentifier);
-                        if (parameter.getType().equals(String.class)) {
-                            pathValue = "\"" + pathValue + "\"";
+                            String pathValue = pathMap.get(pathIdentifier);
+                            if (parameter.getType().equals(String.class)) {
+                                pathValue = "\"" + pathValue + "\"";
+                            }
+                            var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                            params.add(serializedPathValue);
+                        } catch (Exception e) {
+                            log.error(e.getMessage());
+                            continue mappingLoop;
                         }
-                        var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
-                        params.add(serializedPathValue);
-
-                    } catch (Exception e) {
-                        log.error(e.getMessage());
+                    } else {
                         continue mappingLoop;
                     }
                 }
@@ -339,7 +345,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                                 sess.sendMessage(resultMessage);
                             }
                         }
-                     }
+                    }
                 }
             }
         }
