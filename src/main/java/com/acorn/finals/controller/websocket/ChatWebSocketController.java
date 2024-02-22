@@ -30,8 +30,8 @@ public class ChatWebSocketController {
         entity.setTopicId(topicId);
 
         service.newMessageAdd(entity);
-        MessageDto dto = service.receviedAndSend(entity);
-        return dto;
+
+        return service.receviedAndSend(entity);
     }
 
     @WebSocketOnConnect("/hello/{helloId}")
