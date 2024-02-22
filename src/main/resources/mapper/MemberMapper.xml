@@ -12,7 +12,7 @@
 
     <select id="findOneByNicknameAndHashtag" resultType="memberEntity">
         select * from member
-        where nickname = #{nickname} and hashtag = #{hashtag }
+        where nickname = #{nickname} and hashtag = #{hashtag}
     </select>
 
     <select id="findAllByChannelId" resultType="memberEntity">
@@ -20,6 +20,11 @@
         join
         (select member_id as id from channel_member where channel_id = #{channelId} )
         using (id)
+    </select>
+
+    <select id="findOneByEmail" resultType="memberEntity" parameterType="String">
+        select * from member
+        where email = #{email}
     </select>
 
     <insert id="insert" parameterType="memberEntity">
