@@ -38,8 +38,16 @@ create table message (
     updated_at date not null
 );
 
+
+create table attachment (
+    id number primary key,
+    content blob
+);
+
+
 create sequence member_seq start with 10000;
 create sequence channel_seq start with 10000;
 create sequence channel_member_seq start with 10000;
 create sequence topic_seq start with 10000;
 create sequence message_seq start with 10000;
+create sequence attachment_seq start with 10000;
