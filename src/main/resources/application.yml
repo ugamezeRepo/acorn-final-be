@@ -36,6 +36,6 @@ logging:
     com.acorn.finals: DEBUG
     org.springframework.web: INFO
     org.springframework.core.env.PropertySourcesPropertyResolver: INFO
-    com.acorn.finals.mapper: DEBUG
+    com.acorn.finals.mapper: TRACE
 
 

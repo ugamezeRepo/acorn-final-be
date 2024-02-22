@@ -4,6 +4,7 @@ import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
 import com.acorn.finals.annotation.WebSocketOnClose;
 import com.acorn.finals.annotation.WebSocketOnConnect;
+import com.acorn.finals.model.WebSocketSessionInfo;
 import com.acorn.finals.util.PathUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -25,7 +26,6 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.*;
 
 @Configuration
@@ -79,6 +79,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
             String path = entry.getKey();
             WebSocketMappingInfo mappingInfo = entry.getValue();
 
+            log.debug("Add websocket handler on {}", path);
             registry.addHandler(new WebSocketMappingHandler(mappingInfo), path)
                     .setAllowedOrigins(globalAllowedOrigins);
         }
@@ -135,21 +136,20 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
     }
 
     private class WebSocketMappingHandler extends TextWebSocketHandler {
-        private static Map<URI, Set<WebSocketSession>> sessionInfo;
+        private static final WebSocketSessionInfo sessionInfo = new WebSocketSessionInfo();
         WebSocketMappingInfo mappingInfo;
 
         private WebSocketMappingHandler(WebSocketMappingInfo mappingInfo) {
             this.mappingInfo = mappingInfo;
-            sessionInfo = new HashMap<>();
         }
 
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-            var sessionSet = sessionInfo.computeIfAbsent(session.getUri(), uri -> new HashSet<>());
+            var requestPath = PathUtils.convertUriToPathExceptForContextPath(session.getUri(), servletContext);
+            var sessionSet = sessionInfo.computeIfAbsent(requestPath, uri -> new HashSet<>());
             sessionSet.add(session);
 
             ObjectMapper mapper = new ObjectMapper();
-            var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
             mappingLoop:
             for (int i = 0; i < mappingInfo.onConnect.size(); i++) {
                 var methodInfo = mappingInfo.onConnect.get(i);
@@ -165,6 +165,8 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                 for (var parameter : methodParameters) {
                     if (parameter.getType().equals(WebSocketSession.class)) {
                         params.add(session);
+                    } else if (parameter.getType().equals(WebSocketSessionInfo.class)) {
+                        params.add(sessionInfo);
                     } else if (parameter.isAnnotationPresent(PathVariable.class)) {
                         try {
                             var pathAnnotation = parameter.getAnnotation(PathVariable.class);
@@ -186,24 +188,17 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                         continue mappingLoop;
                     }
                 }
-
+                if (returnType.equals(void.class) || returnType.equals(Void.class)) {
+                    methodInfo.invoke(methodSubject, params.toArray());
+                    continue;
+                }
                 var invokeResult = methodInfo.invoke(methodSubject, params.toArray());
                 if (returnType.isInstance(invokeResult)) {
-                    String result = null;
                     try {
                         var castedInvokeResult = returnType.cast(invokeResult);
-                        result = mapper.writeValueAsString(castedInvokeResult);
+                        sessionInfo.sendAll(requestPath, castedInvokeResult);
                     } catch (Exception e) {
                         log.error(e.getMessage());
-                    }
-                    if (result != null) {
-                        var resultMessage = new TextMessage(result);
-                        var sessions = sessionInfo.get(session.getUri());
-                        if (sessions != null) {
-                            for (var sess : sessions) {
-                                sess.sendMessage(resultMessage);
-                            }
-                        }
                     }
                 }
             }
@@ -211,10 +206,10 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+            var requestPath = PathUtils.convertUriToPathExceptForContextPath(session.getUri(), servletContext);
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             String payload = message.getPayload();
 
-            var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
             mappingLoop:
             for (int i = 0; i < mappingInfo.onMessage.size(); i++) {
                 var methodInfo = mappingInfo.onMessage.get(i);
@@ -257,28 +252,24 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                         }
                     } else if (parameter.getType().equals(WebSocketSession.class)) {
                         params.add(session);
+                    } else if (parameter.getType().equals(WebSocketSessionInfo.class)) {
+                        params.add(sessionInfo);
                     } else {
                         continue mappingLoop;
                     }
                 }
 
+                if (returnType.equals(void.class) || returnType.equals(Void.class)) {
+                    methodInfo.invoke(methodSubject, params.toArray());
+                    continue;
+                }
                 var invokeResult = methodInfo.invoke(methodSubject, params.toArray());
                 if (returnType.isInstance(invokeResult)) {
-                    String result = null;
                     try {
                         var castedInvokeResult = returnType.cast(invokeResult);
-                        result = mapper.writeValueAsString(castedInvokeResult);
+                        sessionInfo.sendAll(requestPath, castedInvokeResult);
                     } catch (Exception e) {
                         log.error(e.getMessage());
-                    }
-                    if (result != null) {
-                        var resultMessage = new TextMessage(result);
-                        var sessions = sessionInfo.get(session.getUri());
-                        if (sessions != null) {
-                            for (var sess : sessions) {
-                                sess.sendMessage(resultMessage);
-                            }
-                        }
                     }
                 }
             }
@@ -286,11 +277,11 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
         @Override
         public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-            var sessionSet = sessionInfo.computeIfAbsent(session.getUri(), uri -> new HashSet<>());
+            var requestPath = PathUtils.convertUriToPathExceptForContextPath(session.getUri(), servletContext);
+            var sessionSet = sessionInfo.computeIfAbsent(requestPath, uri -> new HashSet<>());
             sessionSet.remove(session);
 
             ObjectMapper mapper = new ObjectMapper();
-            var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
             mappingLoop:
             for (int i = 0; i < mappingInfo.onClose.size(); i++) {
                 var methodInfo = mappingInfo.onClose.get(i);
@@ -306,6 +297,8 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                 for (var parameter : methodParameters) {
                     if (parameter.getType().equals(WebSocketSession.class)) {
                         params.add(session);
+                    } else if (parameter.getType().equals(WebSocketSessionInfo.class)) {
+                        params.add(sessionInfo);
                     } else if (parameter.isAnnotationPresent(PathVariable.class)) {
                         try {
                             var pathAnnotation = parameter.getAnnotation(PathVariable.class);
@@ -327,24 +320,17 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                         continue mappingLoop;
                     }
                 }
-
+                if (returnType.equals(void.class) || returnType.equals(Void.class)) {
+                    methodInfo.invoke(methodSubject, params.toArray());
+                    continue;
+                }
                 var invokeResult = methodInfo.invoke(methodSubject, params.toArray());
                 if (returnType.isInstance(invokeResult)) {
-                    String result = null;
                     try {
                         var castedInvokeResult = returnType.cast(invokeResult);
-                        result = mapper.writeValueAsString(castedInvokeResult);
+                        sessionInfo.sendAll(requestPath, castedInvokeResult);
                     } catch (Exception e) {
                         log.error(e.getMessage());
-                    }
-                    if (result != null) {
-                        var resultMessage = new TextMessage(result);
-                        var sessions = sessionInfo.get(session.getUri());
-                        if (sessions != null) {
-                            for (var sess : sessions) {
-                                sess.sendMessage(resultMessage);
-                            }
-                        }
                     }
                 }
             }

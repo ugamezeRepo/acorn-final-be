@@ -11,18 +11,18 @@
     </select>
 
     <select id="findAllChannelByMemberId" parameterType="int" resultType="channelEntity">
-        (select * from channel)
+        select * from channel
         join
         (select channel_id as id from channel_member where member_id = #{memberId})
-        using(id)
+        using (id)
         order by id
     </select>
 
     <select id="findAllMemberByChannelId" parameterType="int" resultType="memberEntity">
-        (select * from member)
+        select * from member
         join
         (select member_id as id from channel_member where channel_id = #{channelId})
-        using(id)
+        using (id)
         order by id
     </select>
 

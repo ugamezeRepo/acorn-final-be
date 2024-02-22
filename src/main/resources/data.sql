@@ -19,17 +19,17 @@ values (3, 'C 채널', null);
 
 -- add dummy channel member mappings
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
-values (CHANNEL_MEMBER_SEQ.nextval, 1, 1);
+values (1, 1, 1);
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
-values (CHANNEL_MEMBER_SEQ.nextval, 2, 1);
+values (2, 2, 1);
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
-values (CHANNEL_MEMBER_SEQ.nextval, 3, 1);
+values (3, 3, 1);
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
-values (CHANNEL_MEMBER_SEQ.nextval, 2, 2);
+values (4, 2, 2);
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
-values (CHANNEL_MEMBER_SEQ.nextval, 3, 2);
+values (5, 3, 2);
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
-values (CHANNEL_MEMBER_SEQ.nextval, 3, 3);
+values (6, 3, 3);
 
 -- add dummy topics
 insert into TOPIC(ID, TITLE, CHANNEL_ID)
@@ -50,3 +50,6 @@ insert into TOPIC(ID, TITLE, CHANNEL_ID)
 values (8, 'ㅇㅁㅇ', 3);
 insert into TOPIC(ID, TITLE, CHANNEL_ID)
 values (9, 'ㅇㅂㅇ', 3);
+
+update MEMBER
+set STATUS = 'offline';

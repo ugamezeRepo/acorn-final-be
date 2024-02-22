@@ -2,7 +2,8 @@ create table member (
     id number primary key,
     email varchar2(100) not null unique,
     nickname varchar2(30) not null,
-    hashtag number(4) not null
+    hashtag number(4) not null,
+    status varchar2(100) null
 );
 
 create table channel (
@@ -37,17 +38,8 @@ create table message (
     updated_at date not null
 );
 
-
-create table member_connection (
-    id number primary key,
-    nickname varchar2(100) not null,
-    hashtag number(4) not null,
-    status varchar2(100) not null
-);
-
 create sequence member_seq start with 10000;
 create sequence channel_seq start with 10000;
 create sequence channel_member_seq start with 10000;
 create sequence topic_seq start with 10000;
 create sequence message_seq start with 10000;
-create sequence member_connection_seq start with 10000;

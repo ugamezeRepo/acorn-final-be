@@ -5,14 +5,14 @@ import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.model.UrlResponse;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.acorn.finals.model.entity.MemberEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class ChannelService {
     public List<ChannelDto> listAllChannels() {
         var entities = channelMapper.findAll();
         return entities.stream()
-            .map(entity -> new ChannelDto(entity.getName(), entity.getThumbnail()))
-            .collect(Collectors.toList());
+                .map(entity -> new ChannelDto(entity.getName(), entity.getThumbnail()))
+                .collect(Collectors.toList());
     }
 
     public ChannelDto findChannelById(int channelId) {
@@ -57,9 +57,9 @@ public class ChannelService {
     }
 
     public List<MemberDto> listChannelMembers(int channelId) {
-        var entities = channelMemberMapper.findAllMemberByChannelId(channelId);
+        List<MemberEntity> entities = channelMemberMapper.findAllMemberByChannelId(channelId);
         return entities.stream()
-                .map(entity -> new MemberDto(entity.getEmail(), entity.getNickname(), entity.getHashtag()))
+                .map(MemberEntity::toDto)
                 .collect(Collectors.toList());
     }
 }

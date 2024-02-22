@@ -3,10 +3,9 @@ package com.acorn.finals.mapper;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 
 
 @Mapper
@@ -24,5 +23,4 @@ public interface ChannelMemberMapper {
     int update(ChannelMemberEntity entity);
 
     int deleteById(int id);
-
 }

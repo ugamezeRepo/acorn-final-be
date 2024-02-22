@@ -11,4 +11,5 @@ public class MemberDto {
     String email;
     String nickname;
     Integer hashtag;
+    String status;
 }

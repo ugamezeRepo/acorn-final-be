@@ -1,8 +1,10 @@
 package com.acorn.finals.util;
 
+import jakarta.servlet.ServletContext;
 import org.springframework.http.server.RequestPath;
 import org.springframework.web.util.pattern.PathPatternParser;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,5 +37,9 @@ public class PathUtils {
             result.put(extractedKey, value);
         }
         return result;
+    }
+
+    public static String convertUriToPathExceptForContextPath(URI uri, ServletContext context) {
+        return uri.getPath().substring(context.getContextPath().length());
     }
 }

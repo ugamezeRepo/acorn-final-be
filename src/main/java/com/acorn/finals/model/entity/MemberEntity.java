@@ -15,8 +15,9 @@ public class MemberEntity extends BaseEntity {
     String email;
     String nickname;
     Integer hashtag;
+    String status;
 
     public MemberDto toDto() {
-        return new MemberDto(email, nickname, hashtag);
+        return new MemberDto(email, nickname, hashtag, status);
     }
 }
