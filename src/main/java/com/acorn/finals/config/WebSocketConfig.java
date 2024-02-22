@@ -211,7 +211,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
             ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             String payload = message.getPayload();
-
+            assert (session.getUri() != null && session.getUri().getPath() != null);
             var requestPath = session.getUri().getPath().substring(servletContext.getContextPath().length());
             mappingLoop:
             for (int i = 0; i < mappingInfo.onMessage.size(); i++) {
@@ -339,7 +339,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                                 sess.sendMessage(resultMessage);
                             }
                         }
-                     }
+                    }
                 }
             }
         }

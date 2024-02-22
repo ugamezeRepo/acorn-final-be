@@ -9,6 +9,7 @@ import com.acorn.finals.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @WebSocketController("/chat")
@@ -17,16 +18,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class ChatWebSocketController {
     private final MessageService service;
 
+
     /**
      * client 가 websocket 으로  메시지를 보냈을때 할 처리
-     * @param
+     *
+     * @param entity 클래스의 필요한 정보 필여  url 에 담겨있는 내용은 따로 주실필요없습니다
      */
-    @WebSocketMapping("/path/{pathId}")
-    public MessageDto handleChatSend(MessageEntity entity, @PathVariable int pathId) {
+    @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
+    public MessageDto handleChatSend(@RequestBody MessageEntity entity, @PathVariable int channelId, @PathVariable int topicId) {
+        entity.setChannelId(channelId);
+        entity.setTopicId(topicId);
 
         service.newMessageAdd(entity);
-        MessageDto dto =service.receviedAndSend(entity);
-        System.out.println(dto);
+        MessageDto dto = service.receviedAndSend(entity);
         return dto;
     }
 
