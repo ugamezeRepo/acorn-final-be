@@ -3,17 +3,23 @@ package com.acorn.finals.controller;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.service.MemberService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+    private final MemberDto mockUser = new MemberDto("admin@admin.com", "admin", 7777, null);
 
     /**
      * list all another user joined channel
@@ -43,7 +49,8 @@ public class MemberController {
      */
     @GetMapping("/@me/channel")
     public List<ChannelDto> listAllChannel() {
-        return null;
+        // TODO: Authentication to MemberDto
+        return memberService.listAllChannels(mockUser);
     }
 
     /**
@@ -59,10 +66,10 @@ public class MemberController {
 
 
     /**
-     * change my nickname
+     * update my info
      *
-     * @param updateMemberRequest new nickname
-     * @return HTTP STATUS 200 on successful
+     * @param dto
+     * @return
      */
     @PatchMapping("/updateStatus")
     public ResponseEntity<Void> updateMyInfo(@RequestBody MemberDto dto) {
@@ -71,7 +78,9 @@ public class MemberController {
     }
 
     /**
-     * @param required email if u want to change u can change hashtag , nickname
+     * change nickname
+     *
+     * @param dto
      * @return
      */
     @PutMapping("/changeNick")

@@ -2,17 +2,16 @@ package com.acorn.finals.service;
 
 import com.acorn.finals.mapper.ChannelMapper;
 import com.acorn.finals.mapper.ChannelMemberMapper;
-import com.acorn.finals.model.UrlResponse;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
+import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,21 +26,19 @@ public class ChannelService {
     public List<ChannelDto> listAllChannels() {
         var entities = channelMapper.findAll();
         return entities.stream()
-                .map(entity -> new ChannelDto(entity.getName(), entity.getThumbnail()))
+                .map(ChannelEntity::toDto)
                 .collect(Collectors.toList());
     }
 
     public ChannelDto findChannelById(int channelId) {
         var entity = channelMapper.findOneById(channelId);
-        return new ChannelDto(entity.getName(), entity.getThumbnail());
+        return entity.toDto();
     }
 
-    public UrlResponse<ChannelDto> createNewChannel(ChannelDto channelCreateRequest) {
+    public ChannelDto createNewChannel(ChannelDto channelCreateRequest) {
         var channelEntity = channelCreateRequest.toEntity(null);
         channelMapper.insert(channelEntity);
-        int id = channelEntity.getId();
-        String url = generateChannelUrl(id);
-        return new UrlResponse<>(url, channelCreateRequest);
+        return channelEntity.toDto();
     }
 
     public ChannelDto updateChannel(int channelId, ChannelDto channelUpdateRequest) {

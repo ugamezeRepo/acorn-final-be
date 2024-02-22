@@ -1,6 +1,5 @@
 package com.acorn.finals.controller;
 
-import com.acorn.finals.model.UrlResponse;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.MessageDto;
@@ -8,13 +7,18 @@ import com.acorn.finals.model.dto.TopicDto;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MessageService;
 import com.acorn.finals.service.TopicService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -53,7 +57,7 @@ public class ChannelController {
      * @return created channel
      */
     @PostMapping
-    public UrlResponse<ChannelDto> createNewChannel(@RequestBody ChannelDto channelCreateRequest) {
+    public ChannelDto createNewChannel(@RequestBody ChannelDto channelCreateRequest) {
         return channelService.createNewChannel(channelCreateRequest);
     }
 
@@ -64,7 +68,8 @@ public class ChannelController {
      * @return updated channel
      */
     @PatchMapping("/{channelId}")
-    public ResponseEntity<ChannelDto> updateChannel(@PathVariable int channelId, @RequestBody ChannelDto channelUpdateRequest) {
+    public ResponseEntity<ChannelDto> updateChannel(@PathVariable int channelId,
+                                                    @RequestBody ChannelDto channelUpdateRequest) {
         return ResponseEntity.ok(channelService.updateChannel(channelId, channelUpdateRequest));
     }
 
@@ -81,6 +86,7 @@ public class ChannelController {
         }
         return ResponseEntity.ok().build();
     }
+
     /**
      * list all members of channel
      *
@@ -99,7 +105,7 @@ public class ChannelController {
      * @return list of topics of channel
      */
     @GetMapping("/{channelId}/topic")
-    public List<UrlResponse<TopicDto>> listAllTopics(@PathVariable int channelId) {
+    public List<TopicDto> listAllTopics(@PathVariable int channelId) {
         return topicService.findAllByChannelId(channelId);
     }
 
@@ -111,7 +117,7 @@ public class ChannelController {
      * @return created topic with title and url
      */
     @PostMapping("/{channelId}/topic")
-    public UrlResponse<TopicDto> createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest) {
+    public TopicDto createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest) {
         return topicService.createNewTopic(channelId, topicCreateRequest);
     }
 
@@ -174,7 +180,8 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId) {
+    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId,
+                                              @PathVariable String messageId) {
         return ResponseEntity.ok().build();
     }
 
@@ -188,7 +195,8 @@ public class ChannelController {
      * @return updated message
      */
     @PatchMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId, MessageDto updateMessageRequest) {
+    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId,
+                                    @PathVariable String messageId, MessageDto updateMessageRequest) {
         return updateMessageRequest;
     }
 }

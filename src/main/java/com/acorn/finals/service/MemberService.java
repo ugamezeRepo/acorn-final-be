@@ -2,16 +2,16 @@ package com.acorn.finals.service;
 
 import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.mapper.MemberMapper;
+import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +63,14 @@ public class MemberService {
         memberMapper.update(memberEntity);
 
         return memberEntity.toDto();
+    }
+
+    @Transactional
+    public List<ChannelDto> listAllChannels(MemberDto member) {
+        var memberEntity = memberMapper.findOneByNicknameAndHashtag(member.getNickname(), member.getHashtag());
+        var channels = channelMemberMapper.findAllChannelByMemberId(memberEntity.getId());
+        return channels.stream()
+                .map(ChannelEntity::toDto)
+                .toList();
     }
 }

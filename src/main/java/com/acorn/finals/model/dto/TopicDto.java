@@ -9,11 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopicDto {
+    int id;
     String title;
 
-    public TopicEntity toEntity(Integer channelId, Integer topicId) {
+    public TopicEntity toEntity(Integer channelId) {
         return TopicEntity.builder()
-                .id(topicId)
+                .id(id)
                 .title(title)
                 .channelId(channelId)
                 .build();

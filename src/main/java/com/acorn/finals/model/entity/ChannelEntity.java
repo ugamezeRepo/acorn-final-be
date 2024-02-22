@@ -1,7 +1,12 @@
 package com.acorn.finals.model.entity;
 
 
-import lombok.*;
+import com.acorn.finals.model.dto.ChannelDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.Alias;
 
 
@@ -15,4 +20,8 @@ public class ChannelEntity extends BaseEntity {
     Integer id;
     String name;
     String thumbnail;
+
+    public ChannelDto toDto() {
+        return new ChannelDto(id, name, thumbnail);
+    }
 }
