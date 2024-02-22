@@ -55,9 +55,9 @@ public class JwtService {
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getSubject();
     }
 
-    public String isTokenExpired(String token) {
-        Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getExpiration();
-        return null;
+    public boolean isTokenExpired(String token) {
+        Date ExpirationTime = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().getExpiration();
+        return ExpirationTime.before(new Date());
     }
 
 
@@ -79,7 +79,7 @@ public class JwtService {
 
             claim = false;
         }
-        return claim;
+        return claim && !isTokenExpired(token);
     }
 
 }
