@@ -13,6 +13,4 @@ public class MessageDto {
     MemberDto author;
     String content;
     LocalDateTime createdAt;
-
-
 }
