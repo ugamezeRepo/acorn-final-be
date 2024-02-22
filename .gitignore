@@ -40,3 +40,4 @@ out/
 
 ### settings
 application-database.yml
+application-jwt.yml

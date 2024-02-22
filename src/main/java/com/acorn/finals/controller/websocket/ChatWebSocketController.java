@@ -4,7 +4,6 @@ import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
 import com.acorn.finals.annotation.WebSocketOnConnect;
 import com.acorn.finals.model.dto.MessageDto;
-import com.acorn.finals.model.entity.MessageEntity;
 import com.acorn.finals.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,13 +24,8 @@ public class ChatWebSocketController {
      * @param entity 클래스의 필요한 정보 필여  url 에 담겨있는 내용은 따로 주실필요없습니다
      */
     @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
-    public MessageDto handleChatSend(@RequestBody MessageEntity entity, @PathVariable int channelId, @PathVariable int topicId) {
-        entity.setChannelId(channelId);
-        entity.setTopicId(topicId);
-
-        service.newMessageAdd(entity);
-        MessageDto dto = service.receviedAndSend(entity);
-        return dto;
+    public MessageDto handleChatSend(@RequestBody MessageDto dto, @PathVariable int channelId, @PathVariable int topicId) {
+        return service.receivedAndSend(dto, channelId, topicId);
     }
 
     @WebSocketOnConnect("/hello/{helloId}")
