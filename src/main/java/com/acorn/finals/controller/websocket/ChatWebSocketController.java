@@ -21,10 +21,11 @@ public class ChatWebSocketController {
     /**
      * client 가 websocket 으로  메시지를 보냈을때 할 처리
      *
-     * @param entity 클래스의 필요한 정보 필여  url 에 담겨있는 내용은 따로 주실필요없습니다
+     * @param dto 클래스의 필요한 정보 필여  url 에 담겨있는 내용은 따로 주실필요없습니다
      */
     @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
     public MessageDto handleChatSend(@RequestBody MessageDto dto, @PathVariable int channelId, @PathVariable int topicId) {
+        log.debug("message yes eyse yes");
         return service.receivedAndSend(dto, channelId, topicId);
     }
 

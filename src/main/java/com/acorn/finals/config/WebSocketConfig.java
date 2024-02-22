@@ -85,6 +85,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
         }
     }
 
+
     private static class WebSocketMappingInfo {
         List<Method> onConnect;
         List<Object> onConnectObject;
