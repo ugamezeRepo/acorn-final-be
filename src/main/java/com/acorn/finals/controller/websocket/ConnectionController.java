@@ -20,7 +20,7 @@ import java.util.Map;
 @WebSocketController("/connection")
 @RequiredArgsConstructor
 @Slf4j
-public class MemberWsController {
+public class ConnectionController {
     private static final Map<WebSocketSession, MemberDto> activeConnection = new HashMap<>();
     private final MemberService memberService;
 
