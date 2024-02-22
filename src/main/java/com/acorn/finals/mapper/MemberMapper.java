@@ -13,6 +13,8 @@ public interface MemberMapper {
 
     MemberEntity findOneByNicknameAndHashtag(String nickname, int hashtag);
 
+    MemberEntity findOneByEmail(String email);
+
     List<MemberEntity> findAllByChannelId(int channelId);
 
     int insert(MemberEntity entity);

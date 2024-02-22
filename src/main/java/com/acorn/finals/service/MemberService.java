@@ -48,4 +48,20 @@ public class MemberService {
                 .map(ChannelEntity::getId)
                 .toList();
     }
+
+    @Transactional
+    public MemberDto changeNickandTag(MemberDto dto) {
+        var memberEntity = memberMapper.findOneByEmail(dto.getEmail());
+        if (memberEntity == null) {
+            return new MemberDto();
+        }
+        if (dto.getNickname() != null) {
+            memberEntity.setNickname(dto.getNickname());
+        } else if (dto.getHashtag() != null) {
+            memberEntity.setHashtag(dto.getHashtag());
+        }
+        memberMapper.update(memberEntity);
+
+        return memberEntity.toDto();
+    }
 }

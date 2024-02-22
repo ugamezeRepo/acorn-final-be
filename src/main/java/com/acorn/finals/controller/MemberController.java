@@ -64,8 +64,19 @@ public class MemberController {
      * @param updateMemberRequest new nickname
      * @return HTTP STATUS 200 on successful
      */
-    @PatchMapping("/@me")
-    public ResponseEntity<Void> updateMyInfo(@PathVariable MemberDto updateMemberRequest) {
+    @PatchMapping("/updateStatus")
+    public ResponseEntity<Void> updateMyInfo(@RequestBody MemberDto dto) {
+        memberService.updateStatus(dto);
         return ResponseEntity.ok(null);
+    }
+
+    /**
+     * @param required email if u want to change u can change hashtag , nickname
+     * @return
+     */
+    @PutMapping("/changeNick")
+    public ResponseEntity<MemberDto> changeNick(@RequestBody MemberDto dto) {
+        MemberDto responseDto = memberService.changeNickandTag(dto);
+        return ResponseEntity.ok().body(responseDto);
     }
 }
