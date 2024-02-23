@@ -1,1 +1,3 @@
-jwt.name=long-longlonglonglonglonglonglonglong-long-long-long-long-long-secret
+jwt:
+  name: long-longlonglonglonglonglonglonglong-long-long-long-long-long-secret
+  expiration: 3600000

@@ -42,3 +42,4 @@ out/
 application-database.yml
 application-jwt.yml
 application-cors.yml
+application-oauth2.yml
