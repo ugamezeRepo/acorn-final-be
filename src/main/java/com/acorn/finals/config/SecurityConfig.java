@@ -1,6 +1,8 @@
 package com.acorn.finals.config;
 
 import com.acorn.finals.config.properties.CorsPropertiesConfig;
+import com.acorn.finals.security.handler.CustomAuthenticationFailureHandler;
+import com.acorn.finals.security.handler.CustomAuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -41,6 +44,13 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
         http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        http.oauth2Login(o -> {
+            o.successHandler(new CustomAuthenticationSuccessHandler(new DefaultOAuth2UserService()));
+            o.failureHandler(new CustomAuthenticationFailureHandler());
+//            o.loginPage("/api/login");
+            o.permitAll();
+        });
+
         return http.build();
     }
 
@@ -48,4 +58,5 @@ public class SecurityConfig {
     PasswordEncoder bcryptEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

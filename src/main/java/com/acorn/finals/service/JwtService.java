@@ -1,10 +1,13 @@
 package com.acorn.finals.service;
 
+import com.acorn.finals.config.properties.JwtPropertiesConfig;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -18,17 +21,25 @@ import java.util.Map;
 
 @Service
 @Slf4j
-@Profile("jwt")
+@Profile({"jwt"})
+@RequiredArgsConstructor
 public class JwtService {
-    //@Value("${jwt.name}")
+    private final JwtPropertiesConfig jwtConfig;
+    SecretKey key;
+    String secret;
+    private String secretString;
+    private String encodedSecretString;
 
-    private final String secretString = "long-longlonglonglonglonglonglonglong-long-long-long-long-long-secret";
-    private final String encodedSecretString = Encoders.BASE64.encode(secretString.getBytes(StandardCharsets.UTF_8));
-    SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(encodedSecretString));
-    String secret = Encoders.BASE64.encode(key.getEncoded());
+    private long expiration;
 
-    private final String getSecretString2 = "secret-key";
-
+    @PostConstruct
+    public void init() {
+        secretString = jwtConfig.getName();
+        expiration = jwtConfig.getExpiration();
+        encodedSecretString = Encoders.BASE64.encode(secretString.getBytes(StandardCharsets.UTF_8));
+        key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(encodedSecretString));
+        secret = Encoders.BASE64.encode(key.getEncoded());
+    }
 
     public String createToken(Map<String, Object> claims, String subject) {
 
