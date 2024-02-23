@@ -41,3 +41,4 @@ out/
 ### settings
 application-database.yml
 application-jwt.yml
+application-cors.yml

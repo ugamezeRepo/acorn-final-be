@@ -17,6 +17,7 @@ spring:
     active:
       - database
       - jwt
+      - cors
 
 
 mybatis:

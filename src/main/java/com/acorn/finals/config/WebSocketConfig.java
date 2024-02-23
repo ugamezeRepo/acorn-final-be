@@ -4,6 +4,7 @@ import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
 import com.acorn.finals.annotation.WebSocketOnClose;
 import com.acorn.finals.annotation.WebSocketOnConnect;
+import com.acorn.finals.config.properties.CorsPropertiesConfig;
 import com.acorn.finals.model.WebSocketSessionInfo;
 import com.acorn.finals.util.PathUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +34,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextAware {
-    private static final String[] globalAllowedOrigins = {"http://localhost:5173"};
     private static ApplicationContext context;
-
+    private final CorsPropertiesConfig corsConfig;
     private final ServletContext servletContext;
 
     @Override
@@ -81,7 +81,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
 
             log.debug("Add websocket handler on {}", path);
             registry.addHandler(new WebSocketMappingHandler(mappingInfo), path)
-                    .setAllowedOrigins(globalAllowedOrigins);
+                    .setAllowedOrigins(corsConfig.getAllowedOrigins());
         }
     }
 
