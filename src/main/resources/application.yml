@@ -2,7 +2,13 @@ server:
   port: 9000
   servlet:
     context-path: /api
-
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:selfsigned.p12
+    key-alias: selfsigned
+    key-store-password: selfsigned
+    
 spring:
   sql:
     init:
