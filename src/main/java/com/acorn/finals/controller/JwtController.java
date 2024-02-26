@@ -2,6 +2,7 @@ package com.acorn.finals.controller;
 
 import com.acorn.finals.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,11 @@ public class JwtController {
     @GetMapping("/jwt/validation")
     public boolean jwtCheck(String token) {
         return jwtService.validateToken(token);
+    }
+
+    @GetMapping("jwt/test")
+    public String jwtTest() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
 }
