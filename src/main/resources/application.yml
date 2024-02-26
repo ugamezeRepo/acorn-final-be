@@ -19,7 +19,6 @@ spring:
       - jwt
       - cors
       - oauth2
-      - ssl
       - frontend
 
 mybatis:
