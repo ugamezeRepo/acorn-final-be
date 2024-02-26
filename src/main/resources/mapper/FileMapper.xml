@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.acorn.finals.mapper.FileMapper">
+    <select id="findOneById" resultType="fileEntity" parameterType="int">
+        select * from file
+        where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="fileEntity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select file_seq.nextval from dual
+        </selectKey>
+        insert into file (id, orgFileName, saveFileName, fileSize, filePath)
+        values (#{id}, #{orgFileName}, #{saveFileName}, #{fileSize}, #{filePath})
+    </insert>
+
+    <delete id="deleteById" parameterType="int">
+        delete from file
+        where id = #{id}
+    </delete>
+</mapper>

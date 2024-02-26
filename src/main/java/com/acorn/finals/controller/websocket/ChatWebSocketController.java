@@ -3,7 +3,9 @@ package com.acorn.finals.controller.websocket;
 import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
 import com.acorn.finals.annotation.WebSocketOnConnect;
+import com.acorn.finals.mapper.MessageMapper;
 import com.acorn.finals.model.dto.MessageDto;
+import com.acorn.finals.model.dto.RequestDto;
 import com.acorn.finals.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +25,29 @@ public class ChatWebSocketController {
      * @param dto 클래스의 필요한 정보 필여  url 에 담겨있는 내용은 따로 주실필요없습니다
      */
     @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
-    public MessageDto handleChatSend(@RequestBody MessageDto dto, @PathVariable int channelId, @PathVariable int topicId) {
-        return service.receivedAndSend(dto, channelId, topicId);
+    public RequestDto handleChatSend(@RequestBody RequestDto requestDto, @PathVariable int channelId, @PathVariable int topicId) {
+//        insert => 추가할 job messageDto
+//        update => 업데이트할 job messageId, messageDto
+//        delete => 삭제할 job messageId
+        MessageDto messageDto = requestDto.getMessageDto();
+
+        switch (requestDto.getJob()) {
+            case "insert":
+                messageDto = service.insertMsg(messageDto, channelId, topicId);
+                requestDto.setMessageDto(messageDto);
+
+                return requestDto;
+            case "update":
+                return null;
+
+            case "delete":
+                System.out.println("DELETE Controller");
+                service.deleteMsg();
+                return null;
+
+            default:
+                return null;
+        }
     }
 
     @WebSocketOnConnect("/hello/{helloId}")

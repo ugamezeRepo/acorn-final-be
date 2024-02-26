@@ -20,4 +20,5 @@ public interface MessageMapper {
 
     int deleteById(int id);
 
+    void deleteLastId();
 }

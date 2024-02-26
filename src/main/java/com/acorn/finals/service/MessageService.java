@@ -34,11 +34,28 @@ public class MessageService {
 //    }
 
     @Transactional
-    public MessageDto receivedAndSend(MessageDto dto, int channelId, int topicId) {
+    public MessageDto insertMsg(MessageDto dto, int channelId, int topicId) {
         var tmpAuthor = dto.getAuthor();
         var authorEntity = memberMapper.findOneByNicknameAndHashtag(tmpAuthor.getNickname(), tmpAuthor.getHashtag());
         var messageEntity = new MessageEntity(null, authorEntity.getId(), dto.getContent(), channelId, topicId);
         messageMapper.insert(messageEntity);
         return new MessageDto(authorEntity.toDto(), messageEntity.getContent(), messageEntity.getCreatedAt());
+    }
+
+    @Transactional
+    public MessageDto updateMsg(MessageDto dto, int channelId, int topicId) {
+        var tmpAuthor = dto.getAuthor();
+        var authorEntity = memberMapper.findOneByNicknameAndHashtag(tmpAuthor.getNickname(), tmpAuthor.getHashtag());
+        var messageEntity = new MessageEntity(null, authorEntity.getId(), dto.getContent(), channelId, topicId);
+        messageMapper.update(messageEntity);
+
+        return null;
+    }
+
+    @Transactional
+    public int deleteMsg() {
+        System.out.println("DELETE Service");
+//        messageMapper.deleteLastId();
+        return 0;
     }
 }

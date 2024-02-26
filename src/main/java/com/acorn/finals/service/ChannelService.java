@@ -3,14 +3,17 @@ package com.acorn.finals.service;
 import com.acorn.finals.mapper.ChannelMapper;
 import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.model.dto.ChannelDto;
+import com.acorn.finals.model.dto.ChannelMemberDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -35,9 +38,16 @@ public class ChannelService {
         return entity.toDto();
     }
 
-    public ChannelDto createNewChannel(ChannelDto channelCreateRequest) {
-        var channelEntity = channelCreateRequest.toEntity(null);
+    @Transactional
+    public ChannelDto createNewChannel(ChannelMemberDto channelCreateRequest) {
+        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getChannelName(), channelCreateRequest.getChannelThumbnail());
+        var channelEntity = channelDto.toEntity(null);
+        MemberDto memberDto = new MemberDto();
+        memberDto.setNickname(channelCreateRequest.getMemberNickname());
+        memberDto.setHashtag(Integer.getInteger(channelCreateRequest.getMemberHashtag()));
+
         channelMapper.insert(channelEntity);
+        channelMemberMapper.insert();
         return channelEntity.toDto();
     }
 
