@@ -6,12 +6,14 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -73,4 +75,17 @@ public class MemberService {
                 .map(ChannelEntity::toDto)
                 .toList();
     }
+
+    public boolean join(MemberEntity entity) {
+        boolean isSuccess = false;
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (memberMapper.findOneByEmail(userEmail) == null) {
+            entity.setHashtag(7775);
+            entity.setNickname("새아이디");
+            entity.setEmail(userEmail);
+            isSuccess = true;
+        }
+        return isSuccess;
+    }
+
 }

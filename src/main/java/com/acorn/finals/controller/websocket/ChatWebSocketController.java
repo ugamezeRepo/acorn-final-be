@@ -26,6 +26,7 @@ public class ChatWebSocketController {
     public MessageDto handleChatSend(@RequestBody MessageDto dto, @PathVariable int channelId, @PathVariable int topicId) {
         return service.receivedAndSend(dto, channelId, topicId);
     }
+    
 
     @WebSocketOnConnect("/hello/{helloId}")
     public void onConnect() {

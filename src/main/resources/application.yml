@@ -20,7 +20,7 @@ spring:
       - cors
       - oauth2
       - ssl
-
+      - frontend
 
 mybatis:
   configuration:
