@@ -5,7 +5,6 @@ import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.mapper.TopicMapper;
 import com.acorn.finals.model.dto.ChannelDto;
-import com.acorn.finals.model.dto.ChannelMemberDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
@@ -27,8 +26,6 @@ public class ChannelService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
     private final TopicMapper topicMapper;
-    private Authentication auth;
-
     String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
     }
@@ -46,8 +43,8 @@ public class ChannelService {
     }
 
     @Transactional
-    public ChannelDto createNewChannel(ChannelMemberDto channelCreateRequest) {
-        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getChannelName(), channelCreateRequest.getChannelThumbnail());
+    public ChannelDto createNewChannel(ChannelDto channelCreateRequest, Authentication auth){
+        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail());
         var channelEntity = channelDto.toEntity(null);
 
         var memberEntity = memberMapper.findOneByEmail(auth.getName());
