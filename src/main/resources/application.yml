@@ -16,7 +16,7 @@ spring:
   profiles:
     active:
       - database
-      - jwt
+      - token
       - cors
       - oauth2
       - frontend

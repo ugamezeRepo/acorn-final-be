@@ -32,4 +32,8 @@ public class CustomUserDetailService implements UserDetailsService {
         return ud;
     }
 
+
+    public UserDetails loadUserByEmail(String email) {
+        return loadUserByUsername(email);
+    }
 }

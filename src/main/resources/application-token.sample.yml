@@ -1,0 +1,7 @@
+token:
+  access-token:
+    secret: long-longlonglonglonglonglonglonglong-long-long-long-long-long-secret
+    expiration: 3600
+  refresh-token:
+    secret: refresh-refreshrefreshrefreshrefreshrefreshrefresh--refresh-secret-refresh
+    expiration: 864000

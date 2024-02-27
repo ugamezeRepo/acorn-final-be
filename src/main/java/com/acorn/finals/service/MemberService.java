@@ -76,7 +76,7 @@ public class MemberService {
                 .toList();
     }
 
-    public boolean join(MemberEntity entity) {
+    public boolean signup(MemberEntity entity) {
         boolean isSuccess = false;
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         if (memberMapper.findOneByEmail(userEmail) == null) {
