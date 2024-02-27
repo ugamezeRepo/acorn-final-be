@@ -2,22 +2,31 @@ package com.acorn.finals.service;
 
 import com.acorn.finals.mapper.ChannelMapper;
 import com.acorn.finals.mapper.ChannelMemberMapper;
+import com.acorn.finals.mapper.MemberMapper;
+import com.acorn.finals.mapper.TopicMapper;
 import com.acorn.finals.model.dto.ChannelDto;
+import com.acorn.finals.model.dto.ChannelMemberDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
+import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import com.acorn.finals.model.entity.TopicEntity;
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
 public class ChannelService {
     private final ChannelMapper channelMapper;
+    private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
+    private final TopicMapper topicMapper;
 
     String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
@@ -35,9 +44,21 @@ public class ChannelService {
         return entity.toDto();
     }
 
-    public ChannelDto createNewChannel(ChannelDto channelCreateRequest) {
-        var channelEntity = channelCreateRequest.toEntity(null);
+    @Transactional
+    public ChannelDto createNewChannel(ChannelMemberDto channelCreateRequest) {
+        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getChannelName(), channelCreateRequest.getChannelThumbnail());
+        var channelEntity = channelDto.toEntity(null);
+        var memberEntity = memberMapper.findOneByNicknameAndHashtag(channelCreateRequest.getMemberNickname(), Integer.parseInt(channelCreateRequest.getMemberHashtag()));
+
         channelMapper.insert(channelEntity);
+        int channelId = channelMapper.findLastId();
+        var topicEntity = new TopicEntity();
+        topicEntity.setTitle("일반");
+        topicEntity.setChannelId(channelId);
+        topicMapper.insert(topicEntity);
+        var channelMemberEntity = new ChannelMemberEntity(null, channelId, memberEntity.getId());
+        channelMemberMapper.insert(channelMemberEntity);
+
         return channelEntity.toDto();
     }
 

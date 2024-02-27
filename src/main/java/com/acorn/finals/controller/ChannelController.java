@@ -1,6 +1,7 @@
 package com.acorn.finals.controller;
 
 import com.acorn.finals.model.dto.ChannelDto;
+import com.acorn.finals.model.dto.ChannelMemberDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.dto.TopicDto;
@@ -57,7 +58,7 @@ public class ChannelController {
      * @return created channel
      */
     @PostMapping
-    public ChannelDto createNewChannel(@RequestBody ChannelDto channelCreateRequest) {
+    public ChannelDto createNewChannel(@RequestBody ChannelMemberDto channelCreateRequest) {
         return channelService.createNewChannel(channelCreateRequest);
     }
 

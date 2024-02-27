@@ -12,6 +12,8 @@ public interface ChannelMapper {
 
     ChannelEntity findOneById(int id);
 
+    int findLastId();
+
     int insert(ChannelEntity entity);
 
     int update(ChannelEntity entity);

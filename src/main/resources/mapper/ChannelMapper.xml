@@ -10,6 +10,11 @@
         where id = #{id}
     </select>
 
+    <select id="findLastId" parameterType="channelEntity" resultType="Integer">
+        select MAX(id)
+        from channel
+    </select>
+
     <insert id="insert" parameterType="channelEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select channel_seq.nextval from dual
