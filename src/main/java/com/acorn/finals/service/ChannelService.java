@@ -46,15 +46,15 @@ public class ChannelService {
     public ChannelDto createNewChannel(ChannelDto channelCreateRequest, Authentication auth){
         ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail());
         var channelEntity = channelDto.toEntity(null);
+        channelMapper.insert(channelEntity);
 
         var memberEntity = memberMapper.findOneByEmail(auth.getName());
         var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberEntity.getId());
+        channelMemberMapper.insert(channelMemberEntity);
+
         var topicEntity = new TopicEntity();
         topicEntity.setTitle("일반");
         topicEntity.setChannelId(channelEntity.getId());
-
-        channelMapper.insert(channelEntity);
-        channelMemberMapper.insert(channelMemberEntity);
         topicMapper.insert(topicEntity);
 
         return channelEntity.toDto();
