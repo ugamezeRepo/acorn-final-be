@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -57,8 +58,8 @@ public class ChannelController {
      * @return created channel
      */
     @PostMapping
-    public ChannelDto createNewChannel(@RequestBody ChannelDto channelCreateRequest) {
-        return channelService.createNewChannel(channelCreateRequest);
+    public ChannelDto createNewChannel(@RequestBody ChannelDto channelCreateRequest, Authentication authentication) {
+        return channelService.createNewChannel(channelCreateRequest, authentication);
     }
 
     /**
