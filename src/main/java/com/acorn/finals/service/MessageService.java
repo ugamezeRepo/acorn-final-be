@@ -23,22 +23,31 @@ public class MessageService {
         return entities.stream()
                 .map(entity -> {
                     MemberDto author = memberMapper.findOneById(entity.getAuthorId()).toDto();
-                    return new MessageDto(author, entity.getContent(), entity.getCreatedAt());
+                    return new MessageDto(entity.getId(), author, entity.getContent(), entity.getCreatedAt());
                 })
                 .collect(Collectors.toList());
     }
-//
-//    public int newMessageAdd(MessageEntity entity) {
-//        return messageMapper.insert(entity);
-//
-//    }
 
     @Transactional
-    public MessageDto receivedAndSend(MessageDto dto, int channelId, int topicId) {
+    public MessageDto insertMsg(MessageDto dto, int channelId, int topicId) {
         var tmpAuthor = dto.getAuthor();
         var authorEntity = memberMapper.findOneByNicknameAndHashtag(tmpAuthor.getNickname(), tmpAuthor.getHashtag());
         var messageEntity = new MessageEntity(null, authorEntity.getId(), dto.getContent(), channelId, topicId);
         messageMapper.insert(messageEntity);
-        return new MessageDto(authorEntity.toDto(), messageEntity.getContent(), messageEntity.getCreatedAt());
+
+        return new MessageDto(null, authorEntity.toDto(), messageEntity.getContent(), messageEntity.getCreatedAt());
+    }
+
+    @Transactional
+    public int updateMsg(MessageDto dto) {
+        var messageEntity = messageMapper.findOneById(dto.getId());
+        messageEntity.setContent(dto.getContent());
+
+        return messageMapper.update(messageEntity);
+    }
+
+    @Transactional
+    public int deleteMsg(MessageDto dto) {
+        return messageMapper.deleteById(dto.getId());
     }
 }

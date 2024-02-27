@@ -19,5 +19,4 @@ public interface MessageMapper {
     int update(MessageEntity entity);
 
     int deleteById(int id);
-
 }
