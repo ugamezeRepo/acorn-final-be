@@ -3,6 +3,7 @@
 <mapper namespace="com.acorn.finals.mapper.ChannelMapper">
     <select id="findAll" resultType="channelEntity">
         select * from channel
+        ORDER BY id DESC
     </select>
 
     <select id="findOneById" parameterType="channelEntity" resultType="channelEntity">

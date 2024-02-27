@@ -11,11 +11,11 @@ import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.TopicEntity;
-import java.lang.reflect.Member;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,6 +27,7 @@ public class ChannelService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
     private final TopicMapper topicMapper;
+    private Authentication auth;
 
     String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
@@ -48,16 +49,16 @@ public class ChannelService {
     public ChannelDto createNewChannel(ChannelMemberDto channelCreateRequest) {
         ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getChannelName(), channelCreateRequest.getChannelThumbnail());
         var channelEntity = channelDto.toEntity(null);
-        var memberEntity = memberMapper.findOneByNicknameAndHashtag(channelCreateRequest.getMemberNickname(), Integer.parseInt(channelCreateRequest.getMemberHashtag()));
 
-        channelMapper.insert(channelEntity);
-        int channelId = channelMapper.findLastId();
+        var memberEntity = memberMapper.findOneByEmail(auth.getName());
+        var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberEntity.getId());
         var topicEntity = new TopicEntity();
         topicEntity.setTitle("일반");
-        topicEntity.setChannelId(channelId);
-        topicMapper.insert(topicEntity);
-        var channelMemberEntity = new ChannelMemberEntity(null, channelId, memberEntity.getId());
+        topicEntity.setChannelId(channelEntity.getId());
+
+        channelMapper.insert(channelEntity);
         channelMemberMapper.insert(channelMemberEntity);
+        topicMapper.insert(topicEntity);
 
         return channelEntity.toDto();
     }
