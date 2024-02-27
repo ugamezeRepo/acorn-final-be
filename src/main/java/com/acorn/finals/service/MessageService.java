@@ -47,9 +47,7 @@ public class MessageService {
     }
 
     @Transactional
-    public int deleteMsg() {
-        System.out.println("DELETE Service");
-//        messageMapper.deleteLastId();
-        return 0;
+    public int deleteMsg(MessageDto dto) {
+        return messageMapper.deleteById(dto.getId());
     }
 }
