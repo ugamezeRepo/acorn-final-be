@@ -25,29 +25,26 @@ public class ChatWebSocketController {
      * @param messageReqDto 클래스에 필요한 정보 필요 url 에 담겨있는 내용은 따로 주실필요없습니다.
      */
     @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
-    public ResponseEntity<MessageReqDto> handleChat(@RequestBody MessageReqDto messageReqDto, @PathVariable int channelId, @PathVariable int topicId) {
+    public ResponseEntity<MessageReqDto> handleChat(@RequestBody MessageReqDto messageReqDto,
+                                                    @PathVariable int channelId, @PathVariable int topicId) {
         MessageDto messageDto = messageReqDto.getMessageDto();
 
         switch (messageReqDto.getJob()) {
             case "insert":
                 messageDto = service.insertMsg(messageDto, channelId, topicId);
                 messageReqDto.setMessageDto(messageDto);
-
                 return ResponseEntity.ok(messageReqDto);
             case "update":
                 service.updateMsg(messageDto);
-
                 return ResponseEntity.ok(messageReqDto);
             case "delete":
                 service.deleteMsg(messageDto);
-
                 return ResponseEntity.ok(messageReqDto);
-
             default:
                 return ResponseEntity.badRequest().build();
         }
     }
-    
+
 
     @WebSocketOnConnect("/hello/{helloId}")
     public void onConnect() {

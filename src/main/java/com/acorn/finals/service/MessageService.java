@@ -5,12 +5,11 @@ import com.acorn.finals.mapper.MessageMapper;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.entity.MessageEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +33,8 @@ public class MessageService {
         var authorEntity = memberMapper.findOneByNicknameAndHashtag(tmpAuthor.getNickname(), tmpAuthor.getHashtag());
         var messageEntity = new MessageEntity(null, authorEntity.getId(), dto.getContent(), channelId, topicId);
         messageMapper.insert(messageEntity);
-
-        return new MessageDto(null, authorEntity.toDto(), messageEntity.getContent(), messageEntity.getCreatedAt());
+        return new MessageDto(messageEntity.getId(), authorEntity.toDto(), messageEntity.getContent(),
+                messageEntity.getCreatedAt());
     }
 
     @Transactional
