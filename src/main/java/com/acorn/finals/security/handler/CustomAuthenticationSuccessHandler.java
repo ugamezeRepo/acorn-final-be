@@ -27,7 +27,6 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Profile({"token"})
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final TokenService tokenService;

@@ -28,7 +28,6 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@Profile({"token"})
 @RequiredArgsConstructor
 public class TokenService {
     private final TokenPropertiesConfig tokenPropertiesConfig;
