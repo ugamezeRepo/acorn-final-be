@@ -2,7 +2,6 @@ package com.acorn.finals.controller.websocket;
 
 import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
-import com.acorn.finals.annotation.WebSocketOnConnect;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.dto.MessageReqDto;
 import com.acorn.finals.service.MessageService;
@@ -43,11 +42,5 @@ public class ChatWebSocketController {
             default:
                 return ResponseEntity.badRequest().build();
         }
-    }
-
-
-    @WebSocketOnConnect("/hello/{helloId}")
-    public void onConnect() {
-        log.debug("am i working");
     }
 }

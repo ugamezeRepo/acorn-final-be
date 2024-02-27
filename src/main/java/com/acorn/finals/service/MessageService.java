@@ -41,7 +41,7 @@ public class MessageService {
     public int updateMsg(MessageDto dto) {
         var messageEntity = messageMapper.findOneById(dto.getId());
         messageEntity.setContent(dto.getContent());
-
+        dto.setCreatedAt(messageEntity.getCreatedAt());
         return messageMapper.update(messageEntity);
     }
 
