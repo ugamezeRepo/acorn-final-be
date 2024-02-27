@@ -25,7 +25,7 @@
 
     <update id="update" parameterType="messageEntity">
         update message
-        set author_id = #{authorId}, content = #{content}, send_date = #{sendDate}, channel_id = #{channelId}, topic_id = #{topicId}, updated_at = #{updatedAt}
+        set author_id = #{authorId}, content = #{content}, created_at = #{createdAt}, channel_id = #{channelId}, topic_id = #{topicId}, updated_at = #{updatedAt}
         where id = #{id}
     </update>
 
@@ -33,4 +33,5 @@
         delete from message
         where id = #{id}
     </delete>
+
 </mapper>

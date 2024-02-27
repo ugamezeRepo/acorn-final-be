@@ -12,12 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDto {
-    Integer id;
-    MemberDto author;
-    String content;
-
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    LocalDateTime createdAt;
+public class RequestDto {
+    String job;
+    MessageDto messageDto;
 }
