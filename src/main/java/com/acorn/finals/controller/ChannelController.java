@@ -7,20 +7,14 @@ import com.acorn.finals.model.dto.TopicDto;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MessageService;
 import com.acorn.finals.service.TopicService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/channel")
@@ -39,6 +33,16 @@ public class ChannelController {
     public List<ChannelDto> listAllChannels() {
         return channelService.listAllChannels();
     }
+
+    /**
+     * @param inviteCode
+     * @return ChannelDto return
+     */
+    @PostMapping("/invite/{code}")
+    public ChannelDto responseChInfo(@PathVariable("code") String inviteCode) {
+        return channelService.findChannelInfoByInviteCode(inviteCode);
+    }
+
 
     /**
      * find a channel by id
