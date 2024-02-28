@@ -29,7 +29,13 @@ public class ChannelService {
     private final ChannelMemberMapper channelMemberMapper;
     private final TopicMapper topicMapper;
 
-    String generateChannelUrl(int channelId) {
+
+    public ChannelDto findChannelInfoByInviteCode(String inviteCode) {
+        ChannelEntity entity = channelMapper.findOneByInviteCode(inviteCode);
+        return entity.toDto();
+    }
+
+    public String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
     }
 
@@ -83,5 +89,5 @@ public class ChannelService {
                 .map(MemberEntity::toDto)
                 .collect(Collectors.toList());
     }
-    
+
 }

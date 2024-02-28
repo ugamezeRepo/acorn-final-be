@@ -6,7 +6,7 @@
         ORDER BY id DESC
     </select>
 
-    <select id="findOneByInviteCode" parameterType="String" resultType="channelentity">
+    <select id="findOneByInviteCode" parameterType="String" resultType="channelEntity">
         select * from channel
         where invite_code = #{inviteCode}
     </select>
