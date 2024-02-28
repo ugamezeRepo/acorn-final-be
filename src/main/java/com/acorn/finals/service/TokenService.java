@@ -136,7 +136,6 @@ public class TokenService {
         cookie.setMaxAge(3600);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setDomain(frontendPropertiesConfig.getUrl());
         return new AccessTokenDto(accessToken);
     }
 }

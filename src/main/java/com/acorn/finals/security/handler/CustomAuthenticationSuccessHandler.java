@@ -54,13 +54,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             cookie.setMaxAge(tokenPropertiesConfig.getAccessToken().getExpiration());
             cookie.setHttpOnly(true); // JavaScript에서 쿠키에 접근할 수 없도록 설정
             cookie.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
-            cookie.setDomain(frontendPropertiesConfig.getUrl());
 
             Cookie cookie2 = new Cookie("Refresh", refreshtoken);
             cookie2.setMaxAge(tokenPropertiesConfig.getRefreshToken().getExpiration());
             cookie2.setHttpOnly(true); // JavaScript에서 쿠키에 접근할 수 없도록 설정
             cookie2.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
-            cookie2.setDomain(frontendPropertiesConfig.getUrl());
 
             // 응답 헤더에 쿠키 추가
             response.addCookie(cookie);
