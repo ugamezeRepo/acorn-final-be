@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,8 +60,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             response.addCookie(cookie);
             response.addCookie(cookie2);
             // set-header http only refresh token
-            System.out.println("여기오냐?");
-            //Oauth 로그인 후 Security 에서 부여되는 userName 을 다시 이메일로 지정하기 위한 로직
+            // Oauth 로그인 후 Security 에서 부여되는 userName 을 다시 이메일로 지정하기 위한 로직
             UserDetails ud = new User(email, "", List.of());
             Authentication auth = new UsernamePasswordAuthenticationToken(ud, ud.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
