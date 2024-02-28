@@ -29,6 +29,7 @@ public class SecurityConfig {
     private final CorsPropertiesConfig corsConfig;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final JwtFilter jwtFilter;
+    private String[] whiteList = {"/"};
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -48,7 +49,12 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
         http.formLogin(AbstractHttpConfigurer::disable);
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        http.authorizeHttpRequests(auth ->
+                auth
+                    .anyRequest().authenticated()
+        );
+
         http.oauth2Login(o -> {
             o.successHandler(successHandler);
             o.failureHandler(new CustomAuthenticationFailureHandler());

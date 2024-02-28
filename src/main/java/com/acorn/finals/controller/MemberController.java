@@ -91,7 +91,7 @@ public class MemberController {
      * @return boolean
      */
     @PostMapping("/signup")
-    public boolean join(@RequestBody MemberEntity entity) {
+    public boolean join(@RequestBody MemberEntity entity, Authentication auth) {
         return memberService.signup(entity);
     }
 
