@@ -6,14 +6,13 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -86,8 +85,6 @@ public class MemberService {
     }
 
 
-
-
     public boolean signup(MemberEntity entity) {
         boolean isSuccess = false;
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -95,6 +92,7 @@ public class MemberService {
             entity.setHashtag(entity.getHashtag());
             entity.setNickname(entity.getNickname());
             entity.setEmail(userEmail);
+            memberMapper.insert(entity);
             isSuccess = true;
         }
         return isSuccess;
