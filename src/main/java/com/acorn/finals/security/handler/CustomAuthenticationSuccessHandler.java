@@ -8,6 +8,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,10 +23,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,34 +34,29 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final FrontendPropertiesConfig frontendPropertiesConfig;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
         if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
+            log.debug("on authentication success");
             OAuth2User user = oauthToken.getPrincipal();
-
             Map<String, Object> attributes = user.getAttributes();
             String email = (String) attributes.get("email");
 
-            // 로그인 성공 후 동작 예시: 이메일이나 사용자 정보를 기반으로 추가 작업 수행
-            System.out.println("User logged in: " + email);
+            String accessToken = tokenService.createAccessTokenFromEmail(email);
+            String refreshToken = tokenService.createRefreshTokenFromEmail(email);
 
-            String token = tokenService.generateToken(email);
-            String refreshtoken = tokenService.createRefreshToken(email);
+            Cookie accessTokenCookie = new Cookie("Authorization", "Bearer+" + accessToken);
+            accessTokenCookie.setMaxAge(tokenPropertiesConfig.getAccessToken().getExpiration());
+            accessTokenCookie.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
 
-            System.out.println(token);
-
-            Cookie cookie = new Cookie("Authorization", "Bearer+" + token);
-            cookie.setMaxAge(tokenPropertiesConfig.getAccessToken().getExpiration());
-            cookie.setHttpOnly(true); // JavaScript에서 쿠키에 접근할 수 없도록 설정
-            cookie.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
-
-            Cookie cookie2 = new Cookie("Refresh", refreshtoken);
-            cookie2.setMaxAge(tokenPropertiesConfig.getRefreshToken().getExpiration());
-            cookie2.setHttpOnly(true); // JavaScript에서 쿠키에 접근할 수 없도록 설정
-            cookie2.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
+            Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);
+            refreshTokenCookie.setMaxAge(tokenPropertiesConfig.getRefreshToken().getExpiration());
+            refreshTokenCookie.setHttpOnly(true); // JavaScript에서 쿠키에 접근할 수 없도록 설정
+            refreshTokenCookie.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
 
             // 응답 헤더에 쿠키 추가
-            response.addCookie(cookie);
-            response.addCookie(cookie2);
+            response.addCookie(accessTokenCookie);
+            response.addCookie(refreshTokenCookie);
 
             // set-header http only refresh token
             // Oauth 로그인 후 Security 에서 부여되는 userName 을 다시 이메일로 지정하기 위한 로직
@@ -80,7 +74,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         } else {
             // 다른 인증 방식인 경우 다른 처리를 수행할 수 있습니다.
-            throw new RuntimeException("Unreacahble!");
+            throw new RuntimeException("Unreachable!");
         }
     }
 }

@@ -92,6 +92,7 @@ public class MemberService {
             entity.setHashtag(entity.getHashtag());
             entity.setNickname(entity.getNickname());
             entity.setEmail(userEmail);
+            entity.setStatus("offline");
             memberMapper.insert(entity);
             isSuccess = true;
         }
