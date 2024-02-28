@@ -133,7 +133,7 @@ public class TokenService {
         Cookie cookie = new Cookie("Authorization", "Bearer+" + accessToken);
         cookie.setMaxAge(3600);
         cookie.setHttpOnly(true);
-        cookie.setPath("/api");
+        cookie.setPath("/");
         return new AccessTokenDto(accessToken);
     }
 }
