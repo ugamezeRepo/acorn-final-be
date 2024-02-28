@@ -45,3 +45,6 @@ application-cors.yml
 application-oauth2.yml
 application-ssl.yml
 application-frontend.yml
+
+### log files
+dotori-log/

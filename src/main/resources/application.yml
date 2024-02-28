@@ -42,4 +42,4 @@ logging:
     com.acorn.finals.mapper: TRACE
 
   file:
-    path: ./dotori-debug.log
+    path: ./dotori-log
