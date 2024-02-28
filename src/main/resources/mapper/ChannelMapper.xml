@@ -6,6 +6,11 @@
         ORDER BY id DESC
     </select>
 
+    <select id="findOneByInviteCode" parameterType="String" resultType="channelentity">
+        select * from channel
+        where invite_code = #{inviteCode}
+    </select>
+
     <select id="findOneById" parameterType="channelEntity" resultType="channelEntity">
         select * from channel
         where id = #{id}
@@ -15,10 +20,10 @@
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select channel_seq.nextval from dual
         </selectKey>
-        insert into channel (id, name, thumbnail)
-        values (#{id}, #{name}, #{thumbnail})
+        insert into channel (id, name, thumbnail, invite_code)
+        values (#{id}, #{name}, #{thumbnail},#{inviteCode})
     </insert>
-    
+
     <update id="update" parameterType="channelEntity">
         update channel
         set name = #{name}, thumbnail = #{thumbnail}

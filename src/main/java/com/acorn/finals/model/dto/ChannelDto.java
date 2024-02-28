@@ -12,12 +12,14 @@ public class ChannelDto {
     int id;
     String name;
     String thumbnail;
+    String inviteCode;
 
     public ChannelEntity toEntity(Integer channelId) {
         return ChannelEntity.builder()
                 .id(channelId)
                 .name(name)
                 .thumbnail(thumbnail)
+                .inviteCode(inviteCode)
                 .build();
     }
 }
