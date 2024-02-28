@@ -92,8 +92,8 @@ public class MemberService {
         boolean isSuccess = false;
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         if (memberMapper.findOneByEmail(userEmail) == null) {
-            entity.setHashtag(7775);
-            entity.setNickname("새아이디");
+            entity.setHashtag(entity.getHashtag());
+            entity.setNickname(entity.getNickname());
             entity.setEmail(userEmail);
             isSuccess = true;
         }
