@@ -6,6 +6,7 @@ import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,8 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    private final MemberDto mockUser = new MemberDto("admin@admin.com", "admin", 7777, null);
-
     /**
      * list all another user joined channel
      *
@@ -44,9 +43,9 @@ public class MemberController {
      * @return list of channel
      */
     @GetMapping("/@me/channel")
-    public List<ChannelDto> listAllChannel() {
+    public List<ChannelDto> listAllChannel(Authentication auth) {
         // TODO: Authentication to MemberDto
-        return memberService.listAllChannels(mockUser);
+        return memberService.listAllChannelsByEmail(auth.getName());
     }
 
     /**

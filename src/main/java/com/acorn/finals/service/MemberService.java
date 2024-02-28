@@ -76,6 +76,18 @@ public class MemberService {
                 .toList();
     }
 
+    @Transactional
+    public List<ChannelDto> listAllChannelsByEmail(String email) {
+        var memberEntity = memberMapper.findOneByEmail(email);
+        var channels = channelMemberMapper.findAllChannelByMemberId(memberEntity.getId());
+        return channels.stream()
+                .map(ChannelEntity::toDto)
+                .toList();
+    }
+
+
+
+
     public boolean signup(MemberEntity entity) {
         boolean isSuccess = false;
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
