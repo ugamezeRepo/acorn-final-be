@@ -60,8 +60,10 @@ public class AcornJwt {
     public String toString() {
         var hmacKey = key == null ? null : Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8));
         var builder = Jwts.builder();
-        for (var aud : audience) {
-            builder.audience().add(aud);
+        if (audience != null) {
+            for (var aud : audience) {
+                builder.audience().add(aud);
+            }
         }
         return builder.issuer(issuer)
                 .subject(subject)
