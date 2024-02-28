@@ -1,5 +1,6 @@
 package com.acorn.finals.service;
 
+import com.acorn.finals.config.properties.FrontendPropertiesConfig;
 import com.acorn.finals.config.properties.TokenPropertiesConfig;
 import com.acorn.finals.mapper.RefreshTokenMapper;
 import com.acorn.finals.model.dto.AccessTokenDto;
@@ -32,6 +33,7 @@ import java.util.UUID;
 public class TokenService {
     private final TokenPropertiesConfig tokenPropertiesConfig;
     private final RefreshTokenMapper refreshTokenMapper;
+    private final FrontendPropertiesConfig frontendPropertiesConfig;
     SecretKey key;
     String secret;
     private String secretString;
@@ -134,6 +136,7 @@ public class TokenService {
         cookie.setMaxAge(3600);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
+        cookie.setDomain(frontendPropertiesConfig.getUrl());
         return new AccessTokenDto(accessToken);
     }
 }
