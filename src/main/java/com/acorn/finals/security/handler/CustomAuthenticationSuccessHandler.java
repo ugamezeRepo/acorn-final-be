@@ -1,5 +1,6 @@
 package com.acorn.finals.security.handler;
 
+import com.acorn.finals.config.properties.FrontendPropertiesConfig;
 import com.acorn.finals.config.properties.TokenPropertiesConfig;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.service.TokenService;
@@ -31,6 +32,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final TokenService tokenService;
     private final MemberMapper memberMapper;
     private final TokenPropertiesConfig tokenPropertiesConfig;
+    private final FrontendPropertiesConfig frontendPropertiesConfig;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -66,16 +68,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             SecurityContextHolder.getContext().setAuthentication(auth);
             // 가입정보가 있으면 인덱스 페이지
             if (memberMapper.findOneByEmail(email) != null) {
-                response.sendRedirect("/api");
+                response.sendRedirect(frontendPropertiesConfig.getUrl() + "/signup");
                 return;
             }
             // 로그인 성공 후 리다이렉트 등 다른 동작을 수행할 수 있습니다.
             //Db 에 없을시 폼 데이터 페이지로 이동
-            response.sendRedirect("https://dotori.site");
+            response.sendRedirect(frontendPropertiesConfig.getUrl() + "/channel/@me");
 
         } else {
             // 다른 인증 방식인 경우 다른 처리를 수행할 수 있습니다.
-            response.sendRedirect("/api");
+            throw new RuntimeException("Unreacahble!");
         }
     }
 }

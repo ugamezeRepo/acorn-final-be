@@ -41,6 +41,8 @@ public class ConnectionController {
     public void onClose(WebSocketSession session, WebSocketSessionInfo sessionInfo) {
         var userInfo = activeConnection.remove(session);
         if (userInfo == null) return;
+
+
         userInfo.setStatus("offline");
         memberService.updateStatus(userInfo);
 
