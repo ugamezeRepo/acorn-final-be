@@ -21,6 +21,11 @@ public class MemberService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
 
+    public MemberDto findMemberByEmail(String email) {
+        var memberEntity = memberMapper.findOneByEmail(email);
+        return memberEntity.toDto();
+    }
+
     public List<MemberDto> findAllMemberByChannelId(int channelId) {
         return memberMapper.findAllByChannelId(channelId).stream()
                 .map(MemberEntity::toDto)

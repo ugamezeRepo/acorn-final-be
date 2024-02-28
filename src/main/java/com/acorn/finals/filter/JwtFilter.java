@@ -32,6 +32,10 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // get access token from cookie
         var accessTokenJws = Arrays.stream(cookies)
@@ -39,7 +43,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 .map(cookie -> cookie.getValue().substring(7))
                 .findFirst()
                 .orElse(null);
-
         if (accessTokenJws == null) {
             filterChain.doFilter(request, response);
             return;

@@ -8,8 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,8 +21,8 @@ public class TokenController {
     private final TokenPropertiesConfig tokenPropertiesConfig;
     private final RefreshTokenMapper refreshTokenMapper;
 
-    @PostMapping("/issue")
-    public ResponseEntity<Void> issueAccessToken(@RequestHeader("RefreshToken") String refreshToken) {
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> refreshAccessToken(@CookieValue("RefreshToken") String refreshToken) {
         String accessToken = tokenService.createAccessTokenFromRefreshToken(refreshToken);
         if (accessToken == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

@@ -4,6 +4,7 @@ import com.acorn.finals.config.properties.CorsPropertiesConfig;
 import com.acorn.finals.filter.JwtFilter;
 import com.acorn.finals.security.handler.CustomAuthenticationFailureHandler;
 import com.acorn.finals.security.handler.CustomAuthenticationSuccessHandler;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,7 +28,11 @@ public class SecurityConfig {
     private final CorsPropertiesConfig corsConfig;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final JwtFilter jwtFilter;
-    private String[] whiteList = {"/"};
+    private final String[] whiteList = {
+            "/chat/channel/*/topic/*",
+            "/connection/ping",
+            "/connection/channel/*/members"
+    };
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -52,13 +55,13 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth ->
                 auth
-                    .anyRequest().authenticated()
+                        .requestMatchers(whiteList).permitAll()
+                        .anyRequest().authenticated()
         );
 
         http.oauth2Login(o -> {
             o.successHandler(successHandler);
             o.failureHandler(new CustomAuthenticationFailureHandler());
-//            o.loginPage("/api/login");
             o.permitAll();
         });
         http.sessionManagement(config -> config.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
