@@ -1,10 +1,9 @@
 package com.acorn.finals.mapper;
 
 import com.acorn.finals.model.entity.ChannelEntity;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface ChannelMapper {
@@ -18,4 +17,5 @@ public interface ChannelMapper {
 
     int deleteById(int id);
 
+    ChannelEntity findOneByInviteCode(String inviteCode);
 }

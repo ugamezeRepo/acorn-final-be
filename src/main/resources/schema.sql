@@ -9,9 +9,10 @@ create table member
 
 create table channel
 (
-    id        number primary key,
-    name      varchar2(100) not null,
-    thumbnail clob          null
+    id          number primary key,
+    name        varchar2(100) not null,
+    thumbnail   clob          null,
+    invite_code varchar2(100) not null
 );
 
 create table channel_member

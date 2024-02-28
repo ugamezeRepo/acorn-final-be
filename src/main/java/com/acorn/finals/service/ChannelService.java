@@ -10,14 +10,16 @@ import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.TopicEntity;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class ChannelService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
     private final TopicMapper topicMapper;
+
     String generateChannelUrl(int channelId) {
         return String.format("/channel/%d", channelId);
     }
@@ -43,8 +46,10 @@ public class ChannelService {
     }
 
     @Transactional
-    public ChannelDto createNewChannel(ChannelDto channelCreateRequest, Authentication auth){
-        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail());
+    public ChannelDto createNewChannel(ChannelDto channelCreateRequest, Authentication auth) {
+        String inviteCode = UUID.randomUUID().toString();
+        channelCreateRequest.setInviteCode(inviteCode);
+        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail(), channelCreateRequest.getInviteCode());
         var channelEntity = channelDto.toEntity(null);
         channelMapper.insert(channelEntity);
 
@@ -78,4 +83,5 @@ public class ChannelService {
                 .map(MemberEntity::toDto)
                 .collect(Collectors.toList());
     }
+    
 }

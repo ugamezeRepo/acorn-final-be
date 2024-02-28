@@ -10,12 +10,12 @@ values (3, 'dummy@dummy.com', 'dummy', 9999);
 
 
 -- add dummy channels
-insert into CHANNEL(ID, NAME, THUMBNAIL)
-values (1, 'A 채널', null);
-insert into CHANNEL(ID, NAME, THUMBNAIL)
-values (2, 'B 채널', null);
-insert into CHANNEL(ID, NAME, THUMBNAIL)
-values (3, 'C 채널', null);
+insert into CHANNEL(ID, NAME, THUMBNAIL, INVITE_CODE)
+values (1, 'A 채널', null, 'sadadsadsaad');
+insert into CHANNEL(ID, NAME, THUMBNAIL, INVITE_CODE)
+values (2, 'B 채널', null, 'sdadsaasasd');
+insert into CHANNEL(ID, NAME, THUMBNAIL, invite_code)
+values (3, 'C 채널', null, 'sadasdsadsad');
 
 -- add dummy channel member mappings
 insert into CHANNEL_MEMBER(ID, CHANNEL_ID, MEMBER_ID)
@@ -51,5 +51,3 @@ values (8, 'ㅇㅁㅇ', 3);
 insert into TOPIC(ID, TITLE, CHANNEL_ID)
 values (9, 'ㅇㅂㅇ', 3);
 
-update MEMBER
-set STATUS = 'offline';
