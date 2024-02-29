@@ -94,15 +94,25 @@ public class MemberService {
     @Transactional
     public boolean signup(MemberEntity entity) {
         boolean isSuccess = false;
-        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (memberMapper.findOneByEmail(userEmail) == null) {
-            entity.setHashtag(entity.getHashtag());
-            entity.setNickname(entity.getNickname());
-            entity.setEmail(userEmail);
-            entity.setStatus("offline");
-            memberMapper.insert(entity);
-            isSuccess = true;
+        try {
+
+            if (memberMapper.findOneByNicknameAndHashtag(entity.getNickname(), entity.getHashtag()) != null) {
+                throw new RuntimeException("중복된 닉네임 존재");
+            }
+
+            String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (memberMapper.findOneByEmail(userEmail) == null) {
+                entity.setHashtag(entity.getHashtag());
+                entity.setNickname(entity.getNickname());
+                entity.setEmail(userEmail);
+                entity.setStatus("offline");
+                memberMapper.insert(entity);
+                isSuccess = true;
+            }
+        } catch (Exception e) {
+            log.debug("{}", e.getMessage());
         }
+
         return isSuccess;
     }
 

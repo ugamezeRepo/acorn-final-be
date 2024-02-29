@@ -13,5 +13,6 @@ public class ChannelMemberEntity extends BaseEntity {
     Integer id;
     Integer channelId;
     Integer memberId;
+    String role;
 }
 
