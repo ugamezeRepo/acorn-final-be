@@ -6,13 +6,14 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
+    private final TokenService tokenService;
 
     public MemberDto findMemberByEmail(String email) {
         var memberEntity = memberMapper.findOneByEmail(email);
@@ -89,7 +91,7 @@ public class MemberService {
                 .toList();
     }
 
-
+    @Transactional
     public boolean signup(MemberEntity entity) {
         boolean isSuccess = false;
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -104,4 +106,9 @@ public class MemberService {
         return isSuccess;
     }
 
+    @Transactional
+    public boolean TokenDeleteAndChangeStatus(String email) {
+        memberMapper.logoutStatus(email);
+        return tokenService.deleteRefreshTokenByEmail(email);
+    }
 }

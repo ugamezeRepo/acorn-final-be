@@ -5,13 +5,14 @@ import com.acorn.finals.mapper.RefreshTokenMapper;
 import com.acorn.finals.model.AcornJwt;
 import com.acorn.finals.model.entity.RefreshTokenEntity;
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.UUID;
 
 
 @Service
@@ -45,6 +46,22 @@ public class TokenService {
                 .key(secretString)
                 .build();
         return token.toString();
+    }
+
+    /**
+     * delete RefreshToken by Email when user logout
+     *
+     * @param email
+     * @return delete RefreshToken
+     */
+    public boolean deleteRefreshTokenByEmail(String email) {
+        var isSuccess = false;
+        int result = refreshTokenMapper.deleteByEmail(email);
+        if (result > 0) {
+            isSuccess = true;
+        }
+
+        return isSuccess;
     }
 
     /**

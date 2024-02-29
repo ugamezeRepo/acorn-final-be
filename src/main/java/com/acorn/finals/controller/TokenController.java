@@ -1,7 +1,6 @@
 package com.acorn.finals.controller;
 
 import com.acorn.finals.config.properties.TokenPropertiesConfig;
-import com.acorn.finals.mapper.RefreshTokenMapper;
 import com.acorn.finals.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TokenController {
     private final TokenService tokenService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
-    private final RefreshTokenMapper refreshTokenMapper;
 
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAccessToken(@CookieValue("RefreshToken") String refreshToken) {

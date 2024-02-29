@@ -22,4 +22,6 @@ public interface MemberMapper {
     int update(MemberEntity entity);
 
     int deleteById(int id);
+
+    int logoutStatus(String email);
 }

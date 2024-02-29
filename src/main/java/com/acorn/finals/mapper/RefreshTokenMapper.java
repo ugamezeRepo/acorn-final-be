@@ -14,4 +14,6 @@ public interface RefreshTokenMapper {
     int deleteByToken(String token);
 
     int update(RefreshTokenEntity entity);
+
+    int deleteByEmail(String email);
 }

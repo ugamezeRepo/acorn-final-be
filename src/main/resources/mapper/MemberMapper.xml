@@ -45,4 +45,10 @@
         delete from member
         where id = #{id}
     </delete>
+
+    <update id="logoutStatus" parameterType="String">
+        update member
+        set status = 'offline'
+        where email = #{email}
+    </update>
 </mapper>

@@ -19,6 +19,11 @@
         where token = #{token}
     </delete>
 
+    <delete id="deleteByEmail" parameterType="String">
+        delete from refresh_token
+        where email = #{email}
+    </delete>
+
     <update id="update" parameterType="refreshentity">
         update refresh_token
         set token = #{token}, expire_date = #{expireDate}
