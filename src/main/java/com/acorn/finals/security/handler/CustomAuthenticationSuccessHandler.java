@@ -65,7 +65,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             SecurityContextHolder.getContext().setAuthentication(auth);
             // 가입정보가 있으면 인덱스 페이지
             if (memberMapper.findOneByEmail(email) != null) {
-                response.sendRedirect(frontendPropertiesConfig.getUrl() + "/channel/member/@me");
+                response.sendRedirect(frontendPropertiesConfig.getUrl() + "/channel/@me");
                 return;
             }
             // 로그인 성공 후 리다이렉트 등 다른 동작을 수행할 수 있습니다.
