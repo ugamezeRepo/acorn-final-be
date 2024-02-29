@@ -30,8 +30,8 @@
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select channel_member_seq.nextval from dual
         </selectKey>
-        insert into channel_member (id, channel_id, member_id )
-        values (#{id}, #{channelId}, #{memberId})
+        insert into channel_member (id, channel_id, member_id ,role)
+        values (#{id}, #{channelId}, #{memberId},#{role})
     </insert>
 
     <update id="update" parameterType="channelMemberEntity">
