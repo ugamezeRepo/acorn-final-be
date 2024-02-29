@@ -10,12 +10,18 @@
         where id = #{id}
     </select>
 
+    <select id="findOneByChannelIdAndMemberId" resultType="channelMemberEntity">
+        select * from channel_member
+        where channel_id = #{channelId} and member_id = #{memberId}
+        order by id desc
+    </select>
+
     <select id="findAllChannelByMemberId" parameterType="int" resultType="channelEntity">
         select * from channel
         join
         (select channel_id as id from channel_member where member_id = #{memberId})
         using (id)
-        order by id
+        order by id desc
     </select>
 
     <select id="findAllMemberByChannelId" parameterType="int" resultType="memberEntity">
@@ -23,7 +29,7 @@
         join
         (select member_id as id from channel_member where channel_id = #{channelId})
         using (id)
-        order by id
+        order by id desc
     </select>
 
     <insert id="insert" parameterType="channelMemberEntity">
@@ -40,8 +46,8 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteById" parameterType="int">
+    <delete id="deleteByChannelIdAndMemberId">
         delete from channel_member
-        where id = #{id}
+        where member_id = #{memberId} and channel_id = #{channelId}
     </delete>
 </mapper>

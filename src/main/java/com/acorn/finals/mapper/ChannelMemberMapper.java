@@ -10,9 +10,12 @@ import java.util.List;
 
 @Mapper
 public interface ChannelMemberMapper {
+
     List<ChannelMemberEntity> findAll();
 
     ChannelMemberEntity findOneById(int id);
+
+    ChannelMemberEntity findOneByChannelIdAndMemberId(int channelId, int memberId);
 
     List<ChannelEntity> findAllChannelByMemberId(int memberId);
 
@@ -22,5 +25,5 @@ public interface ChannelMemberMapper {
 
     int update(ChannelMemberEntity entity);
 
-    int deleteById(int id);
+    int deleteByChannelIdAndMemberId(int channelId, int memberId);
 }

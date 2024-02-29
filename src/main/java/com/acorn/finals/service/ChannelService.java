@@ -58,10 +58,7 @@ public class ChannelService {
         ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail(), channelCreateRequest.getInviteCode());
         var channelEntity = channelDto.toEntity(null);
         channelMapper.insert(channelEntity);
-
-        var memberEntity = memberMapper.findOneByEmail(auth.getName());
-        var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberEntity.getId());
-        channelMemberMapper.insert(channelMemberEntity);
+        joinChannel(channelEntity.getId(), auth);
 
         var topicEntity = new TopicEntity();
         topicEntity.setTitle("일반");
@@ -69,6 +66,24 @@ public class ChannelService {
         topicMapper.insert(topicEntity);
 
         return channelEntity.toDto();
+    }
+
+    @Transactional
+    public boolean joinChannel(int channelId, Authentication auth) {
+        var memberEntity = memberMapper.findOneByEmail(auth.getName());
+        var channelMemberEntity = new ChannelMemberEntity(null, channelId, memberEntity.getId());
+
+        if (channelMemberMapper.findOneByChannelIdAndMemberId(channelId, memberEntity.getId()) != null) {
+            throw new RuntimeException("이미 입장한 채널입니다.");
+        }
+
+        return channelMemberMapper.insert(channelMemberEntity) > 0;
+    }
+
+    @Transactional
+    public boolean exitChannel(int channelId, Authentication auth) {
+        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
+        return channelMemberMapper.deleteByChannelIdAndMemberId(channelId, memberId) > 0;
     }
 
     public ChannelDto updateChannel(int channelId, ChannelDto channelUpdateRequest) {

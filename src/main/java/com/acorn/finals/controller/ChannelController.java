@@ -67,6 +67,36 @@ public class ChannelController {
     }
 
     /**
+     * join channel
+     *
+     * @param channelId
+     * @param auth
+     * @return HTTP STATUS 200 on success
+     */
+    @PostMapping("{channelId}/join")
+    public ResponseEntity<Void> joinChannel(@PathVariable int channelId, Authentication auth) {
+        if (!channelService.joinChannel(channelId, auth)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * exit channel
+     *
+     * @param channelId
+     * @param auth
+     * @return HTTP STATUS 200 on success
+     */
+    @PostMapping("{channelId}/exit")
+    public ResponseEntity<Void> exitChannel(@PathVariable int channelId, Authentication auth) {
+        if (!channelService.exitChannel(channelId, auth)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
      * update channel
      *
      * @param channelUpdateRequest channel update request with new channel name, or thumbnail url
