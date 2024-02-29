@@ -11,6 +11,7 @@ import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.TopicEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ChannelService {
     private final ChannelMapper channelMapper;
     private final MemberMapper memberMapper;
@@ -55,35 +57,42 @@ public class ChannelService {
     public ChannelDto createNewChannel(ChannelDto channelCreateRequest, Authentication auth) {
         String inviteCode = UUID.randomUUID().toString();
         channelCreateRequest.setInviteCode(inviteCode);
-        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail(), channelCreateRequest.getInviteCode());
+        ChannelDto channelDto = new ChannelDto(-1, channelCreateRequest.getName(), channelCreateRequest.getThumbnail(), channelCreateRequest.getInviteCode());
+
         var channelEntity = channelDto.toEntity(null);
         channelMapper.insert(channelEntity);
         joinChannel(channelEntity.getId(), auth);
-
-        var topicEntity = new TopicEntity();
-        topicEntity.setTitle("일반");
-        topicEntity.setChannelId(channelEntity.getId());
-        topicMapper.insert(topicEntity);
 
         return channelEntity.toDto();
     }
 
     @Transactional
     public boolean joinChannel(int channelId, Authentication auth) {
-        var memberEntity = memberMapper.findOneByEmail(auth.getName());
-        var channelMemberEntity = new ChannelMemberEntity(null, channelId, memberEntity.getId());
+        try {
+            var memberEntity = memberMapper.findOneByEmail(auth.getName());
+            var channelMemberEntity = new ChannelMemberEntity(null, channelId, memberEntity.getId());
 
-        if (channelMemberMapper.findOneByChannelIdAndMemberId(channelId, memberEntity.getId()) != null) {
-            throw new RuntimeException("이미 입장한 채널입니다.");
+            if (channelMemberMapper.findOneByChannelIdAndMemberId(channelId, memberEntity.getId()) != null) {
+                throw new RuntimeException("already joined");
+            }
+            channelMemberMapper.insert(channelMemberEntity);
+         } catch (Exception e){
+            log.debug(e.getMessage());
+            return false;
         }
-
-        return channelMemberMapper.insert(channelMemberEntity) > 0;
+        return true;
     }
 
     @Transactional
     public boolean exitChannel(int channelId, Authentication auth) {
-        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
-        return channelMemberMapper.deleteByChannelIdAndMemberId(channelId, memberId) > 0;
+        try {
+            int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
+            channelMemberMapper.deleteByChannelIdAndMemberId(channelId, memberId);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     public ChannelDto updateChannel(int channelId, ChannelDto channelUpdateRequest) {

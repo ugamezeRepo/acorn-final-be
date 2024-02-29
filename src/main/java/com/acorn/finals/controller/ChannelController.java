@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -61,9 +62,13 @@ public class ChannelController {
      * @param channelCreateRequest channel create request with channel name
      * @return created channel
      */
+    @Transactional
     @PostMapping
     public ChannelDto createNewChannel(@RequestBody ChannelDto channelCreateRequest, Authentication authentication) {
-        return channelService.createNewChannel(channelCreateRequest, authentication);
+        var channelDto = channelService.createNewChannel(channelCreateRequest, authentication);
+        var topicCreate = new TopicDto(-1,  "일반");
+        topicService.createNewTopic(channelDto.getId(), topicCreate);
+        return channelDto;
     }
 
     /**
@@ -76,7 +81,7 @@ public class ChannelController {
     @PostMapping("{channelId}/join")
     public ResponseEntity<Void> joinChannel(@PathVariable int channelId, Authentication auth) {
         if (!channelService.joinChannel(channelId, auth)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
@@ -91,7 +96,7 @@ public class ChannelController {
     @PostMapping("{channelId}/exit")
     public ResponseEntity<Void> exitChannel(@PathVariable int channelId, Authentication auth) {
         if (!channelService.exitChannel(channelId, auth)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
