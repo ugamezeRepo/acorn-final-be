@@ -10,7 +10,7 @@
         where id = #{id}
     </select>
 
-    <select id="findOneByNicknameAndHashtag" parameterType="String" resultType="memberEntity">
+    <select id="findOneByNicknameAndHashtag" resultType="memberEntity">
         select * from member
         where nickname = #{nickname} and hashtag = #{hashtag}
     </select>
