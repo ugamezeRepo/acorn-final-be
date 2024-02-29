@@ -60,7 +60,7 @@ public class ChannelService {
         channelMapper.insert(channelEntity);
 
         var memberEntity = memberMapper.findOneByEmail(auth.getName());
-        var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberEntity.getId());
+        var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberEntity.getId(), "owner");
         channelMemberMapper.insert(channelMemberEntity);
 
         var topicEntity = new TopicEntity();

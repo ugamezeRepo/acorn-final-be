@@ -19,7 +19,8 @@ create table channel_member
 (
     id         number primary key,
     channel_id number not null,
-    member_id  number not null
+    member_id  number not null,
+    role       varchar2(20) default 'guest' check (role in ('owner', 'manager', 'guest'))
 );
 
 create table topic
