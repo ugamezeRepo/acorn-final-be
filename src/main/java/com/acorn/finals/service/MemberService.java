@@ -1,19 +1,19 @@
 package com.acorn.finals.service;
 
+import com.acorn.finals.mapper.ChannelMapper;
 import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +22,7 @@ public class MemberService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
     private final TokenService tokenService;
+    private final ChannelMapper channelMapper;
 
     public MemberDto findMemberByEmail(String email) {
         var memberEntity = memberMapper.findOneByEmail(email);

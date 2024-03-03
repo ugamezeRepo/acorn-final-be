@@ -10,16 +10,15 @@ import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.TopicEntity;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +32,6 @@ public class ChannelService {
     public ChannelDto findChannelInfoByInviteCode(String inviteCode) {
         ChannelEntity entity = channelMapper.findOneByInviteCode(inviteCode);
         return entity.toDto();
-    }
-
-    public String generateChannelUrl(int channelId) {
-        return String.format("/channel/%d", channelId);
     }
 
     public List<ChannelDto> listAllChannels() {
@@ -55,7 +50,8 @@ public class ChannelService {
     public ChannelDto createNewChannel(ChannelDto channelCreateRequest, Authentication auth) {
         String inviteCode = UUID.randomUUID().toString();
         channelCreateRequest.setInviteCode(inviteCode);
-        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail(), channelCreateRequest.getInviteCode());
+        ChannelDto channelDto = new ChannelDto(0, channelCreateRequest.getName(), channelCreateRequest.getThumbnail(),
+                channelCreateRequest.getInviteCode());
         var channelEntity = channelDto.toEntity(null);
         channelMapper.insert(channelEntity);
 
@@ -90,4 +86,12 @@ public class ChannelService {
                 .collect(Collectors.toList());
     }
 
+    public ChannelDto joinMember(String email, String code, String role) {
+        var member = memberMapper.findOneByEmail(email);
+        var channel = channelMapper.findOneByInviteCode(code);
+
+        var entity = new ChannelMemberEntity(null, channel.getId(), member.getId(), role);
+        channelMemberMapper.insert(entity);
+        return channel.toDto();
+    }
 }

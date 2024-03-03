@@ -7,14 +7,20 @@ import com.acorn.finals.model.dto.TopicDto;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MessageService;
 import com.acorn.finals.service.TopicService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/channel")
@@ -43,7 +49,6 @@ public class ChannelController {
         return channelService.findChannelInfoByInviteCode(inviteCode);
     }
 
-
     /**
      * find a channel by id
      *
@@ -64,6 +69,15 @@ public class ChannelController {
     @PostMapping
     public ChannelDto createNewChannel(@RequestBody ChannelDto channelCreateRequest, Authentication authentication) {
         return channelService.createNewChannel(channelCreateRequest, authentication);
+    }
+
+    @PostMapping("/join/{code}")
+    public ResponseEntity<ChannelDto> joinChannel(@PathVariable String code, Authentication auth) {
+        if (auth == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        var channelInfo = channelService.joinMember(auth.getName(), code, "guest");
+        return ResponseEntity.ok(channelInfo);
     }
 
     /**
@@ -102,6 +116,7 @@ public class ChannelController {
     public List<MemberDto> listAllMembers(@PathVariable int channelId) {
         return channelService.listChannelMembers(channelId);
     }
+
 
     /**
      * list all topics of channel
@@ -204,4 +219,5 @@ public class ChannelController {
                                     @PathVariable String messageId, MessageDto updateMessageRequest) {
         return updateMessageRequest;
     }
+
 }

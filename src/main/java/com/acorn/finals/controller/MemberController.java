@@ -5,18 +5,26 @@ import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.RefreshTokenEntity;
 import com.acorn.finals.service.MemberService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
+
+    // channel member mapper
 
     /**
      * list all another user joined channel
@@ -106,6 +114,5 @@ public class MemberController {
     public boolean logout(@RequestBody RefreshTokenEntity entity) {
         return memberService.TokenDeleteAndChangeStatus(entity.getEmail());
     }
-
 }
 
