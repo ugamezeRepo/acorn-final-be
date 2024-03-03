@@ -6,3 +6,4 @@ spring:
           google:
             client-id: sample
             client-secret: sample
+            redirect-uri: redirect uri
