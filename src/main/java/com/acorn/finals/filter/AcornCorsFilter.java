@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
-public class CorsFilter implements Filter {
+public class AcornCorsFilter implements Filter {
     private final FrontendPropertiesConfig frontendPropertiesConfig;
 
     @Override

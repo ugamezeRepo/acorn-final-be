@@ -1,7 +1,6 @@
 package com.acorn.finals.config;
 
 import com.acorn.finals.config.properties.CorsPropertiesConfig;
-import com.acorn.finals.filter.CorsFilter;
 import com.acorn.finals.filter.JwtFilter;
 import com.acorn.finals.security.handler.CustomAuthenticationFailureHandler;
 import com.acorn.finals.security.handler.CustomAuthenticationSuccessHandler;
@@ -25,7 +24,7 @@ public class SecurityConfig {
     private final CorsPropertiesConfig corsConfig;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final JwtFilter jwtFilter;
-    private final CorsFilter corsFilter;
+//    private final AcornCorsFilter acornCorsFilter;
 
     private final String[] whiteList = {
             "/chat/channel/*/topic/*",
