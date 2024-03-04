@@ -3,6 +3,7 @@ package com.acorn.finals.security.handler;
 import com.acorn.finals.config.properties.FrontendPropertiesConfig;
 import com.acorn.finals.config.properties.TokenPropertiesConfig;
 import com.acorn.finals.mapper.MemberMapper;
+import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.TokenService;
 import jakarta.servlet.ServletException;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Slf4j
 @Service
@@ -70,27 +72,28 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
 
             if (memberMapper.findOneByEmail(email) == null) {
-//                boolean userCreated = false;
-//                final int maxFallback = 5;
-//                int currentFallback = 0;
-//                while (true) {
-//                    var rand = new Random();
-//                    var adjectiveIndex = rand.nextInt(0, 20);
-//                    var nounIndex = rand.nextInt(0, 20);
-//                    var nickname = String.join(" ", adjectives[adjectiveIndex], nouns[nounIndex]);
-//                    var hashtag = rand.nextInt(1000, 10000);
-//                    var result = memberService.signup(new MemberEntity(null, email, nickname, hashtag, "online"));
-//                    currentFallback += 1;
-//                    if (result || currentFallback > maxFallback) {
-//                        userCreated = result;
-//                        break;
-//                    }
-//                }
-//
-//                if (!userCreated) {
-//                    throw new RuntimeException("user creation failed");
-//                }
-                response.sendRedirect(frontendPropertiesConfig.getUrl() + "/signup");
+                boolean userCreated = false;
+                final int maxFallback = 5;
+                int currentFallback = 0;
+                while (true) {
+                    var rand = new Random();
+                    var adjectiveIndex = rand.nextInt(0, 20);
+                    var nounIndex = rand.nextInt(0, 20);
+                    var nickname = String.join(" ", adjectives[adjectiveIndex], nouns[nounIndex]);
+                    var hashtag = rand.nextInt(1000, 10000);
+                    var result = memberService.signup(new MemberEntity(null, email, nickname, hashtag, "online"));
+                    currentFallback += 1;
+                    if (result || currentFallback > maxFallback) {
+                        userCreated = result;
+                        break;
+                    }
+                }
+
+                if (!userCreated) {
+                    throw new RuntimeException("user creation failed");
+                }
+//                response.sendRedirect(frontendPropertiesConfig.getUrl() + "/signup");
+//                return;
             }
             response.sendRedirect(frontendPropertiesConfig.getUrl() + "/channel/@me");
 

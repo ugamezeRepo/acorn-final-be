@@ -31,13 +31,14 @@ public class MemberService {
     }
 
     public List<MemberDto> findAllMemberByChannelId(int channelId) {
-        return memberMapper.findAllByChannelId(channelId).stream()
-                .map(MemberEntity::toDto)
-                .collect(Collectors.toList());
+        return memberMapper.findAllByChannelId(channelId).stream().map(MemberEntity::toDto).collect(Collectors.toList());
     }
 
     @Transactional
     public boolean updateStatus(MemberDto dto) {
+        if (dto.getNickname() == null || dto.getHashtag() == null) {
+            return false;
+        }
         var memberEntity = memberMapper.findOneByNicknameAndHashtag(dto.getNickname(), dto.getHashtag());
         log.debug("find one by nickname and hashtag done");
         if (memberEntity == null) {
@@ -49,14 +50,14 @@ public class MemberService {
 
     @Transactional
     public List<Integer> findAllJoinedChannelIdByMember(MemberDto dto) {
+        if (dto.getNickname() == null || dto.getHashtag() == null) {
+            return List.of();
+        }
         var memberEntity = memberMapper.findOneByNicknameAndHashtag(dto.getNickname(), dto.getHashtag());
         if (memberEntity == null) {
             return List.of();
         }
-        return channelMemberMapper
-                .findAllChannelByMemberId(memberEntity.getId()).stream()
-                .map(ChannelEntity::getId)
-                .toList();
+        return channelMemberMapper.findAllChannelByMemberId(memberEntity.getId()).stream().map(ChannelEntity::getId).toList();
     }
 
     @Transactional
@@ -79,18 +80,14 @@ public class MemberService {
     public List<ChannelDto> listAllChannels(MemberDto member) {
         var memberEntity = memberMapper.findOneByNicknameAndHashtag(member.getNickname(), member.getHashtag());
         var channels = channelMemberMapper.findAllChannelByMemberId(memberEntity.getId());
-        return channels.stream()
-                .map(ChannelEntity::toDto)
-                .toList();
+        return channels.stream().map(ChannelEntity::toDto).toList();
     }
 
     @Transactional
     public List<ChannelDto> listAllChannelsByEmail(String email) {
         var memberEntity = memberMapper.findOneByEmail(email);
         var channels = channelMemberMapper.findAllChannelByMemberId(memberEntity.getId());
-        return channels.stream()
-                .map(ChannelEntity::toDto)
-                .toList();
+        return channels.stream().map(ChannelEntity::toDto).toList();
     }
 
     @Transactional
