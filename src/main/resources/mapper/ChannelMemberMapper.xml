@@ -44,4 +44,10 @@
         delete from channel_member
         where id = #{id}
     </delete>
+
+    <update id="updaterole" parameterType="channelMemberEntity">
+        update channel_member
+        set role= #{role}
+        where member_id = #{memberId}
+    </update>
 </mapper>

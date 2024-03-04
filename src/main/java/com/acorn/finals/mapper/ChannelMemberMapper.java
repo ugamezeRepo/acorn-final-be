@@ -23,4 +23,6 @@ public interface ChannelMemberMapper {
     int update(ChannelMemberEntity entity);
 
     int deleteById(int id);
+
+    int updaterole(ChannelMemberEntity entity);
 }

@@ -5,20 +5,22 @@ import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.mapper.TopicMapper;
 import com.acorn.finals.model.dto.ChannelDto;
+import com.acorn.finals.model.dto.ChannelMemberDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.TopicEntity;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,5 +95,15 @@ public class ChannelService {
         var entity = new ChannelMemberEntity(null, channel.getId(), member.getId(), role);
         channelMemberMapper.insert(entity);
         return channel.toDto();
+    }
+
+    public boolean changeRole(ChannelMemberDto dto) {
+        boolean isSuccess = false;
+        ChannelMemberEntity channelMemberEntity = dto.toEntity();
+        int result = channelMemberMapper.updaterole(channelMemberEntity);
+        if (result > 0) {
+            isSuccess = true;
+        }
+        return isSuccess;
     }
 }
