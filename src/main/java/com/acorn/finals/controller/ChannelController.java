@@ -172,7 +172,14 @@ public class ChannelController {
      * @return on success, updated topic data with HTTP STATUS 200
      */
     @PatchMapping("/{channelId}/topic/{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(@PathVariable int channelId, @PathVariable int topicId, @RequestBody TopicDto topicUpdateRequest) {
+    public ResponseEntity<TopicDto> updateTopic(@PathVariable int channelId, @PathVariable int topicId, @RequestBody TopicDto topicUpdateRequest, Authentication auth) {
+        String email = auth.getName();
+        String role = memberService.getMemberChannelRole(email, channelId);
+
+        if (!role.equals("owner") && !role.equals("manager")) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         if (!topicService.updateTopic(channelId, topicId, topicUpdateRequest)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
