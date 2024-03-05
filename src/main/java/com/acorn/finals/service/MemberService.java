@@ -116,4 +116,12 @@ public class MemberService {
         memberMapper.logoutStatus(email);
         return tokenService.deleteRefreshTokenByEmail(email);
     }
+
+
+    @Transactional
+    public String getMemberChannelRole(String email, int channelId) {
+        var member = memberMapper.findOneByEmail(email);
+        var role = channelMemberMapper.findRoleByMemberIdAndChannelId(member.getId(), channelId);
+        return role;
+    }
 }

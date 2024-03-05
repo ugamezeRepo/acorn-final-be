@@ -25,4 +25,6 @@ public interface ChannelMemberMapper {
     int deleteById(int id);
 
     int updaterole(ChannelMemberEntity entity);
+
+    String findRoleByMemberIdAndChannelId(int memberId, int channelId);
 }
