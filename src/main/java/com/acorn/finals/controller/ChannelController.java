@@ -2,6 +2,7 @@ package com.acorn.finals.controller;
 
 import com.acorn.finals.model.dto.*;
 import com.acorn.finals.service.ChannelService;
+import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.MessageService;
 import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class ChannelController {
     private final ChannelService channelService;
     private final TopicService topicService;
     private final MessageService messageService;
+    private final MemberService memberService;
 
     /**
      * find list all channels
@@ -87,8 +89,7 @@ public class ChannelController {
      * @return updated channel
      */
     @PatchMapping("/{channelId}")
-    public ResponseEntity<ChannelDto> updateChannel(@PathVariable int channelId,
-                                                    @RequestBody ChannelDto channelUpdateRequest) {
+    public ResponseEntity<ChannelDto> updateChannel(@PathVariable int channelId, @RequestBody ChannelDto channelUpdateRequest) {
         return ResponseEntity.ok(channelService.updateChannel(channelId, channelUpdateRequest));
     }
 
@@ -150,11 +151,13 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
-    public ResponseEntity<Void> removeTopic(
-            @PathVariable int channelId,
-            @PathVariable int topicId,
-            @RequestBody TopicDto topicDeleteRequest) {
-        if (!topicService.removeTopic(topicId, topicDeleteRequest)) {
+    public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (! "owner".equals(role) && ! "manager".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (!topicService.removeTopic(topicId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(null);
@@ -169,10 +172,7 @@ public class ChannelController {
      * @return on success, updated topic data with HTTP STATUS 200
      */
     @PatchMapping("/{channelId}/topic/{topicId}")
-    public ResponseEntity<TopicDto> updateTopic(
-            @PathVariable int channelId,
-            @PathVariable int topicId,
-            @RequestBody TopicDto topicUpdateRequest) {
+    public ResponseEntity<TopicDto> updateTopic(@PathVariable int channelId, @PathVariable int topicId, @RequestBody TopicDto topicUpdateRequest) {
         if (!topicService.updateTopic(channelId, topicId, topicUpdateRequest)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -200,8 +200,7 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId,
-                                              @PathVariable String messageId) {
+    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId) {
         return ResponseEntity.ok().build();
     }
 
@@ -215,8 +214,7 @@ public class ChannelController {
      * @return updated message
      */
     @PatchMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId,
-                                    @PathVariable String messageId, MessageDto updateMessageRequest) {
+    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId, MessageDto updateMessageRequest) {
         return updateMessageRequest;
     }
 

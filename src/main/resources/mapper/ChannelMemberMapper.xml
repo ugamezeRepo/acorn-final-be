@@ -26,6 +26,13 @@
         order by id
     </select>
 
+    <select id="findRoleByMemberIdAndChannelId" resultType="String">
+        select role
+        from channel_member
+        where member_id = #{memberId}
+        and channel_id = #{channelId}
+    </select>
+
     <insert id="insert" parameterType="channelMemberEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select channel_member_seq.nextval from dual

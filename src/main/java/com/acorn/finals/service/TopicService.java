@@ -27,7 +27,7 @@ public class TopicService {
         return new TopicDto(id, topicCreateRequest.getTitle());
     }
 
-    public boolean removeTopic(int topicId, TopicDto topicRemoveRequest) {
+    public boolean removeTopic(int topicId) {
         return topicMapper.deleteById(topicId) > 0;
     }
 
