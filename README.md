@@ -7,11 +7,12 @@ Springboot && React 를 활용한 메신저 사이트
 * 2024.02.12 ~ 2024.03.15
 
 ## 🔧 개발 환경
-- **Language** : `Java , Javascript`
-- **IDE**  : `IntelliJ , VisualStudioCode`
-- **Framework** : `Springboot , React`
-- **DataBase** : `Oracle11g`
-- **ORM** : `Mybatis`
+
+- **Language** : `Java`, `Javascript`
+- **IDE**  : `IntelliJ`, `VisualStudioCode`
+- **Framework** : `SpringBoot` , `React`
+- **DataBase** : `Oracle Database 11g`
+- **SQL Mapper** : `Mybatis`
 
 ## ⭐️ 주요 기능
 
