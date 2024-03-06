@@ -68,7 +68,8 @@ public class MemberService {
         }
         if (dto.getNickname() != null) {
             memberEntity.setNickname(dto.getNickname());
-        } else if (dto.getHashtag() != null) {
+        }
+        if (dto.getHashtag() != null) {
             memberEntity.setHashtag(dto.getHashtag());
         }
         memberMapper.update(memberEntity);
