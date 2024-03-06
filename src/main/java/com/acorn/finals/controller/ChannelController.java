@@ -102,7 +102,12 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}")
-    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId) {
+    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId, Authentication auth) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (!"owner".equals(role)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!channelService.deleteChannel(channelId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -146,9 +151,10 @@ public class ChannelController {
 
     /**
      * remove topic
-     *
-     * @param channelId          id of the channel that references topic
-     * @return HTTP STATUS 200 on success
+     * @param channelId id of channel that refrences topic
+     * @param topicId id of topic
+     * @param auth
+     * @return
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
     public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
@@ -157,7 +163,7 @@ public class ChannelController {
         if (! "owner".equals(role) && ! "manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        if (!topicService.removeTopic(topicId)) {
+        if (!topicService.removeTopic(channelId, topicId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(null);
@@ -274,4 +280,5 @@ public class ChannelController {
 
         return ResponseEntity.ok(null);
     }
+
 }

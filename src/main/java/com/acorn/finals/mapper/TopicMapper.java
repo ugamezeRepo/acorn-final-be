@@ -18,6 +18,6 @@ public interface TopicMapper {
 
     int update(TopicEntity entity);
 
-    int deleteById(int id);
+    int delete(int channelId, int topicId);
 
 }
