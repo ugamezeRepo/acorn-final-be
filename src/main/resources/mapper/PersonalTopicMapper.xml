@@ -5,14 +5,14 @@
         select * from personal_topic
     </select>
 
-    <select id="findOneById" resultType="personalTopicEntity" parameterType="int">
-        select * from personal_topic
-        where id = #{id}
-    </select>
-
     <select id="findAllByMemberId" resultType="personalTopicEntity" parameterType="int">
         select * from personal_topic
         where member1_id = #{member1Id}
+    </select>
+
+    <select id="findOneById" resultType="personalTopicEntity" parameterType="int">
+        select * from personal_topic
+        where id = #{id}
     </select>
 
     <select id="findOneByMember1IdAndMember2Id" resultType="personalTopicEntity" parameterType="int">

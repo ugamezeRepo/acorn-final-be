@@ -43,11 +43,11 @@ public class PersonalTopicService {
         return personalTopicEntity.toDto();
     }
 
-//    @Transactional
-//    public boolean removePersonalTopic(int personalTopicId) {
-//        return personalTopicMapper.deleteById(personalTopicId) > 0;
-//    }
-//
+    @Transactional
+    public boolean removePersonalTopic(int personalTopicId) {
+        return personalTopicMapper.deleteById(personalTopicId) > 0;
+    }
+
 //    public boolean updatePersonalTopic(int memberId, int personalTopicId, PersonalTopicDto personalTopicUpdateRequest) {
 //        var personalTopicEntity = personalTopicUpdateRequest.toEntity(memberId);
 //        personalTopicEntity.setId(personalTopicId);

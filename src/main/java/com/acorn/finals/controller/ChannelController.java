@@ -236,9 +236,10 @@ public class ChannelController {
     }
 
     /**
-     * list all personal topics of member
+     * find a personal topic by personalTopicId
      *
-     * @return list of topics of channel
+     * @param personalTopicId id of the personal topic
+     * @return topic of channel
      */
     @GetMapping("/@me/{personalTopicId}")
     public PersonalTopicDto personalTopicDtoByPersonalTopicId(@PathVariable int personalTopicId) {
@@ -257,20 +258,16 @@ public class ChannelController {
     }
 
     /**
-     * remove topic
+     * remove personal topic
      *
+     * @param personalTopicId id of the personal topic
      * @return HTTP STATUS 200 on success
      */
-    @DeleteMapping("/@me/{topicId}")
-    public ResponseEntity<Void> removePersonalTopic() {
-//        var memberId = memberService.findMemberByEmail(auth.getName()).getId();
-//        var role = memberService.getMemberChannelRole(auth.getName(), channelId);
-//        if (! "owner".equals(role) && ! "manager".equals(role)) {
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
-//        if (!topicService.removeTopic(topicId)) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-//        }
+    @DeleteMapping("/@me/{personalTopicId}")
+    public ResponseEntity<Void> removePersonalTopic(@PathVariable int personalTopicId) {
+        if (!personalTopicService.removePersonalTopic(personalTopicId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.ok(null);
     }
