@@ -4,6 +4,7 @@ import com.acorn.finals.model.dto.*;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.PersonalTopicService;
 import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class ChannelController {
     private final TopicService topicService;
     private final MessageService messageService;
     private final MemberService memberService;
+    private final PersonalTopicService personalTopicService;
 
     /**
      * find list all channels
@@ -142,12 +144,10 @@ public class ChannelController {
         return topicService.createNewTopic(channelId, topicCreateRequest);
     }
 
-
     /**
      * remove topic
      *
      * @param channelId          id of the channel that references topic
-     * @param topicDeleteRequest topic delete request with url
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
@@ -225,4 +225,34 @@ public class ChannelController {
         return updateMessageRequest;
     }
 
+    /**
+     * create new personal topic
+     *
+     * @param topicCreateRequest topic create request with member1's id, and member2's id
+     * @return created topic
+     */
+    @PostMapping("/@me")
+    public PersonalTopicDto createNewPersonalTopic(@RequestBody PersonalTopicDto topicCreateRequest, Authentication auth) {
+        return personalTopicService.createNewTopic(topicCreateRequest, auth);
+    }
+
+    /**
+     * remove topic
+     *
+     * @param topicId          id of the channel that references topic
+     * @return HTTP STATUS 200 on success
+     */
+    @DeleteMapping("/@me/{topicId}")
+    public ResponseEntity<Void> removePersonalTopic(@PathVariable int topicId, Authentication auth ) {
+//        var memberId = memberService.findMemberByEmail(auth.getName()).getId();
+//        var role = memberService.getMemberChannelRole(auth.getName(), channelId);
+//        if (! "owner".equals(role) && ! "manager".equals(role)) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+//        if (!topicService.removeTopic(topicId)) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
+
+        return ResponseEntity.ok(null);
+    }
 }
