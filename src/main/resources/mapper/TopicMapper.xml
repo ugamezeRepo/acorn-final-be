@@ -29,8 +29,8 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteById" parameterType="int">
+    <delete id="delete" >
         delete from topic
-        where id = #{id}
+        where id = #{topicId} and channel_id = #{channelId}
     </delete>
 </mapper>

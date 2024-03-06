@@ -41,20 +41,15 @@
         values (#{id}, #{channelId}, #{memberId},#{role})
     </insert>
 
-    <update id="update" parameterType="channelMemberEntity">
-        update channel_member
-        set channel_id = #{channelId}, member_id = #{memberId}
-        where id = #{id}
-    </update>
 
-    <delete id="deleteById" parameterType="int">
+    <delete id="deleteByChannelIdAndMemberId" parameterType="int">
         delete from channel_member
-        where id = #{id}
+        where channel_id = #{channelId} and member_id = #{memberId}
     </delete>
 
-    <update id="updaterole" parameterType="channelMemberEntity">
+    <update id="updateRole" parameterType="channelMemberEntity">
         update channel_member
         set role= #{role}
-        where member_id = #{memberId}
+        where member_id = #{memberId} and channel_id = #{channelId}
     </update>
 </mapper>

@@ -25,6 +25,7 @@ public class ChannelController {
     private final MemberService memberService;
     private final PersonalTopicService personalTopicService;
 
+
     /**
      * find list all channels
      *
@@ -40,7 +41,7 @@ public class ChannelController {
      * @return ChannelDto return
      */
     @PostMapping("/invite/{code}")
-    public ChannelDto responseChInfo(@PathVariable("code") String inviteCode) {
+    public ChannelDto responseChannelInfo(@PathVariable("code") String inviteCode) {
         return channelService.findChannelInfoByInviteCode(inviteCode);
     }
 
@@ -79,8 +80,10 @@ public class ChannelController {
         return ResponseEntity.ok(channelInfo);
     }
 
-    @PatchMapping("/role")
-    public boolean changeRole(@RequestBody ChannelMemberDto dto) {
+    @PatchMapping("{channelId}/role")
+    public boolean changeRole(@RequestBody ChangeRoleRequestDto dto, Authentication authentication, @PathVariable("channelId") int channelId) {
+        dto.setOwnerEmail(authentication.getName());
+        dto.setChannelId(channelId);
         return channelService.changeRole(dto);
     }
 
@@ -102,7 +105,12 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}")
-    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId) {
+    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId, Authentication auth) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (!"owner".equals(role)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!channelService.deleteChannel(channelId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -140,19 +148,31 @@ public class ChannelController {
      * @return created topic with title and url
      */
     @PostMapping("/{channelId}/topic")
-    public TopicDto createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest) {
-        return topicService.createNewTopic(channelId, topicCreateRequest);
+    public ResponseEntity<TopicDto> createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest, Authentication auth) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email,channelId);
+        if (! "owner".equals(role) && ! "manager".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        TopicDto newTopicDto = topicService.createNewTopic(channelId, topicCreateRequest);
+        return ResponseEntity.ok(newTopicDto);
     }
 
     /**
      * remove topic
-     *
-     * @return HTTP STATUS 200 on success
+     * @param channelId id of channel that refrences topic
+     * @param topicId id of topic
+     * @param auth
+     * @return
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
-    public ResponseEntity<Void> removeTopic(
-            @PathVariable int topicId) {
-        if (!topicService.removeTopic(topicId)) {
+    public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (! "owner".equals(role) && ! "manager".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if (!topicService.removeTopic(channelId, topicId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok().build();
@@ -266,4 +286,5 @@ public class ChannelController {
 
         return ResponseEntity.ok(null);
     }
+
 }
