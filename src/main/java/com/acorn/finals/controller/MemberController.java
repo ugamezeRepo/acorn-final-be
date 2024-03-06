@@ -116,6 +116,7 @@ public class MemberController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity) {
+        //Cook 값 지우기
         ResponseCookie refreshTokenCookie =
                 ResponseCookie.from("RefreshToken","")
                         .maxAge(0)
