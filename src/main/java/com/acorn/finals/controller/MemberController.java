@@ -6,7 +6,10 @@ import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.RefreshTokenEntity;
 import com.acorn.finals.service.MemberService;
 import java.util.List;
+
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,8 +114,17 @@ public class MemberController {
      * @return if RefreshToken delete and changeStatus return true nor false
      */
     @PostMapping("/logout")
-    public boolean logout(@RequestBody RefreshTokenEntity entity) {
-        return memberService.TokenDeleteAndChangeStatus(entity.getEmail());
+    public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity) {
+        Cookie refreshTokenCookie = new Cookie("RefreshToken", "");
+        refreshTokenCookie.setMaxAge(0);
+        refreshTokenCookie.setHttpOnly(true);
+
+        boolean logoutResult = memberService.TokenDeleteAndChangeStatus(entity.getEmail());
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+                .body(logoutResult);
     }
 }
 
