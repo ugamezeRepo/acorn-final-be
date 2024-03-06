@@ -100,7 +100,12 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}")
-    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId) {
+    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId, Authentication auth) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (!"owner".equals(role)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!channelService.deleteChannel(channelId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -145,10 +150,10 @@ public class ChannelController {
 
     /**
      * remove topic
-     *
-     * @param channelId          id of the channel that references topic
-     * @param topicDeleteRequest topic delete request with url
-     * @return HTTP STATUS 200 on success
+     * @param channelId id of channel that refrences topic
+     * @param topicId id of topic
+     * @param auth
+     * @return
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
     public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
@@ -157,7 +162,7 @@ public class ChannelController {
         if (! "owner".equals(role) && ! "manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        if (!topicService.removeTopic(topicId)) {
+        if (!topicService.removeTopic(channelId, topicId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(null);
@@ -197,32 +202,4 @@ public class ChannelController {
     public List<MessageDto> listAllMessages(@PathVariable int channelId, @PathVariable int topicId) {
         return messageService.findAllByChannelIdAndTopicId(channelId, topicId);
     }
-
-    /**
-     * delete message
-     *
-     * @param channelId id of the channel that references topic
-     * @param topicId   id of the topic that references message
-     * @param messageId id of the message that will be deleted
-     * @return HTTP STATUS 200 on success
-     */
-    @DeleteMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId) {
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * update message
-     *
-     * @param channelId            id of the channel that references topic
-     * @param topicId              id of the channel that references message
-     * @param messageId            id of the message will be updated
-     * @param updateMessageRequest update message request with new content
-     * @return updated message
-     */
-    @PatchMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId, MessageDto updateMessageRequest) {
-        return updateMessageRequest;
-    }
-
 }
