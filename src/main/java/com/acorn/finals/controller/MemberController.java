@@ -10,6 +10,7 @@ import java.util.List;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -114,14 +115,15 @@ public class MemberController {
      * @return if RefreshToken delete and changeStatus return true nor false
      */
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout(Authentication auth) {
-        Cookie refreshTokenCookie = new Cookie("RefreshToken", "");
-        refreshTokenCookie.setMaxAge(0);
-        refreshTokenCookie.setHttpOnly(true);
-
+    public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity) {
+        //Cookie 값 지우기
+        ResponseCookie refreshTokenCookie =
+                ResponseCookie.from("RefreshToken","")
+                        .maxAge(0)
+                        .httpOnly(true)
+                        .path("/")
+                        .build();
         boolean logoutResult = memberService.TokenDeleteAndChangeStatus(auth.getName());
-
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(logoutResult);
