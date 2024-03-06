@@ -5,7 +5,7 @@ import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.mapper.TopicMapper;
 import com.acorn.finals.model.dto.ChannelDto;
-import com.acorn.finals.model.dto.ChannelMemberDto;
+import com.acorn.finals.model.dto.ChangeRoleRequestDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
@@ -29,6 +29,7 @@ public class ChannelService {
     private final MemberMapper memberMapper;
     private final ChannelMemberMapper channelMemberMapper;
     private final TopicMapper topicMapper;
+    private final MemberService memberService;
 
 
     public ChannelDto findChannelInfoByInviteCode(String inviteCode) {
@@ -96,14 +97,21 @@ public class ChannelService {
         channelMemberMapper.insert(entity);
         return channel.toDto();
     }
-
-    public boolean changeRole(ChannelMemberDto dto) {
+    @Transactional
+    public boolean changeRole(ChangeRoleRequestDto dto) {
         boolean isSuccess = false;
+        String ownerRole= memberService.getMemberChannelRole(dto.getOwnerEmail(),dto.getChannelId());
+
+        if(ownerRole.equals("owner")){
+            return isSuccess;
+        }
         ChannelMemberEntity channelMemberEntity = dto.toEntity();
-        int result = channelMemberMapper.updaterole(channelMemberEntity);
+        int result = channelMemberMapper.updateRole(channelMemberEntity);
         if (result > 0) {
             isSuccess = true;
         }
         return isSuccess;
     }
+
+
 }

@@ -20,11 +20,10 @@ public interface ChannelMemberMapper {
 
     int insert(ChannelMemberEntity entity);
 
-    int update(ChannelMemberEntity entity);
 
-    int deleteById(int id);
-
-    int updaterole(ChannelMemberEntity entity);
+    int updateRole(ChannelMemberEntity entity);
 
     String findRoleByMemberIdAndChannelId(int memberId, int channelId);
+
+    int deleteByChannelIdAndMemberId(int channelId, int memberId);
 }
