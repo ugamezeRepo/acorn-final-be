@@ -25,6 +25,7 @@ public class ChannelController {
     private final MemberService memberService;
     private final PersonalTopicService personalTopicService;
 
+
     /**
      * find list all channels
      *
@@ -40,7 +41,7 @@ public class ChannelController {
      * @return ChannelDto return
      */
     @PostMapping("/invite/{code}")
-    public ChannelDto responseChInfo(@PathVariable("code") String inviteCode) {
+    public ChannelDto responseChannelInfo(@PathVariable("code") String inviteCode) {
         return channelService.findChannelInfoByInviteCode(inviteCode);
     }
 
@@ -79,8 +80,10 @@ public class ChannelController {
         return ResponseEntity.ok(channelInfo);
     }
 
-    @PatchMapping("/role")
-    public boolean changeRole(@RequestBody ChannelMemberDto dto) {
+    @PatchMapping("{channelId}/role")
+    public boolean changeRole(@RequestBody ChangeRoleRequestDto dto, Authentication authentication, @PathVariable("channelId") int channelId) {
+        dto.setOwnerEmail(authentication.getName());
+        dto.setChannelId(channelId);
         return channelService.changeRole(dto);
     }
 
@@ -145,8 +148,14 @@ public class ChannelController {
      * @return created topic with title and url
      */
     @PostMapping("/{channelId}/topic")
-    public TopicDto createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest) {
-        return topicService.createNewTopic(channelId, topicCreateRequest);
+    public ResponseEntity<TopicDto> createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest, Authentication auth) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email,channelId);
+        if (! "owner".equals(role) && ! "manager".equals(role)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        TopicDto newTopicDto = topicService.createNewTopic(channelId, topicCreateRequest);
+        return ResponseEntity.ok(newTopicDto);
     }
 
     /**
