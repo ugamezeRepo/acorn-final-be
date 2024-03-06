@@ -48,10 +48,4 @@ public class PersonalTopicService {
         return personalTopicMapper.deleteById(personalTopicId) > 0;
     }
 
-//    public boolean updatePersonalTopic(int memberId, int personalTopicId, PersonalTopicDto personalTopicUpdateRequest) {
-//        var personalTopicEntity = personalTopicUpdateRequest.toEntity(memberId);
-//        personalTopicEntity.setId(personalTopicId);
-//
-//        return personalTopicMapper.update(personalTopicEntity) > 0;
-//    }
 }

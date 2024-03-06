@@ -147,20 +147,15 @@ public class ChannelController {
     /**
      * remove topic
      *
-     * @param channelId          id of the channel that references topic
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
-    public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
-        var email = auth.getName();
-        var role = memberService.getMemberChannelRole(email, channelId);
-        if (! "owner".equals(role) && ! "manager".equals(role)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    public ResponseEntity<Void> removeTopic(
+            @PathVariable int topicId) {
         if (!topicService.removeTopic(topicId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok().build();
     }
 
     /**
