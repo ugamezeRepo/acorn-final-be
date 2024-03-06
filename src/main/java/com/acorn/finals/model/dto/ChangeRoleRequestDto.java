@@ -10,13 +10,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChannelMemberDto {
+public class ChangeRoleRequestDto {
     Integer id;
+    String ownerEmail;
     Integer channelId;
     Integer memberId;
-    String role;
+    String newRole;
 
     public ChannelMemberEntity toEntity() {
-        return new ChannelMemberEntity(id, channelId, memberId, role);
+        return new ChannelMemberEntity(id, channelId, memberId, newRole);
     }
 }

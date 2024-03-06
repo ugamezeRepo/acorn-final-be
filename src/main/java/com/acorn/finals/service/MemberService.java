@@ -25,6 +25,7 @@ public class MemberService {
     private final TokenService tokenService;
     private final ChannelMapper channelMapper;
 
+
     public MemberDto findMemberByEmail(String email) {
         var memberEntity = memberMapper.findOneByEmail(email);
         return memberEntity.toDto();
