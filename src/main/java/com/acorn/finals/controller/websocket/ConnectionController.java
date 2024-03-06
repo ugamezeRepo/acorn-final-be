@@ -24,16 +24,26 @@ import java.util.Map;
 public class ConnectionController {
     private static final Map<WebSocketSession, MemberDto> activeConnection = new HashMap<>();
     private final MemberService memberService;
+
     private final ObjectMapper objectMapper;
+    private final Map<String, Integer> currentConnectionAmount = new HashMap<>();
+    private String email;
 
     @WebSocketMapping("/ping")
     public void connect(@RequestBody MemberDto myInfo, WebSocketSession session, WebSocketSessionInfo sessionInfo) {
-        myInfo.setStatus("online");
-        memberService.updateStatus(myInfo);
-        activeConnection.put(session, myInfo);
-        var channelIds = memberService.findAllJoinedChannelIdByMember(myInfo);
+        email = myInfo.getEmail();
 
-        channelIds.forEach(id -> sessionInfo.sendAll(
+        if (!myInfo.getStatus().equals("offline")) {
+            int connectionAmount = currentConnectionAmount.get(myInfo.getEmail());
+            currentConnectionAmount.replace(myInfo.getEmail(), connectionAmount + 1);
+        } else {
+            currentConnectionAmount.put(myInfo.getEmail(), 1);
+            myInfo.setStatus("online");
+            memberService.updateStatus(myInfo);
+            activeConnection.put(session, myInfo);
+            var channelIds = memberService.findAllJoinedChannelIdByMember(myInfo);
+
+            channelIds.forEach(id -> sessionInfo.sendAll(
                 String.format("/connection/channel/%d/members", id),
                 memberService.findAllMemberByChannelId(id),
                 objectMapper)
@@ -45,16 +55,22 @@ public class ConnectionController {
         var userInfo = activeConnection.remove(session);
         if (userInfo == null) return;
 
+        if (currentConnectionAmount.get(email) - 1 > 0) {
+            int connectionAmount = currentConnectionAmount.get(email);
+            currentConnectionAmount.replace(email, connectionAmount - 1);
+        } else {
+            currentConnectionAmount.remove(email);
 
-        userInfo.setStatus("offline");
-        memberService.updateStatus(userInfo);
+            userInfo.setStatus("offline");
+            memberService.updateStatus(userInfo);
 
-        var channelIds = memberService.findAllJoinedChannelIdByMember(userInfo);
-        channelIds.forEach(id -> sessionInfo.sendAll(
+            var channelIds = memberService.findAllJoinedChannelIdByMember(userInfo);
+            channelIds.forEach(id -> sessionInfo.sendAll(
                 String.format("/connection/channel/%d/members", id),
                 memberService.findAllMemberByChannelId(id),
                 objectMapper)
         );
+
     }
 
     @WebSocketOnConnect("/channel/{channelId}/members")
