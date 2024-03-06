@@ -114,12 +114,12 @@ public class MemberController {
      * @return if RefreshToken delete and changeStatus return true nor false
      */
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity) {
+    public ResponseEntity<Boolean> logout(Authentication auth) {
         Cookie refreshTokenCookie = new Cookie("RefreshToken", "");
         refreshTokenCookie.setMaxAge(0);
         refreshTokenCookie.setHttpOnly(true);
 
-        boolean logoutResult = memberService.TokenDeleteAndChangeStatus(entity.getEmail());
+        boolean logoutResult = memberService.TokenDeleteAndChangeStatus(auth.getName());
 
 
         return ResponseEntity.ok()
