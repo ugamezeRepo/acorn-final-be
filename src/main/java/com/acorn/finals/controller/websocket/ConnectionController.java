@@ -33,11 +33,11 @@ public class ConnectionController {
     public void connect(@RequestBody MemberDto myInfo, WebSocketSession session, WebSocketSessionInfo sessionInfo) {
         email = myInfo.getEmail();
 
-        if (!myInfo.getStatus().equals("offline")) {
-            int connectionAmount = currentConnectionAmount.get(myInfo.getEmail());
-            currentConnectionAmount.replace(myInfo.getEmail(), connectionAmount + 1);
-        } else {
-            currentConnectionAmount.put(myInfo.getEmail(), 1);
+//        if (!myInfo.getStatus().equals("offline")) {
+//            int connectionAmount = currentConnectionAmount.get(myInfo.getEmail());
+//            currentConnectionAmount.replace(myInfo.getEmail(), connectionAmount + 1);
+//        } else {
+//            currentConnectionAmount.put(myInfo.getEmail(), 1);
             myInfo.setStatus("online");
             memberService.updateStatus(myInfo);
             activeConnection.put(session, myInfo);
@@ -48,7 +48,7 @@ public class ConnectionController {
                 memberService.findAllMemberByChannelId(id),
                 objectMapper)
             );
-        }
+//        }
     }
 
     @WebSocketOnClose("/ping")
@@ -56,11 +56,11 @@ public class ConnectionController {
         var userInfo = activeConnection.remove(session);
         if (userInfo == null) return;
 
-        if (currentConnectionAmount.get(email) - 1 > 0) {
-            int connectionAmount = currentConnectionAmount.get(email);
-            currentConnectionAmount.replace(email, connectionAmount - 1);
-        } else {
-            currentConnectionAmount.remove(email);
+//        if (currentConnectionAmount.get(email) - 1 > 0) {
+//            int connectionAmount = currentConnectionAmount.get(email);
+//            currentConnectionAmount.replace(email, connectionAmount - 1);
+//        } else {
+//            currentConnectionAmount.remove(email);
 
             userInfo.setStatus("offline");
             memberService.updateStatus(userInfo);
@@ -71,7 +71,7 @@ public class ConnectionController {
                 memberService.findAllMemberByChannelId(id),
                 objectMapper)
             );
-        }
+//        }
     }
 
     @WebSocketOnConnect("/channel/{channelId}/members")

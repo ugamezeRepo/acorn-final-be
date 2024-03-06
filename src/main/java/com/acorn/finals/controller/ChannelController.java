@@ -4,6 +4,7 @@ import com.acorn.finals.model.dto.*;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.PersonalTopicService;
 import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class ChannelController {
     private final TopicService topicService;
     private final MessageService messageService;
     private final MemberService memberService;
+    private final PersonalTopicService personalTopicService;
 
     /**
      * find list all channels
@@ -147,7 +149,6 @@ public class ChannelController {
         return topicService.createNewTopic(channelId, topicCreateRequest);
     }
 
-
     /**
      * remove topic
      * @param channelId id of channel that refrences topic
@@ -202,4 +203,82 @@ public class ChannelController {
     public List<MessageDto> listAllMessages(@PathVariable int channelId, @PathVariable int topicId) {
         return messageService.findAllByChannelIdAndTopicId(channelId, topicId);
     }
+
+    /**
+     * delete message
+     *
+     * @param channelId id of the channel that references topic
+     * @param topicId   id of the topic that references message
+     * @param messageId id of the message that will be deleted
+     * @return HTTP STATUS 200 on success
+     */
+    @DeleteMapping("/{channelId}/topic/{topicId}/message/{messageId}")
+    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId) {
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * update message
+     *
+     * @param channelId            id of the channel that references topic
+     * @param topicId              id of the channel that references message
+     * @param messageId            id of the message will be updated
+     * @param updateMessageRequest update message request with new content
+     * @return updated message
+     */
+    @PatchMapping("/{channelId}/topic/{topicId}/message/{messageId}")
+    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId, MessageDto updateMessageRequest) {
+        return updateMessageRequest;
+    }
+
+    /**
+     * list all personal topics of member
+     *
+     * @return list of topics of channel
+     */
+    @GetMapping("/@me")
+    public List<PersonalTopicDto> listTopicsByMemberId(Authentication auth) {
+        return personalTopicService.findAllByMemberId(auth);
+    }
+
+    /**
+     * list all personal topics of member
+     *
+     * @return list of topics of channel
+     */
+    @GetMapping("/@me/{personalTopicId}")
+    public PersonalTopicDto personalTopicDtoByPersonalTopicId(@PathVariable int personalTopicId) {
+        return personalTopicService.findOneByPersonalTopicId(personalTopicId);
+    }
+
+    /**
+     * create new personal topic
+     *
+     * @param personalTopicCreateRequest topic create request with member1's id, and member2's id
+     * @return created topic
+     */
+    @PostMapping("/@me")
+    public PersonalTopicDto createNewPersonalTopic(@RequestBody PersonalTopicDto personalTopicCreateRequest, Authentication auth) {
+        return personalTopicService.createNewTopic(personalTopicCreateRequest, auth);
+    }
+
+    /**
+     * remove topic
+     *
+     * @return HTTP STATUS 200 on success
+     */
+    @DeleteMapping("/@me/{topicId}")
+    public ResponseEntity<Void> removePersonalTopic() {
+//        var memberId = memberService.findMemberByEmail(auth.getName()).getId();
+//        var role = memberService.getMemberChannelRole(auth.getName(), channelId);
+//        if (! "owner".equals(role) && ! "manager".equals(role)) {
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        }
+//        if (!topicService.removeTopic(topicId)) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
+
+        return ResponseEntity.ok(null);
+    }
+
 }
