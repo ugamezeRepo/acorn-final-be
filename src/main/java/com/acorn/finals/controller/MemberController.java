@@ -116,17 +116,14 @@ public class MemberController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity) {
-        //Cookg 값 지우기
+        //Cookie 값 지우기
         ResponseCookie refreshTokenCookie =
                 ResponseCookie.from("RefreshToken","")
                         .maxAge(0)
                         .httpOnly(true)
                         .path("/")
                         .build();
-
-        boolean logoutResult = memberService.TokenDeleteAndChangeStatus(entity.getEmail());
-
-
+        boolean logoutResult = memberService.TokenDeleteAndChangeStatus(auth.getName());
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(logoutResult);

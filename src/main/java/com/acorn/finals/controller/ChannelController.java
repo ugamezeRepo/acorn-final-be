@@ -4,6 +4,7 @@ import com.acorn.finals.model.dto.*;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.PersonalTopicService;
 import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,7 @@ public class ChannelController {
     private final TopicService topicService;
     private final MessageService messageService;
     private final MemberService memberService;
+    private final PersonalTopicService personalTopicService;
 
 
     /**
@@ -103,7 +105,12 @@ public class ChannelController {
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}")
-    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId) {
+    public ResponseEntity<Void> deleteChannel(@PathVariable int channelId, Authentication auth) {
+        var email = auth.getName();
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (!"owner".equals(role)) {
+            return ResponseEntity.badRequest().build();
+        }
         if (!channelService.deleteChannel(channelId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
@@ -151,13 +158,12 @@ public class ChannelController {
         return ResponseEntity.ok(newTopicDto);
     }
 
-
     /**
      * remove topic
-     *
-     * @param channelId          id of the channel that references topic
-     * @param topicDeleteRequest topic delete request with url
-     * @return HTTP STATUS 200 on success
+     * @param channelId id of channel that refrences topic
+     * @param topicId id of topic
+     * @param auth
+     * @return
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
     public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
@@ -166,10 +172,10 @@ public class ChannelController {
         if (! "owner".equals(role) && ! "manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        if (!topicService.removeTopic(topicId)) {
+        if (!topicService.removeTopic(channelId, topicId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -232,6 +238,53 @@ public class ChannelController {
     @PatchMapping("/{channelId}/topic/{topicId}/message/{messageId}")
     public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId, MessageDto updateMessageRequest) {
         return updateMessageRequest;
+    }
+
+    /**
+     * list all personal topics of member
+     *
+     * @return list of topics of channel
+     */
+    @GetMapping("/@me")
+    public List<PersonalTopicDto> listTopicsByMemberId(Authentication auth) {
+        return personalTopicService.findAllByMemberId(auth);
+    }
+
+    /**
+     * find a personal topic by personalTopicId
+     *
+     * @param personalTopicId id of the personal topic
+     * @return topic of channel
+     */
+    @GetMapping("/@me/{personalTopicId}")
+    public PersonalTopicDto personalTopicDtoByPersonalTopicId(@PathVariable int personalTopicId) {
+        return personalTopicService.findOneByPersonalTopicId(personalTopicId);
+    }
+
+    /**
+     * create new personal topic
+     *
+     * @param personalTopicCreateRequest topic create request with member1's id, and member2's id
+     * @return created topic
+     */
+    @PostMapping("/@me")
+    public PersonalTopicDto createNewPersonalTopic(@RequestBody PersonalTopicDto personalTopicCreateRequest, Authentication auth) {
+        return personalTopicService.createNewTopic(personalTopicCreateRequest, auth);
+    }
+
+    /**
+     * remove personal topic
+     *
+     * @param personalTopicId id of the personal topic
+     * @return HTTP STATUS 200 on success
+     */
+    @DeleteMapping("/@me/{personalTopicId}")
+    public ResponseEntity<Void> removePersonalTopic(@PathVariable int personalTopicId) {
+        if (!personalTopicService.removePersonalTopic(personalTopicId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok(null);
     }
 
 }
