@@ -10,6 +10,7 @@ import java.util.List;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -115,9 +116,12 @@ public class MemberController {
      */
     @PostMapping("/logout")
     public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity) {
-        Cookie refreshTokenCookie = new Cookie("RefreshToken", "");
-        refreshTokenCookie.setMaxAge(0);
-        refreshTokenCookie.setHttpOnly(true);
+        ResponseCookie refreshTokenCookie =
+                ResponseCookie.from("RefreshToken","")
+                        .maxAge(0)
+                        .httpOnly(true)
+                        .path("/")
+                        .build();
 
         boolean logoutResult = memberService.TokenDeleteAndChangeStatus(entity.getEmail());
 
