@@ -47,7 +47,8 @@ public class ConnectionController {
                 String.format("/connection/channel/%d/members", id),
                 memberService.findAllMemberByChannelId(id),
                 objectMapper)
-        );
+            );
+        }
     }
 
     @WebSocketOnClose("/ping")
@@ -69,8 +70,8 @@ public class ConnectionController {
                 String.format("/connection/channel/%d/members", id),
                 memberService.findAllMemberByChannelId(id),
                 objectMapper)
-        );
-
+            );
+        }
     }
 
     @WebSocketOnConnect("/channel/{channelId}/members")
