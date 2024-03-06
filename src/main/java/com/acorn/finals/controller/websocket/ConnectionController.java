@@ -7,6 +7,7 @@ import com.acorn.finals.annotation.WebSocketOnConnect;
 import com.acorn.finals.model.WebSocketSessionInfo;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.service.MemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class ConnectionController {
     private static final Map<WebSocketSession, MemberDto> activeConnection = new HashMap<>();
     private final MemberService memberService;
+    private final ObjectMapper objectMapper;
 
     @WebSocketMapping("/ping")
     public void connect(@RequestBody MemberDto myInfo, WebSocketSession session, WebSocketSessionInfo sessionInfo) {
@@ -33,7 +35,8 @@ public class ConnectionController {
 
         channelIds.forEach(id -> sessionInfo.sendAll(
                 String.format("/connection/channel/%d/members", id),
-                memberService.findAllMemberByChannelId(id))
+                memberService.findAllMemberByChannelId(id),
+                objectMapper)
         );
     }
 
@@ -49,7 +52,8 @@ public class ConnectionController {
         var channelIds = memberService.findAllJoinedChannelIdByMember(userInfo);
         channelIds.forEach(id -> sessionInfo.sendAll(
                 String.format("/connection/channel/%d/members", id),
-                memberService.findAllMemberByChannelId(id))
+                memberService.findAllMemberByChannelId(id),
+                objectMapper)
         );
     }
 

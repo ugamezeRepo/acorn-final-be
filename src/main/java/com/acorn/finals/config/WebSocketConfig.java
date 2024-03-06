@@ -37,6 +37,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
     private static ApplicationContext context;
     private final CorsPropertiesConfig corsConfig;
     private final ServletContext servletContext;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -150,7 +151,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
             var sessionSet = sessionInfo.computeIfAbsent(requestPath, uri -> new HashSet<>());
             sessionSet.add(session);
 
-            ObjectMapper mapper = new ObjectMapper();
             mappingLoop:
             for (int i = 0; i < mappingInfo.onConnect.size(); i++) {
                 var methodInfo = mappingInfo.onConnect.get(i);
@@ -179,7 +179,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                             if (parameter.getType().equals(String.class)) {
                                 pathValue = "\"" + pathValue + "\"";
                             }
-                            var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                            var serializedPathValue = objectMapper.readValue(pathValue, parameter.getType());
                             params.add(serializedPathValue);
                         } catch (Exception e) {
                             log.error(e.getMessage());
@@ -197,7 +197,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                 if (returnType.isInstance(invokeResult)) {
                     try {
                         var castedInvokeResult = returnType.cast(invokeResult);
-                        sessionInfo.sendAll(requestPath, castedInvokeResult);
+                        sessionInfo.sendAll(requestPath, castedInvokeResult, objectMapper);
                     } catch (Exception e) {
                         log.error(e.getMessage());
                     }
@@ -208,7 +208,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
         @Override
         protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
             var requestPath = PathUtils.convertUriToPathExceptForContextPath(session.getUri(), servletContext);
-            ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
             String payload = message.getPayload();
 
             mappingLoop:
@@ -228,7 +227,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                     if (parameter.isAnnotationPresent(RequestBody.class)) {
                         // handle request dto from text message
                         try {
-                            var serialized = mapper.readValue(payload, parameter.getType());
+                            var serialized = objectMapper.readValue(payload, parameter.getType());
                             params.add(serialized);
                         } catch (Exception e) {
                             log.error(e.getMessage());
@@ -245,7 +244,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                             if (parameter.getType().equals(String.class)) {
                                 pathValue = "\"" + pathValue + "\"";
                             }
-                            var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                            var serializedPathValue = objectMapper.readValue(pathValue, parameter.getType());
                             params.add(serializedPathValue);
                         } catch (Exception e) {
                             log.error(e.getMessage());
@@ -268,7 +267,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                 if (returnType.isInstance(invokeResult)) {
                     try {
                         var castedInvokeResult = returnType.cast(invokeResult);
-                        sessionInfo.sendAll(requestPath, castedInvokeResult);
+                        sessionInfo.sendAll(requestPath, castedInvokeResult, objectMapper);
                     } catch (Exception e) {
                         log.error(e.getMessage());
                     }
@@ -282,7 +281,6 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
             var sessionSet = sessionInfo.computeIfAbsent(requestPath, uri -> new HashSet<>());
             sessionSet.remove(session);
 
-            ObjectMapper mapper = new ObjectMapper();
             mappingLoop:
             for (int i = 0; i < mappingInfo.onClose.size(); i++) {
                 var methodInfo = mappingInfo.onClose.get(i);
@@ -311,7 +309,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                             if (parameter.getType().equals(String.class)) {
                                 pathValue = "\"" + pathValue + "\"";
                             }
-                            var serializedPathValue = mapper.readValue(pathValue, parameter.getType());
+                            var serializedPathValue = objectMapper.readValue(pathValue, parameter.getType());
                             params.add(serializedPathValue);
                         } catch (Exception e) {
                             log.error(e.getMessage());
@@ -329,7 +327,7 @@ public class WebSocketConfig implements WebSocketConfigurer, ApplicationContextA
                 if (returnType.isInstance(invokeResult)) {
                     try {
                         var castedInvokeResult = returnType.cast(invokeResult);
-                        sessionInfo.sendAll(requestPath, castedInvokeResult);
+                        sessionInfo.sendAll(requestPath, castedInvokeResult, objectMapper);
                     } catch (Exception e) {
                         log.error(e.getMessage());
                     }
