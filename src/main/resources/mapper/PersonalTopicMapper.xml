@@ -10,9 +10,9 @@
         where id = #{id}
     </select>
 
-    <select id="findAllByMember1Id" resultType="personalTopicEntity" parameterType="int">
+    <select id="findAllByMemberId" resultType="personalTopicEntity" parameterType="int">
         select * from personal_topic
-        where (member1_id = #{member1Id}
+        where member1_id = #{member1Id}
     </select>
 
     <select id="findOneByMember1IdAndMember2Id" resultType="personalTopicEntity" parameterType="int">
@@ -26,7 +26,7 @@
             select personal_topic_seq.nextval from dual
         </selectKey>
         insert into personal_topic (id, member1_id, member2_id)
-        values (#{id}, #{member1Id}, #{member2Id})
+        values #{id}, #{member1Id}, #{member2Id}
     </insert>
 
     <update id="update" parameterType="personalTopicEntity">

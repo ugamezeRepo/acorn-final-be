@@ -11,7 +11,7 @@ public interface PersonalTopicMapper {
 
     PersonalTopicEntity findOneById(int id);
 
-    List<PersonalTopicEntity> findAllByMember1Id();
+    List<PersonalTopicEntity> findAllByMemberId(int member1Id);
 
     List<PersonalTopicEntity> findOneByMember1IdAndMember2Id();
 

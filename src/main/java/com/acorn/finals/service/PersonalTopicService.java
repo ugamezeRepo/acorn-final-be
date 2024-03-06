@@ -18,13 +18,20 @@ public class PersonalTopicService {
     private final PersonalTopicMapper personalTopicMapper;
     private final MemberMapper memberMapper;
 
-//    public List<PersonalTopicDto> findAllByMemberId(int memberId) {
-//        var entities = personalTopicMapper.findOneByMember1IdAndMember2Id();
-//
-//        return entities.stream()
-//                .map(PersonalTopicEntity::toDto)
-//                .collect(Collectors.toList());
-//    }
+    public List<PersonalTopicDto> findAllByMemberId(Authentication auth) {
+        int member1Id = memberMapper.findOneByEmail(auth.getName()).getId();
+        var entities = personalTopicMapper.findAllByMemberId(member1Id);
+
+        return entities.stream()
+            .map(PersonalTopicEntity::toDto)
+            .collect(Collectors.toList());
+    }
+
+    public PersonalTopicDto findOneByPersonalTopicId(int personalTopicId) {
+        var entities = personalTopicMapper.findOneById(personalTopicId);
+
+        return entities.toDto();
+    }
 
     @Transactional
     public PersonalTopicDto createNewTopic(PersonalTopicDto personalTopicCreateRequest, Authentication auth) {

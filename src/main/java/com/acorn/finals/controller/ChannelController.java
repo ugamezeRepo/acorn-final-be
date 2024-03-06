@@ -226,24 +226,43 @@ public class ChannelController {
     }
 
     /**
+     * list all personal topics of member
+     *
+     * @return list of topics of channel
+     */
+    @GetMapping("/@me")
+    public List<PersonalTopicDto> listTopicsByMemberId(Authentication auth) {
+        return personalTopicService.findAllByMemberId(auth);
+    }
+
+    /**
+     * list all personal topics of member
+     *
+     * @return list of topics of channel
+     */
+    @GetMapping("/@me/{personalTopicId}")
+    public PersonalTopicDto personalTopicDtoByPersonalTopicId(@PathVariable int personalTopicId) {
+        return personalTopicService.findOneByPersonalTopicId(personalTopicId);
+    }
+
+    /**
      * create new personal topic
      *
-     * @param topicCreateRequest topic create request with member1's id, and member2's id
+     * @param personalTopicCreateRequest topic create request with member1's id, and member2's id
      * @return created topic
      */
     @PostMapping("/@me")
-    public PersonalTopicDto createNewPersonalTopic(@RequestBody PersonalTopicDto topicCreateRequest, Authentication auth) {
-        return personalTopicService.createNewTopic(topicCreateRequest, auth);
+    public PersonalTopicDto createNewPersonalTopic(@RequestBody PersonalTopicDto personalTopicCreateRequest, Authentication auth) {
+        return personalTopicService.createNewTopic(personalTopicCreateRequest, auth);
     }
 
     /**
      * remove topic
      *
-     * @param topicId          id of the channel that references topic
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/@me/{topicId}")
-    public ResponseEntity<Void> removePersonalTopic(@PathVariable int topicId, Authentication auth ) {
+    public ResponseEntity<Void> removePersonalTopic() {
 //        var memberId = memberService.findMemberByEmail(auth.getName()).getId();
 //        var role = memberService.getMemberChannelRole(auth.getName(), channelId);
 //        if (! "owner".equals(role) && ! "manager".equals(role)) {
