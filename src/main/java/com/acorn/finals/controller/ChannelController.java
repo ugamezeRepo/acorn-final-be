@@ -1,11 +1,7 @@
 package com.acorn.finals.controller;
 
 import com.acorn.finals.model.dto.*;
-import com.acorn.finals.service.ChannelService;
-import com.acorn.finals.service.MemberService;
-import com.acorn.finals.service.MessageService;
-import com.acorn.finals.service.PersonalTopicService;
-import com.acorn.finals.service.TopicService;
+import com.acorn.finals.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -150,26 +146,27 @@ public class ChannelController {
     @PostMapping("/{channelId}/topic")
     public ResponseEntity<TopicDto> createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest, Authentication auth) {
         var email = auth.getName();
-        var role = memberService.getMemberChannelRole(email,channelId);
-        if (! "owner".equals(role) && ! "manager".equals(role)) {
+        var role = memberService.getMemberChannelRole(email, channelId);
+        if (!"owner".equals(role) && !"manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         TopicDto newTopicDto = topicService.createNewTopic(channelId, topicCreateRequest);
-        return ResponseEntity.ok(newTopicDto);
+        return ResponseEntity.ok().body(newTopicDto);
     }
 
     /**
      * remove topic
+     *
      * @param channelId id of channel that refrences topic
-     * @param topicId id of topic
+     * @param topicId   id of topic
      * @param auth
      * @return
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
-    public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth ) {
+    public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth) {
         var email = auth.getName();
         var role = memberService.getMemberChannelRole(email, channelId);
-        if (! "owner".equals(role) && ! "manager".equals(role)) {
+        if (!"owner".equals(role) && !"manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if (!topicService.removeTopic(channelId, topicId)) {
