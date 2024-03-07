@@ -17,7 +17,7 @@
             or (member1_id = #{member2Id} nad member2_id = #{member1Id})
     </select>
 
-    <insert id="insert" parameterType="personalTopicEntity"  useGeneratedKeys="true" keyColumn="id">
+    <insert id="insert" parameterType="personalTopicEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select personal_topic_seq.nextval from dual
         </selectKey>
