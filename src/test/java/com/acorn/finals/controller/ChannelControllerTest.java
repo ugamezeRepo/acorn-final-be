@@ -6,6 +6,7 @@ import com.acorn.finals.model.entity.TopicEntity;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.PersonalTopicService;
 import com.acorn.finals.service.TopicService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +38,8 @@ class ChannelControllerTest {
     @MockBean
     ChannelService channelService;
     @MockBean
+    PersonalTopicService personalTopicService;
+    @MockBean
     TopicMapper topicMapper;
 
 //    @Test
@@ -56,7 +59,7 @@ class ChannelControllerTest {
         when(topicMapper.insert(any())).thenReturn(1);
 
         // Creating instance of controller
-        ChannelController controller = new ChannelController(channelService, topicService, messageService,memberService);
+        ChannelController controller = new ChannelController(channelService, topicService, messageService,memberService, personalTopicService);
         TopicEntity topicEntity = new TopicEntity();
         topicEntity.setId(1);
         // Performing test
@@ -82,7 +85,7 @@ class ChannelControllerTest {
         when(memberService.getMemberChannelRole(anyString(), anyInt())).thenReturn("user");
 
         // Creating instance of controller
-        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService);
+        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService, personalTopicService);
 
         // Performing test
         ResponseEntity<TopicDto> response = controller.createNewTopic(123, new TopicDto(), auth);
