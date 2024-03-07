@@ -22,7 +22,7 @@
             select personal_topic_seq.nextval from dual
         </selectKey>
         insert into personal_topic (id, member1_id, member2_id)
-        values #{id}, #{member1Id}, #{member2Id}
+        values (#{id}, #{member1Id}, #{member2Id})
     </insert>
 
     <delete id="deleteById" parameterType="int">
