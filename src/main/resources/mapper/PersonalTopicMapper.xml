@@ -17,12 +17,12 @@
             or (member1_id = #{member2Id} nad member2_id = #{member1Id})
     </select>
 
-    <insert id="insert" parameterType="personalTopicEntity">
+    <insert id="insert" parameterType="personalTopicEntity"  useGeneratedKeys="true" keyColumn="id">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select personal_topic_seq.nextval from dual
         </selectKey>
         insert into personal_topic (id, member1_id, member2_id)
-        values #{id}, #{member1Id}, #{member2Id}
+        values (#{id}, #{member1Id}, #{member2Id})
     </insert>
 
     <delete id="deleteById" parameterType="int">
