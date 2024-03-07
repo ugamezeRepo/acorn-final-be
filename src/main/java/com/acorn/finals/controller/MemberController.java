@@ -116,7 +116,7 @@ public class MemberController {
      * @return if RefreshToken delete and changeStatus return true nor false
      */
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout(@RequestBody RefreshTokenEntity entity, Authentication auth) {
+    public ResponseEntity<Boolean> logout(Authentication auth) {
         //Cookie 값 지우기
         ResponseCookie refreshTokenCookie =
                 ResponseCookie.from("RefreshToken","")
