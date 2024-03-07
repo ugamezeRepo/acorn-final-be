@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberDto {
+    Integer id;
     String email;
     String nickname;
     Integer hashtag;
