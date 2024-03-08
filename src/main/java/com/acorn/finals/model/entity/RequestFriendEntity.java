@@ -15,7 +15,7 @@ public class RequestFriendEntity {
     private int fromId;
     private int toId;
 
-    public RequestFriendDto toDto(RequestFriendEntity entity) {
-        return new RequestFriendDto(entity.getFromId(), entity.getToId());
+    public RequestFriendDto toDto() {
+        return new RequestFriendDto(fromId, toId);
     }
 }

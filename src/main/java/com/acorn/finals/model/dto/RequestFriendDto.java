@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RequestFriendDto {
-    int FromId;
-    int ToId;
+    int fromId;
+    int toId;
 
-    public RequestFriendEntity toEntity(RequestFriendDto dto) {
-        return new RequestFriendEntity(null, dto.FromId, dto.ToId);
+    public RequestFriendEntity toEntity() {
+        return new RequestFriendEntity(null, fromId, toId);
     }
 }
