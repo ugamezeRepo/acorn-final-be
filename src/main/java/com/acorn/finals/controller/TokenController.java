@@ -19,6 +19,11 @@ public class TokenController {
     private final TokenService tokenService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
 
+    /**
+     * 새로운 access token 을 발급합니다
+     * @param refreshToken
+     * @return
+     */
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshAccessToken(@CookieValue("RefreshToken") String refreshToken) {
         String accessToken = tokenService.createAccessTokenFromRefreshToken(refreshToken);

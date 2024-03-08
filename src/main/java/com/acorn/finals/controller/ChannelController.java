@@ -27,7 +27,7 @@ public class ChannelController {
 
 
     /**
-     * find list all channels
+     * 모든 채널의 정보를 가져옵니다
      *
      * @return list of the channels
      */
@@ -37,6 +37,8 @@ public class ChannelController {
     }
 
     /**
+     * 채널 초대 코드에 해당하는 채널의 정보를 가져옵니다
+     *
      * @param inviteCode
      * @return ChannelDto return
      */
@@ -46,7 +48,7 @@ public class ChannelController {
     }
 
     /**
-     * find a channel by id
+     * 채널 id 를 통해 채널의 정보를 가져옵니다
      *
      * @param channelId id of the channel
      * @return found channel
@@ -57,7 +59,7 @@ public class ChannelController {
     }
 
     /**
-     * create a new channel
+     * 새로운 채널을 생성합니다
      *
      * @param channelCreateRequest channel create request with channel name
      * @return created channel
@@ -68,6 +70,7 @@ public class ChannelController {
     }
 
     /**
+     * 채널에 들어갑니다
      * @param code(inviteCode)
      * @return ResponserEntity<ChannelDto>
      */
@@ -80,6 +83,13 @@ public class ChannelController {
         return ResponseEntity.ok(channelInfo);
     }
 
+    /**
+     * 채널에서의 권한을 변경합니다. 단 채널 관리 권한이 존재해야합니다.
+     * @param dto
+     * @param authentication
+     * @param channelId
+     * @return
+     */
     @PatchMapping("{channelId}/role")
     public boolean changeRole(@RequestBody ChangeRoleRequestDto dto, Authentication authentication, @PathVariable("channelId") int channelId) {
         dto.setOwnerEmail(authentication.getName());
@@ -88,19 +98,19 @@ public class ChannelController {
     }
 
     /**
-     * update channel
+     * 채널의 정보를 수정합니다. 단 채널 관리 권한이 존재해야합니다
      *
      * @param channelUpdateRequest channel update request with new channel name, or thumbnail url
      * @return updated channel
      */
     @PatchMapping("/{channelId}")
     public ResponseEntity<ChannelDto> updateChannel(@PathVariable int channelId, @RequestBody ChannelDto channelUpdateRequest) {
+        // TODO: 권한 검증
         return ResponseEntity.ok(channelService.updateChannel(channelId, channelUpdateRequest));
     }
 
     /**
-     * delete channel
-     *
+     * 채널을 삭제합니다. 단 채널 관리 권한이 존재해야합니다
      * @param channelId id of the channel
      * @return HTTP STATUS 200 on success
      */
@@ -118,30 +128,32 @@ public class ChannelController {
     }
 
     /**
-     * list all members of channel
+     * 채널에 있는 모든 멤버 목록을 불러옵니다. 단 채널에 참여중이여야합니다
      *
      * @param channelId id of the channel
      * @return list of members of the channel
      */
     @GetMapping("/{channelId}/member")
     public List<MemberDto> listAllMembers(@PathVariable int channelId) {
+        // TODO: 채널 참여중 체크
         return channelService.listChannelMembers(channelId);
     }
 
 
     /**
-     * list all topics of channel
+     * 채널에 있는 모든 토픽 목록을 불러옵니다. 단 채널에 참여 중이여야합니다.
      *
      * @param channelId id of the channel
      * @return list of topics of channel
      */
     @GetMapping("/{channelId}/topic")
     public List<TopicDto> listAllTopics(@PathVariable int channelId) {
+        // TODO: 채널 참여중 체크 
         return topicService.findAllByChannelId(channelId);
     }
 
     /**
-     * create new topic
+     * 새로운 토픽을 생성합니다. 단 채널의 토픽 생성 권한이 있어야 합니다.
      *
      * @param channelId          id of the channel that references topic
      * @param topicCreateRequest topic create request with title
@@ -159,7 +171,7 @@ public class ChannelController {
     }
 
     /**
-     * remove topic
+     * 토픽을 삭제합니다. 단 채널의 토픽 삭제 권한이 있어야합니다
      * @param channelId id of channel that refrences topic
      * @param topicId id of topic
      * @param auth
@@ -179,7 +191,7 @@ public class ChannelController {
     }
 
     /**
-     * update topic
+     * 토픽 정보를 수정합니다. 단 채널의 토픽 수정 권한이 있어야 합니다.
      *
      * @param channelId          id of the channel that references topic
      * @param topicId            id of the topic that will be updated
@@ -202,7 +214,7 @@ public class ChannelController {
     }
 
     /**
-     * list all messages of the topic
+     * 채널의 토픽에 있는 모든 메시지들을  불러옵니다. 단 채널에 참여 중이여야 합니다.
      *
      * @param channelId id of the channel that references topic
      * @param topicId   id of the topic that references message
@@ -214,34 +226,7 @@ public class ChannelController {
     }
 
     /**
-     * delete message
-     *
-     * @param channelId id of the channel that references topic
-     * @param topicId   id of the topic that references message
-     * @param messageId id of the message that will be deleted
-     * @return HTTP STATUS 200 on success
-     */
-    @DeleteMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId) {
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * update message
-     *
-     * @param channelId            id of the channel that references topic
-     * @param topicId              id of the channel that references message
-     * @param messageId            id of the message will be updated
-     * @param updateMessageRequest update message request with new content
-     * @return updated message
-     */
-    @PatchMapping("/{channelId}/topic/{topicId}/message/{messageId}")
-    public MessageDto updateMessage(@PathVariable String channelId, @PathVariable String topicId, @PathVariable String messageId, MessageDto updateMessageRequest) {
-        return updateMessageRequest;
-    }
-
-    /**
-     * list all personal topics of member
+     * DM토픽 목록을 불러옵니다.
      *
      * @return list of topics of channel
      */
@@ -251,7 +236,7 @@ public class ChannelController {
     }
 
     /**
-     * find a personal topic by personalTopicId
+     * personal topic id 를 통해 DM토픽 정보를 불러옵니다.
      *
      * @param personalTopicId id of the personal topic
      * @return topic of channel
@@ -262,7 +247,7 @@ public class ChannelController {
     }
 
     /**
-     * create new personal topic
+     * 새로운 DM 을 만듭니다.
      *
      * @param personalTopicCreateRequest topic create request with member1's id, and member2's id
      * @return created topic
@@ -273,7 +258,7 @@ public class ChannelController {
     }
 
     /**
-     * remove personal topic
+     *  DM 을 삭제합니다.
      *
      * @param personalTopicId id of the personal topic
      * @return HTTP STATUS 200 on success

@@ -29,20 +29,8 @@ public class MemberController {
     private final MemberService memberService;
 
     // channel member mapper
-
     /**
-     * list all another user joined channel
-     *
-     * @param memberId id of the another member
-     * @return list of channel
-     */
-    @GetMapping("/{memberId}/channel")
-    public List<ChannelDto> listAllChannelOfAnotherMember(@PathVariable int memberId) {
-        return null;
-    }
-
-    /**
-     * query my information
+     * 내 정보를 받아옵니다
      *
      * @return
      */
@@ -53,7 +41,7 @@ public class MemberController {
     }
 
     /**
-     * list all channel
+     * 내가 참여중인 모든 채널의 정보를 받아옵니다
      *
      * @return list of channel
      */
@@ -63,20 +51,9 @@ public class MemberController {
         return memberService.listAllChannelsByEmail(auth.getName());
     }
 
-    /**
-     * list all friends of another user
-     *
-     * @param memberId
-     * @return list of friend
-     */
-    @GetMapping("/{memberId}/friend")
-    public List<MemberDto> listAllFriendsOfAnotherMember(@PathVariable int memberId) {
-        return null;
-    }
-
 
     /**
-     * update my info
+     * 내 정보를 수정합니다
      *
      * @param dto
      * @return
@@ -88,7 +65,7 @@ public class MemberController {
     }
 
     /**
-     * change nickname
+     * 닉네임을 변경합니다
      *
      * @param dto
      * @return
@@ -100,7 +77,7 @@ public class MemberController {
     }
 
     /**
-     * signup url
+     * 회원가입
      *
      * @param entity require nickname , hashtag
      * @return boolean
@@ -111,7 +88,7 @@ public class MemberController {
     }
 
     /**
-     * logout
+     * 로그아웃
      *
      * @return if RefreshToken delete and changeStatus return true nor false
      */
