@@ -3,15 +3,9 @@ package com.acorn.finals.controller;
 import com.acorn.finals.mapper.TopicMapper;
 import com.acorn.finals.model.dto.TopicDto;
 import com.acorn.finals.model.entity.TopicEntity;
-import com.acorn.finals.service.ChannelService;
-import com.acorn.finals.service.MemberService;
-import com.acorn.finals.service.MessageService;
-import com.acorn.finals.service.PersonalTopicService;
-import com.acorn.finals.service.TopicService;
-import org.assertj.core.api.Assertions;
+import com.acorn.finals.service.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,7 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -31,7 +25,7 @@ class ChannelControllerTest {
 
     @MockBean
     MemberService memberService;
-    @MockBean
+    @Autowired
     TopicService topicService;
     @MockBean
     MessageService messageService;
@@ -42,24 +36,26 @@ class ChannelControllerTest {
     @MockBean
     TopicMapper topicMapper;
 
-//    @Test
-//    @DisplayName("Mock Bean 테스트")
-//    void mockBeanHello() {
-//        Assertions.assertNull(mockBean.hello());
-//    }
+    @Test
+    @DisplayName("Mock Bean 테스트")
+    void mockBeanHello() {
+        assertThat(topicMapper).isNull();
+    }
+
     @Test
     void testCreateNewTopicWithValidRole() {
         // Mocking necessary dependencies
         // Mocking authentication object
         Authentication auth = new UsernamePasswordAuthenticationToken("test@example.com", null);
         int channelId = 1;
-        TopicDto topicCreateRequest = new TopicDto(channelId,"Test Topic");
+        TopicDto topicCreateRequest = new TopicDto(channelId, "Test Topic");
         // Setting up mock behavior
         when(memberService.getMemberChannelRole(anyString(), anyInt())).thenReturn("owner");
         when(topicMapper.insert(any())).thenReturn(1);
 
+
         // Creating instance of controller
-        ChannelController controller = new ChannelController(channelService, topicService, messageService,memberService, personalTopicService);
+        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService, personalTopicService);
         TopicEntity topicEntity = new TopicEntity();
         topicEntity.setId(1);
         // Performing test
