@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("token")
+@RequestMapping("/token")
 public class TokenController {
     private final TokenService tokenService;
     private final TokenPropertiesConfig tokenPropertiesConfig;
 
     /**
      * 새로운 access token 을 발급합니다
+     *
      * @param refreshToken
      * @return
      */

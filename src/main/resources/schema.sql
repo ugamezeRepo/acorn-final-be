@@ -67,11 +67,25 @@ create table attachment
 
 create table personal_topic
 (
-    id          number          primary key,
-    member1_id  number          not null,
-    member2_id  number          not null,
+    id         number primary key,
+    member1_id number not null,
+    member2_id number not null,
     constraint topic_member1_id_fk foreign key (member1_id) references member (id),
     constraint topic_member2_id_fk foreign key (member2_id) references member (id)
+);
+
+create table request_friend
+(
+    id      number primary key,
+    from_id number,
+    to_id   number
+);
+
+create table friend
+(
+    id        number primary key,
+    my_id     number,
+    friend_id number
 );
 
 create sequence member_seq start with 10000;
@@ -82,3 +96,4 @@ create sequence message_seq start with 10000;
 create sequence attachment_seq start with 10000;
 create sequence token_seq start with 10000;
 create sequence personal_topic_seq start with 10000;
+create sequence request_friend_seq start with 10000;

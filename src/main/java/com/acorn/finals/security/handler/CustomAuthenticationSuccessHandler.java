@@ -53,6 +53,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
             Cookie accessTokenCookie = new Cookie("Authorization", "Bearer+" + accessToken);
             accessTokenCookie.setMaxAge(tokenPropertiesConfig.getAccessToken().getExpiration());
+            accessTokenCookie.setHttpOnly(true);
             accessTokenCookie.setPath("/"); // 모든 경로에서 쿠키를 사용할수 있도록 설정
 
             Cookie refreshTokenCookie = new Cookie("RefreshToken", refreshToken);

@@ -41,5 +41,6 @@ public class ImageController {
         }
         return ResponseEntity.ok().body(uploadFile.getBytes());
     }
+    
 }
 
