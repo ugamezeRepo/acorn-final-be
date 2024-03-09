@@ -97,3 +97,4 @@ create sequence attachment_seq start with 10000;
 create sequence token_seq start with 10000;
 create sequence personal_topic_seq start with 10000;
 create sequence request_friend_seq start with 10000;
+create sequence friend_seq start with 10000;

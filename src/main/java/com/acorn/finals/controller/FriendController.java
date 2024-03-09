@@ -1,5 +1,6 @@
 package com.acorn.finals.controller;
 
+import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.RequestFriendDto;
 import com.acorn.finals.service.FriendService;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,13 @@ public class FriendController {
         Boolean result = friendService.friendListAnswerAndDelete(requestDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(result);
+    }
+
+    @GetMapping("{id}/list")
+    public ResponseEntity<List<MemberDto>> friendAllList(@PathVariable("id") int id) {
+        List<MemberDto> responseDto = friendService.friendList(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responseDto);
     }
 
 }
