@@ -19,8 +19,6 @@ public class ChannelController {
     private final TopicService topicService;
     private final MessageService messageService;
     private final MemberService memberService;
-    private final PersonalTopicService personalTopicService;
-
 
     /**
      * 모든 채널의 정보를 가져옵니다
@@ -220,52 +218,4 @@ public class ChannelController {
     public List<MessageDto> listAllMessages(@PathVariable int channelId, @PathVariable int topicId) {
         return messageService.findAllByChannelIdAndTopicId(channelId, topicId);
     }
-
-    /**
-     * DM토픽 목록을 불러옵니다.
-     *
-     * @return list of topics of channel
-     */
-    @GetMapping("/@me")
-    public List<PersonalTopicDto> listTopicsByMemberId(Authentication auth) {
-        return personalTopicService.findAllByMemberId(auth);
-    }
-
-    /**
-     * personal topic id 를 통해 DM토픽 정보를 불러옵니다.
-     *
-     * @param personalTopicId id of the personal topic
-     * @return topic of channel
-     */
-    @GetMapping("/@me/{personalTopicId}")
-    public PersonalTopicDto personalTopicDtoByPersonalTopicId(@PathVariable int personalTopicId) {
-        return personalTopicService.findOneByPersonalTopicId(personalTopicId);
-    }
-
-    /**
-     * 새로운 DM 을 만듭니다.
-     *
-     * @param personalTopicCreateRequest topic create request with member1's id, and member2's id
-     * @return created topic
-     */
-    @PostMapping("/@me")
-    public PersonalTopicDto createNewPersonalTopic(@RequestBody PersonalTopicDto personalTopicCreateRequest, Authentication auth) {
-        return personalTopicService.createNewTopic(personalTopicCreateRequest, auth);
-    }
-
-    /**
-     *  DM 을 삭제합니다.
-     *
-     * @param personalTopicId id of the personal topic
-     * @return HTTP STATUS 200 on success
-     */
-    @DeleteMapping("/@me/{personalTopicId}")
-    public ResponseEntity<Void> removePersonalTopic(@PathVariable int personalTopicId) {
-        if (!personalTopicService.removePersonalTopic(personalTopicId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
-        return ResponseEntity.ok(null);
-    }
-
 }

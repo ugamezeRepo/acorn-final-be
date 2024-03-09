@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.acorn.finals.mapper.DirectMessageMapper">
+    <select id="findAllActiveByMemberId" resultType="directMessageEntity" parameterType="int">
+        select * from direct_message
+        where member_id = #{memberId}
+    </select>
+
+    <select id="findOneById" resultType="directMessageEntity" parameterType="String">
+        select * from direct_message
+        where url = #{url}
+    </select>
+
+    <insert id="insert" parameterType="directMessageEntity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select direct_message_seq.nextval from dual
+        </selectKey>
+        insert into direct_message (id, member1_id, member2_id)
+        values (#{id}, #{member1Id}, #{member2Id})
+    </insert>
+
+    <delete id="deleteById" parameterType="int">
+        delete from direct_message
+        where id = #{id}
+    </delete>
+</mapper>
