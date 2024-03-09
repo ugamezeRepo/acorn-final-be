@@ -3,24 +3,15 @@ package com.acorn.finals.controller;
 import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.MemberEntity;
-import com.acorn.finals.model.entity.RefreshTokenEntity;
 import com.acorn.finals.service.MemberService;
-import java.util.List;
-
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/member")
@@ -96,7 +87,7 @@ public class MemberController {
     public ResponseEntity<Boolean> logout(Authentication auth) {
         //Cookie 값 지우기~
         ResponseCookie refreshTokenCookie =
-                ResponseCookie.from("RefreshToken","")
+                ResponseCookie.from("RefreshToken", "")
                         .maxAge(0)
                         .httpOnly(true)
                         .path("/")

@@ -1,11 +1,7 @@
 package com.acorn.finals.model.entity;
 
 import com.acorn.finals.model.dto.TopicDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 @EqualsAndHashCode(callSuper = false)
@@ -15,9 +11,9 @@ import org.apache.ibatis.type.Alias;
 @AllArgsConstructor
 @Alias("topicEntity")
 public class TopicEntity extends BaseEntity {
-    Integer id;
-    String title;
-    Integer channelId;
+    private Integer id;
+    private String title;
+    private Integer channelId;
 
     public TopicDto toDto() {
         return new TopicDto(id, title);
