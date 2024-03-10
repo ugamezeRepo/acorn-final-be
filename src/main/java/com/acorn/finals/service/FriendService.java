@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,11 +28,11 @@ public class FriendService {
         return entity.toDto();
     }
 
-    public List<RequestFriendDto> friendRequestList(RequestFriendDto dto) {
-        List<requestFriendEntity> list = friendMapper.friendRequestList(dto.getToId());
+    public List<MemberDto> friendRequestList(RequestFriendDto dto) {
+        List<MemberEntity> list = friendMapper.friendRequestList(dto.getToId());
 
         return list.stream()
-                .map(requestFriendEntity::toDto)
+                .map(MemberEntity::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +40,8 @@ public class FriendService {
     public boolean friendListAnswerAndDelete(RequestFriendDto dto) {
         requestFriendEntity entity = dto.toEntity();
         int deletedRow = friendMapper.deleteRequest(entity);
-        if (friendMapper.addFriend(entity) > 0) {
+        if (dto.getAnswer().equals("yes")) {
+            friendMapper.addFriend(entity);
             friendMapper.reverseAddFriend(entity);
         }
         return deletedRow > 0;
@@ -47,6 +49,13 @@ public class FriendService {
 
     public List<MemberDto> friendList(int myId) {
         List<MemberEntity> entity = friendMapper.friendAllList(myId);
+        return entity.stream()
+                .map(MemberEntity::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<MemberDto> findNewFriend(Map<String, Object> map) {
+        List<MemberEntity> entity = friendMapper.findNewFriendWithoutFriend(map);
         return entity.stream()
                 .map(MemberEntity::toDto)
                 .collect(Collectors.toList());

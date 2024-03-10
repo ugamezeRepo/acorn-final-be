@@ -9,9 +9,11 @@
         VALUES (#{id}, #{fromId},#{toId} )
     </insert>
 
-    <select id="friendRequestList" parameterType="int" resultType="requestFriendEntity">
-        select from request_friend
-        where to_id = #{toId}
+    <select id="friendRequestList" parameterType="int" resultType="memberEntity">
+        select * from member
+        where id
+        in (select to_id from request_friend
+        where to_id = #{toId})
     </select>
 
     <delete id="deleteRequest" parameterType="requestFriendEntity">
@@ -40,10 +42,23 @@
         values (#{id},#{toId}, #{fromId})
     </insert>
 
-    <select id="friendAllList" parameterType="int" resultType="memberentity">
+    <select id="friendAllList" parameterType="int" resultType="memberEntity">
         select m.id,m.nickname , m.hashtag , m.status
         from MEMBER m
         join friend f on m.id = f.friend_id
         where f.MY_ID = #{myId};
+    </select>
+
+    <select id="findNewFriendWithoutFriend" parameterType="map" resultType="memberEntity">
+        SELECT *
+        FROM member
+        WHERE nickname LIKE '%'{keyword}'%'
+        AND id NOT IN (
+        SELECT m.id
+        FROM member m
+        JOIN friend f ON m.id = f.friend_id
+        WHERE f.my_id = {my_id}
+        )
+        AND id != {my_id} ;
     </select>
 </mapper>

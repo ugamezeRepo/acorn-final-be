@@ -4,11 +4,12 @@ import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.model.entity.requestFriendEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FriendMapper {
     int friendRequestAdd(requestFriendEntity entity);
 
-    List<requestFriendEntity> friendRequestList(int toId);
+    List<MemberEntity> friendRequestList(int toId);
 
     int deleteRequest(requestFriendEntity entity);
 
@@ -20,4 +21,6 @@ public interface FriendMapper {
     int reverseAddFriend(requestFriendEntity entity);
 
     List<MemberEntity> friendAllList(int myId);
+
+    List<MemberEntity> findNewFriendWithoutFriend(Map<String, Object> map);
 }
