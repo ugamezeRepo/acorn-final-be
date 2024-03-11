@@ -1,6 +1,6 @@
 package com.acorn.finals.model.dto;
 
-import com.acorn.finals.model.entity.RequestFriendEntity;
+import com.acorn.finals.model.entity.requestFriendEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +11,9 @@ import lombok.NoArgsConstructor;
 public class RequestFriendDto {
     int fromId;
     int toId;
+    String answer;
 
-    public RequestFriendEntity toEntity() {
-        return new RequestFriendEntity(null, fromId, toId);
+    public requestFriendEntity toEntity() {
+        return new requestFriendEntity(null, fromId, toId);
     }
 }
