@@ -4,7 +4,7 @@ import com.acorn.finals.mapper.FriendMapper;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.RequestFriendDto;
 import com.acorn.finals.model.entity.MemberEntity;
-import com.acorn.finals.model.entity.requestFriendEntity;
+import com.acorn.finals.model.entity.RequestFriendEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,14 @@ public class FriendService {
     private final FriendMapper friendMapper;
 
     @Transactional
-    public RequestFriendDto addFriendRequest(requestFriendEntity entity) {
-
+    public boolean addFriendRequest(RequestFriendEntity entity) {
+        boolean isSuccess = false;
         if (friendMapper.isExistedRequest(entity) != null) {
-            return null;
+            return isSuccess;
         }
         friendMapper.friendRequestAdd(entity);
-        return entity.toDto();
+        isSuccess = true;
+        return isSuccess;
     }
 
     public List<MemberDto> friendRequestList(RequestFriendDto dto) {
@@ -38,7 +39,7 @@ public class FriendService {
 
     @Transactional
     public boolean friendListAnswerAndDelete(RequestFriendDto dto) {
-        requestFriendEntity entity = dto.toEntity();
+        RequestFriendEntity entity = dto.toEntity();
         int deletedRow = friendMapper.deleteRequest(entity);
         if (dto.getAnswer().equals("yes")) {
             friendMapper.addFriend(entity);

@@ -1,24 +1,24 @@
 package com.acorn.finals.mapper;
 
 import com.acorn.finals.model.entity.MemberEntity;
-import com.acorn.finals.model.entity.requestFriendEntity;
+import com.acorn.finals.model.entity.RequestFriendEntity;
 
 import java.util.List;
 import java.util.Map;
 
 public interface FriendMapper {
-    int friendRequestAdd(requestFriendEntity entity);
+    int friendRequestAdd(RequestFriendEntity entity);
 
     List<MemberEntity> friendRequestList(int toId);
 
-    int deleteRequest(requestFriendEntity entity);
+    int deleteRequest(RequestFriendEntity entity);
 
-    List<requestFriendEntity> isExistedRequest(requestFriendEntity entity);
+    List<RequestFriendEntity> isExistedRequest(RequestFriendEntity entity);
 
 
-    int addFriend(requestFriendEntity entity);
+    int addFriend(RequestFriendEntity entity);
 
-    int reverseAddFriend(requestFriendEntity entity);
+    int reverseAddFriend(RequestFriendEntity entity);
 
     List<MemberEntity> friendAllList(int myId);
 

@@ -10,7 +10,7 @@ import org.apache.ibatis.type.Alias;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class requestFriendEntity {
+public class RequestFriendEntity {
     private Integer id;
     private int fromId;
     private int toId;
