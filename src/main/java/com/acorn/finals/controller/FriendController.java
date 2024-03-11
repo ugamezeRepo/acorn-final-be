@@ -20,16 +20,17 @@ public class FriendController {
     private final FriendService friendService;
 
     /**
-     * @param requestDto dto f
+     * @param requestDto fromId , toId
+     * @return  작업이 완료되면 true 를 return 이미 중복된 요청이거나 요청중 오류발생시 fasle return
      */
     @PostMapping("/request")
-    public ResponseEntity<RequestFriendDto> requestFriend(@RequestBody RequestFriendDto requestDto) {
+    public ResponseEntity<Boolean> requestFriend(@RequestBody RequestFriendDto requestDto) {
 
-        RequestFriendDto responseDto = friendService.addFriendRequest(requestDto.toEntity());
+        Boolean isSuccess = friendService.addFriendRequest(requestDto.toEntity());
 
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(responseDto);
+                .body(isSuccess);
     }
 
     /**

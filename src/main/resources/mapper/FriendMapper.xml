@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.acorn.finals.mapper.FriendMapper">
-    <insert id="friendRequestAdd" parameterType="requestFriendEntity">
+    <insert id="friendRequestAdd" parameterType="RequestFriendEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select request_friend_seq.nextval from dual
         </selectKey>
@@ -16,12 +16,12 @@
         where to_id = #{toId})
     </select>
 
-    <delete id="deleteRequest" parameterType="requestFriendEntity">
+    <delete id="deleteRequest" parameterType="RequestFriendEntity">
         delete from request_friend
         WHERE from_id = #{fromId} and to_id = #{toId}
     </delete>
 
-    <select id="isExistedRequest" parameterType="requestFriendEntity" resultType="requestFriendEntity">
+    <select id="isExistedRequest" parameterType="RequestFriendEntity" resultType="RequestFriendEntity">
         select * from request_friend
         WHERE from_id = #{fromId} and to_id =#{toId}
     </select>
