@@ -12,6 +12,8 @@ public interface DirectMessageMapper {
 
     DirectMessageEntity findOneById(int id);
 
+    DirectMessageEntity findOneByMemberIdAndAnotherId(int memberId, int anotherId);
+
     int insert(DirectMessageEntity entity);
 
     int changeDirectMessageActivation(DirectMessageEntity entity);

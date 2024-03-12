@@ -11,6 +11,11 @@
         where id = #{id}
     </select>
 
+    <select id="findOneByMemberIdAndAnotherId" resultType="directMessageEntity">
+        select * from direct_message
+        where member_id = #{memberId} and another_id = #{anotherId}
+    </select>
+
     <insert id="insert" parameterType="directMessageEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select direct_message_seq.nextval from dual

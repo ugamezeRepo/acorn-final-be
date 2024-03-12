@@ -1,10 +1,10 @@
 package com.acorn.finals.controller;
 
 import ch.qos.logback.core.status.Status;
-import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.dto.DirectMessageDto;
 import com.acorn.finals.service.DirectMessageService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,9 +15,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/direct-message")
 @RequiredArgsConstructor
+@Slf4j
 public class DirectMessageController {
     private final DirectMessageService directMessageService;
-    private final MemberMapper memberMapper;
+    private final MemberService memberService;
 
     /**
      * DM토픽 목록을 불러옵니다.
@@ -49,8 +50,21 @@ public class DirectMessageController {
      */
     @PostMapping
     public ResponseEntity<DirectMessageDto> createNewPersonalTopic(@RequestBody DirectMessageDto directMessageCreateRequest, Authentication auth) {
-        DirectMessageDto createdDM = directMessageService.createNewDM(directMessageCreateRequest, auth);
+        int memberId = memberService.findMemberByEmail(auth.getName()).getId();
+        int anotherId = directMessageCreateRequest.getAnotherId();
 
+        try {
+            DirectMessageDto isExistedDM = directMessageService.findOneByMemberIdAndAnotherId(memberId, anotherId);
+            if (isExistedDM != null) {
+                isExistedDM.setActive(1);
+                directMessageService.activateDM(isExistedDM.getId(), isExistedDM);
+                return ResponseEntity.status(HttpStatus.OK).body(isExistedDM);
+            }
+        } catch (RuntimeException e) {
+            log.info("이미 존재하는 DM입니다.");
+        }
+
+        DirectMessageDto createdDM = directMessageService.createNewDM(directMessageCreateRequest, auth);
         return ResponseEntity.status(HttpStatus.OK).body(createdDM);
     }
 

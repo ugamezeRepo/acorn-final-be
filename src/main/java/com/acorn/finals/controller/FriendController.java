@@ -3,9 +3,11 @@ package com.acorn.finals.controller;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.RequestFriendDto;
 import com.acorn.finals.service.FriendService;
+import com.acorn.finals.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/friend")
 public class FriendController {
     private final FriendService friendService;
+    private final MemberService memberService;
 
     /**
      * @param requestDto fromId , toId
@@ -74,15 +77,19 @@ public class FriendController {
      * @param keyword url 로  get 방식으로 보내주길 바람 ex) friend/1/search?keyword= '검색값'
      * @return 자신의 친구를 제외한 유저 정보들이 들어있음
      */
-    @GetMapping("{id}/search")
-    public ResponseEntity<List<MemberDto>> searchFriend(@PathVariable("id") int my_id, @RequestParam("keyword") String keyword) {
+    @GetMapping("/search")
+    public ResponseEntity<List<MemberDto>> searchFriend(Authentication auth , @RequestParam("keyword") String keyword) {
+        var memberDto = memberService.findMemberByEmail(auth.getName());
+        if (memberDto == null) {
+            return ResponseEntity.badRequest().build();
+        }
         Map<String, Object> map = new HashMap<>();
-        map.put("my_id", my_id);
+        map.put("my_id", memberDto.getId());
         map.put("keyword", keyword);
+
         List<MemberDto> requestDto = friendService.findNewFriend(map);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(requestDto);
-
     }
 
 }

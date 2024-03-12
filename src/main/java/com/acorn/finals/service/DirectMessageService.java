@@ -39,6 +39,13 @@ public class DirectMessageService {
     }
 
     @Transactional
+    public DirectMessageDto findOneByMemberIdAndAnotherId(int memberId, int anotherId) {
+        var entity = directMessageMapper.findOneByMemberIdAndAnotherId(memberId, anotherId);
+
+        return entity.toDto();
+    }
+
+    @Transactional
     public DirectMessageDto createNewDM(DirectMessageDto directMessageDto, Authentication auth) {
         var memberId = Integer.parseInt(auth.getName());
         int anotherId = directMessageDto.getAnotherId();
