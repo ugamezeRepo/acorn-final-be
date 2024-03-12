@@ -1,5 +1,6 @@
 package com.acorn.finals.controller;
 
+import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.dto.DirectMessageDto;
 import com.acorn.finals.service.DirectMessageService;
 import com.acorn.finals.service.MemberService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class DirectMessageController {
     private final DirectMessageService directMessageService;
-    private final MemberService memberService;
+    private final MemberMapper memberMapper;
 
     /**
      * DM토픽 목록을 불러옵니다.
@@ -48,7 +50,7 @@ public class DirectMessageController {
     }
 
     /**
-     * 새로운 DM 을 만듭니다.
+     * 새로운 DM을 만듭니다.
      *
      * @param directMessageCreateRequest topic create request with another's id
      * @return created topic
@@ -61,15 +63,22 @@ public class DirectMessageController {
     }
 
     /**
-     *  DM 을 삭제합니다.
+     *  DM을 목록에서 보이지 않도록 비활성화합니다.
      *
      * @param id id of the personal topic
      * @return HTTP STATUS 200 on success
      */
-    @PatchMapping("/@me/{id}")
-    public ResponseEntity<Void> deactiveDM(@PathVariable int id) {
-        directMessageService.deactivateDM(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<DirectMessageDto> activateDM(@PathVariable int id, @RequestBody DirectMessageDto directMessageDMActivateRequest) {
+        DirectMessageDto directMessageDto = directMessageService.activateDM(id, directMessageDMActivateRequest);
 
-        return ResponseEntity.ok(null);
+        return ResponseEntity.status(HttpStatus.OK).body(directMessageDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDM(@PathVariable int id) {
+        directMessageService.deleteDM(id);
+
+        return ResponseEntity.ok().build();
     }
 }

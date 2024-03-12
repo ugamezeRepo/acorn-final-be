@@ -49,9 +49,11 @@ public class DirectMessageService {
     }
 
     @Transactional
-    public DirectMessageDto deactivateDM(int id) {
-        directMessageMapper.deactivateDM(id);
+    public DirectMessageDto activateDM(int id, DirectMessageDto directMessageDMActivateRequest) {
         var entity = directMessageMapper.findOneById(id);
+        entity.setActive(directMessageDMActivateRequest.getActive());
+        directMessageMapper.activateDM(entity);
+
         return entity.toDto();
     }
 

@@ -6,18 +6,24 @@
         where member_id = #{memberId}
     </select>
 
-    <select id="findOneById" resultType="directMessageEntity" parameterType="String">
+    <select id="findOneById" resultType="directMessageEntity" parameterType="int">
         select * from direct_message
-        where url = #{url}
+        where id = #{id}
     </select>
 
     <insert id="insert" parameterType="directMessageEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select direct_message_seq.nextval from dual
         </selectKey>
-        insert into direct_message (id, member1_id, member2_id)
-        values (#{id}, #{member1Id}, #{member2Id})
+        insert into direct_message (id, member_id, another_id, active)
+        values (#{id}, #{memberId}, #{anotherId}, #{active})
     </insert>
+
+    <update id="activateDM" parameterType="directMessageEntity">
+        update direct_message
+        set active = #{active}
+        where id = #{id}
+    </update>
 
     <delete id="deleteById" parameterType="int">
         delete from direct_message

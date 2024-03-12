@@ -15,8 +15,6 @@ public interface DirectMessageMapper {
 
     int activateDM(DirectMessageEntity entity);
 
-    int deactivateDM(int id);
-
     int deleteById(int id);
 
 }
