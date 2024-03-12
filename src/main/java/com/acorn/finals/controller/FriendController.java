@@ -73,18 +73,14 @@ public class FriendController {
     }
 
     /**
-     * @param my_id   지금 나의 id 를 필요로함
      * @param keyword url 로  get 방식으로 보내주길 바람 ex) friend/1/search?keyword= '검색값'
      * @return 자신의 친구를 제외한 유저 정보들이 들어있음
      */
     @GetMapping("/search")
     public ResponseEntity<List<MemberDto>> searchFriend(Authentication auth , @RequestParam("keyword") String keyword) {
-        var memberDto = memberService.findMemberByEmail(auth.getName());
-        if (memberDto == null) {
-            return ResponseEntity.badRequest().build();
-        }
+        var memberId = Integer.parseInt(auth.getName());
         Map<String, Object> map = new HashMap<>();
-        map.put("my_id", memberDto.getId());
+        map.put("my_id", memberId);
         map.put("keyword", keyword);
 
         List<MemberDto> requestDto = friendService.findNewFriend(map);

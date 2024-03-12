@@ -18,7 +18,6 @@ import java.util.List;
 @Slf4j
 public class DirectMessageController {
     private final DirectMessageService directMessageService;
-    private final MemberService memberService;
 
     /**
      * DM토픽 목록을 불러옵니다.
@@ -50,7 +49,7 @@ public class DirectMessageController {
      */
     @PostMapping
     public ResponseEntity<DirectMessageDto> createNewPersonalTopic(@RequestBody DirectMessageDto directMessageCreateRequest, Authentication auth) {
-        int memberId = memberService.findMemberByEmail(auth.getName()).getId();
+        int memberId = Integer.parseInt(auth.getName());
         int anotherId = directMessageCreateRequest.getAnotherId();
 
         try {

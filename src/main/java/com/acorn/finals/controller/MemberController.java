@@ -41,7 +41,8 @@ public class MemberController {
     @GetMapping("/@me/channel")
     public List<ChannelDto> listAllChannel(Authentication auth) {
         // TODO: Authentication to MemberDto
-        return memberService.listAllChannelsByEmail(auth.getName());
+        Integer memberId = Integer.parseInt(auth.getName());
+        return memberService.listAllChannelsByMemberId(memberId);
     }
 
 

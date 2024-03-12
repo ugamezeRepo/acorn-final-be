@@ -83,9 +83,8 @@ public class MemberService {
     }
 
     @Transactional
-    public List<ChannelDto> listAllChannelsByEmail(String email) {
-        var memberEntity = memberMapper.findOneByEmail(email);
-        var channels = channelMemberMapper.findAllChannelByMemberId(memberEntity.getId());
+    public List<ChannelDto> listAllChannelsByMemberId(Integer memberId) {
+        var channels = channelMemberMapper.findAllChannelByMemberId(memberId);
         return channels.stream().map(ChannelEntity::toDto).toList();
     }
 
@@ -94,10 +93,10 @@ public class MemberService {
         boolean isSuccess = false;
         try {
             // TODO: 중복 닉 + 해시태그는 막도록 하기
-
-            if (memberMapper.findOneById(entity.getId()) != null) {
-                throw new RuntimeException("중복된 아이디 존재");
-            }
+//
+//            if (memberMapper.findOneById(entity.getId()) != null) {
+//                throw new RuntimeException("중복된 아이디 존재");
+//            }
             if (memberMapper.findOneByEmail(entity.getEmail()) == null) {
                 memberMapper.insert(entity);
                 isSuccess = true;
