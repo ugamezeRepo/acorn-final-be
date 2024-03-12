@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.acorn.finals.mapper.RefreshTokenMapper">
-    <select id="findOneTokenByEmail" parameterType="String" resultType="refreshentity">
+    <select id="findOneTokenByMemberId" parameterType="String" resultType="refreshentity">
         select * from refresh_token
-        where email = #{email}
+        where member_id = #{memberId}
     </select>
 
     <insert id="insert" parameterType="refreshentity" useGeneratedKeys="true" keyColumn="id">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select member_seq.nextval from dual
         </selectKey>
-        insert into refresh_token (id, email, token, expire_date)
-        values (#{id}, #{email}, #{token}, #{expireDate})
+        insert into refresh_token (id, member_id, token, expire_date)
+        values (#{id}, #{memberId}, #{token}, #{expireDate})
     </insert>
 
     <delete id="deleteByToken" parameterType="String">
@@ -19,9 +19,9 @@
         where token = #{token}
     </delete>
 
-    <delete id="deleteByEmail" parameterType="String">
+    <delete id="deleteByMemberId" parameterType="String">
         delete from refresh_token
-        where email = #{email}
+        where member_id = #{memberId}
     </delete>
 
     <update id="update" parameterType="refreshentity">

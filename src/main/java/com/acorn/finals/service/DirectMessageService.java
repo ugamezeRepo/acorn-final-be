@@ -1,15 +1,16 @@
 package com.acorn.finals.service;
 
-import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.mapper.DirectMessageMapper;
+import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.dto.DirectMessageDto;
 import com.acorn.finals.model.entity.DirectMessageEntity;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,22 +19,22 @@ public class DirectMessageService {
     private final MemberMapper memberMapper;
 
     @Transactional
-    public List<DirectMessageDto> findAllActiveDM(String email) {
-        int memberId = memberMapper.findOneByEmail(email).getId();
+    public List<DirectMessageDto> findAllActiveDM(Integer memberId) {
         var entities = directMessageMapper.findAllActiveByMemberId(memberId);
 
         return entities.stream()
-            .map(DirectMessageEntity::toDto)
-            .collect(Collectors.toList());
+                .map(DirectMessageEntity::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public DirectMessageDto findOneById(int id) {
         var entity = directMessageMapper.findOneById(id);
-        if (entity.getActive() == 0) {
-            directMessageMapper.activateDM(entity);
-        }
 
+        // TODO:  entity 가 있는지 없는지 확인을 할 것
+        if (entity.getActive() == 0) {
+            directMessageMapper.changeDirectMessageActivation(entity);
+        }
         return entity.toDto();
     }
 
@@ -46,7 +47,7 @@ public class DirectMessageService {
 
     @Transactional
     public DirectMessageDto createNewDM(DirectMessageDto directMessageDto, Authentication auth) {
-        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
+        var memberId = Integer.parseInt(auth.getName());
         int anotherId = directMessageDto.getAnotherId();
 
         var directMessageEntity = directMessageDto.toEntity(0, memberId, anotherId, 1);
@@ -59,7 +60,7 @@ public class DirectMessageService {
     public DirectMessageDto activateDM(int id, DirectMessageDto directMessageDMActivateRequest) {
         var entity = directMessageMapper.findOneById(id);
         entity.setActive(directMessageDMActivateRequest.getActive());
-        directMessageMapper.activateDM(entity);
+        directMessageMapper.changeDirectMessageActivation(entity);
 
         return entity.toDto();
     }

@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface RefreshTokenMapper {
-    RefreshTokenEntity findOneTokenByEmail(String email);
+    RefreshTokenEntity findOneTokenByMemberId(Integer memberId);
 
     RefreshTokenEntity findOneTokenByToken(String token);
 
@@ -15,5 +15,5 @@ public interface RefreshTokenMapper {
 
     int update(RefreshTokenEntity entity);
 
-    int deleteByEmail(String email);
+    int deleteByMemberId(Integer memberId);
 }

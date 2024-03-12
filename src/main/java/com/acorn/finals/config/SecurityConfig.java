@@ -1,6 +1,5 @@
 package com.acorn.finals.config;
 
-import com.acorn.finals.config.properties.CorsPropertiesConfig;
 import com.acorn.finals.filter.JwtFilter;
 import com.acorn.finals.security.handler.CustomAuthenticationFailureHandler;
 import com.acorn.finals.security.handler.CustomAuthenticationSuccessHandler;
@@ -21,29 +20,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CorsPropertiesConfig corsConfig;
     private final CustomAuthenticationSuccessHandler successHandler;
     private final JwtFilter jwtFilter;
-//    private final AcornCorsFilter acornCorsFilter;
 
     private final String[] whiteList = {
             "/chat/channel/*/topic/*",
             "/connection/ping",
             "/connection/channel/*/members"
     };
-
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//
-//        configuration.setAllowedOrigins(List.of(corsConfig.getAllowedOrigins()));
-//        configuration.setAllowedMethods(List.of(CorsConfiguration.ALL));
-//        configuration.setAllowCredentials(true);
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

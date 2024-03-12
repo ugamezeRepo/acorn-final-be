@@ -4,6 +4,7 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.service.MemberService;
+import com.acorn.finals.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -18,8 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-
+    private final TokenService tokenService;
     // channel member mapper
+
     /**
      * 내 정보를 받아옵니다
      *
@@ -27,8 +29,8 @@ public class MemberController {
      */
     @GetMapping("/@me")
     public MemberDto queryMyInfo(Authentication auth) {
-        var email = auth.getName();
-        return memberService.findMemberByEmail(email);
+        int memberId = Integer.parseInt(auth.getName());
+        return memberService.findMemberById(memberId);
     }
 
     /**
@@ -92,7 +94,8 @@ public class MemberController {
                         .httpOnly(true)
                         .path("/")
                         .build();
-        boolean logoutResult = memberService.TokenDeleteAndChangeStatus(auth.getName());
+        var memberId = Integer.parseInt(auth.getName());
+        boolean logoutResult = tokenService.deleteRefreshTokenByMemberId(memberId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
                 .body(logoutResult);

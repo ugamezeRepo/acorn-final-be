@@ -34,13 +34,13 @@ public class TokenService {
      * create access token from email email data will be inserted into jwt subject field (sub) expiration time can be
      * configured in application-token.properties
      *
-     * @param email
+     * @param memberId
      * @return new access token jws
      */
-    public String createAccessTokenFromEmail(String email) {
+    public String createAccessTokenFromMemberId(Integer memberId) {
         var currentMs = System.currentTimeMillis();
         var token = AcornJwt.builder()
-                .subject(email)
+                .subject(memberId.toString())
                 .issuedAt(new Date(currentMs))
                 .expirationTime(new Date(currentMs + 1000 * expiration))
                 .key(secretString)
@@ -54,9 +54,9 @@ public class TokenService {
      * @param email
      * @return delete RefreshToken
      */
-    public boolean deleteRefreshTokenByEmail(String email) {
+    public boolean deleteRefreshTokenByMemberId(Integer memberId) {
         var isSuccess = false;
-        int result = refreshTokenMapper.deleteByEmail(email);
+        int result = refreshTokenMapper.deleteByMemberId(memberId);
         if (result > 0) {
             isSuccess = true;
         }
@@ -79,23 +79,23 @@ public class TokenService {
             }
             return null;
         }
-        return createAccessTokenFromEmail(refreshTokenEntity.getEmail());
+        return createAccessTokenFromMemberId(refreshTokenEntity.getMemberId());
     }
 
     /**
      * create refresh token from email, create if not exists else update
      *
-     * @param email
+     * @param memberId
      * @return unique refresh token value
      */
     @Transactional
-    public String createRefreshTokenFromEmail(String email) {
+    public String createRefreshTokenFromMemberId(Integer memberId) {
         RefreshTokenEntity entity = new RefreshTokenEntity();
-        entity.setEmail(email);
+        entity.setMemberId(memberId);
         entity.setExpireDate(LocalDateTime.now().plusSeconds(tokenPropertiesConfig.getRefreshToken().getExpiration()));
         entity.setToken(UUID.randomUUID().toString());
 
-        var existingToken = refreshTokenMapper.findOneTokenByEmail(email);
+        var existingToken = refreshTokenMapper.findOneTokenByMemberId(memberId);
         if (existingToken == null) {
             refreshTokenMapper.insert(entity);
         } else {

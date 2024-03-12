@@ -7,13 +7,13 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,35 +29,26 @@ public class MemberService {
         return memberEntity.toDto();
     }
 
-    public MemberDto findMemberByEmail(String email) {
-        var memberEntity = memberMapper.findOneByEmail(email);
-        return memberEntity.toDto();
-    }
-
     public List<MemberDto> findAllMemberByChannelId(int channelId) {
-        return memberMapper.findAllByChannelId(channelId).stream().map(MemberEntity::toDto)
-                .collect(Collectors.toList());
+        return memberMapper.findAllByChannelId(channelId).stream().map(MemberEntity::toDto).collect(Collectors.toList());
     }
 
     @Transactional
-    public boolean updateStatus(MemberDto dto) {
+    public void updateStatus(MemberDto dto) {
         if (dto.getNickname() == null || dto.getHashtag() == null) {
-            return false;
+            return;
         }
-        var memberEntity = memberMapper.findOneByNicknameAndHashtag(dto.getNickname(), dto.getHashtag());
-        log.debug("find one by nickname and hashtag done");
+        var memberEntity = memberMapper.findOneById(dto.getId());
         if (memberEntity == null) {
-            return false;
+            return;
         }
         memberEntity.setStatus(dto.getStatus());
-        return memberMapper.update(memberEntity) > 0;
+        memberMapper.update(memberEntity);
     }
 
     @Transactional
     public List<Integer> findAllJoinedChannelIdByMemberId(int memberId) {
-        return channelMemberMapper.findAllChannelByMemberId(memberId).stream()
-                .map(ChannelEntity::getId)
-                .toList();
+        return channelMemberMapper.findAllChannelByMemberId(memberId).stream().map(ChannelEntity::getId).toList();
     }
 
     @Transactional
@@ -65,12 +56,7 @@ public class MemberService {
         if (dto.getNickname() == null || dto.getHashtag() == null) {
             return List.of();
         }
-        var memberEntity = memberMapper.findOneByNicknameAndHashtag(dto.getNickname(), dto.getHashtag());
-        if (memberEntity == null) {
-            return List.of();
-        }
-        return channelMemberMapper.findAllChannelByMemberId(memberEntity.getId()).stream().map(ChannelEntity::getId)
-                .toList();
+        return channelMemberMapper.findAllChannelByMemberId(dto.getId()).stream().map(ChannelEntity::getId).toList();
     }
 
     @Transactional
@@ -92,8 +78,7 @@ public class MemberService {
 
     @Transactional
     public List<ChannelDto> listAllChannels(MemberDto member) {
-        var memberEntity = memberMapper.findOneByNicknameAndHashtag(member.getNickname(), member.getHashtag());
-        var channels = channelMemberMapper.findAllChannelByMemberId(memberEntity.getId());
+        var channels = channelMemberMapper.findAllChannelByMemberId(member.getId());
         return channels.stream().map(ChannelEntity::toDto).toList();
     }
 
@@ -108,13 +93,12 @@ public class MemberService {
     public boolean signup(MemberEntity entity) {
         boolean isSuccess = false;
         try {
+            // TODO: 중복 닉 + 해시태그는 막도록 하기
 
-            if (memberMapper.findOneByNicknameAndHashtag(entity.getNickname(), entity.getHashtag()) != null) {
-                throw new RuntimeException("중복된 닉네임 존재");
+            if (memberMapper.findOneById(entity.getId()) != null) {
+                throw new RuntimeException("중복된 아이디 존재");
             }
-
-            String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            if (memberMapper.findOneByEmail(userEmail) == null) {
+            if (memberMapper.findOneByEmail(entity.getEmail()) == null) {
                 memberMapper.insert(entity);
                 isSuccess = true;
             }
@@ -126,16 +110,7 @@ public class MemberService {
     }
 
     @Transactional
-    public boolean TokenDeleteAndChangeStatus(String email) {
-        memberMapper.logoutStatus(email);
-        return tokenService.deleteRefreshTokenByEmail(email);
-    }
-
-
-    @Transactional
-    public String getMemberChannelRole(String email, int channelId) {
-        var member = memberMapper.findOneByEmail(email);
-        var role = channelMemberMapper.findRoleByMemberIdAndChannelId(member.getId(), channelId);
-        return role;
+    public String getMemberChannelRole(Integer memberId, int channelId) {
+        return channelMemberMapper.findRoleByMemberIdAndChannelId(memberId, channelId);
     }
 }
