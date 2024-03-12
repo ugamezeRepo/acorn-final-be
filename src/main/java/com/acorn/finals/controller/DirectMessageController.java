@@ -1,5 +1,6 @@
 package com.acorn.finals.controller;
 
+import ch.qos.logback.core.status.Status;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.dto.DirectMessageDto;
 import com.acorn.finals.service.DirectMessageService;
@@ -57,27 +58,45 @@ public class DirectMessageController {
      */
     @PostMapping
     public ResponseEntity<DirectMessageDto> createNewPersonalTopic(@RequestBody DirectMessageDto directMessageCreateRequest, Authentication auth) {
-        directMessageService.createNewDM(directMessageCreateRequest, auth);
+        DirectMessageDto createdDM = directMessageService.createNewDM(directMessageCreateRequest, auth);
 
-        return null;
+        return ResponseEntity.status(HttpStatus.OK).body(createdDM);
     }
 
     /**
      *  DM을 목록에서 보이지 않도록 비활성화합니다.
      *
-     * @param id id of the personal topic
+     * @param id id of the direct message topic
      * @return HTTP STATUS 200 on success
      */
     @PutMapping("/{id}")
-    public ResponseEntity<DirectMessageDto> activateDM(@PathVariable int id, @RequestBody DirectMessageDto directMessageDMActivateRequest) {
-        DirectMessageDto directMessageDto = directMessageService.activateDM(id, directMessageDMActivateRequest);
+    public ResponseEntity<DirectMessageDto> activateDM(@PathVariable int id,
+            @RequestBody DirectMessageDto directMessageDMActivateRequest, Authentication auth) {
+        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
+        if (memberId != directMessageService.findOneById(id).getMemberId()) {
+            return ResponseEntity.status(Status.WARN).build();
+        }
+        DirectMessageDto updatedDM = directMessageService.activateDM(id, directMessageDMActivateRequest);
 
-        return ResponseEntity.status(HttpStatus.OK).body(directMessageDto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedDM);
     }
 
+    /**
+     *  DM을 삭제합니다.
+     *
+     * @param id id of the direct message topic
+     * @return HTTP STATUS 200 on success
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDM(@PathVariable int id) {
-        directMessageService.deleteDM(id);
+    public ResponseEntity<Void> deleteDM(@PathVariable int id, Authentication auth) {
+        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
+        if (memberId != directMessageService.findOneById(id).getMemberId()) {
+            return ResponseEntity.status(Status.WARN).build();
+        }
+
+        if (directMessageService.deleteDM(id)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 
         return ResponseEntity.ok().build();
     }

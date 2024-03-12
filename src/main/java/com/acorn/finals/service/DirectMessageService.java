@@ -58,8 +58,8 @@ public class DirectMessageService {
     }
 
     @Transactional
-    public void deleteDM(int directMessage) {
-        directMessageMapper.deleteById(directMessage);
+    public boolean deleteDM(int directMessage) {
+        return directMessageMapper.deleteById(directMessage) > 0;
     }
 
 }
