@@ -32,7 +32,7 @@ class ChannelControllerTest {
     @MockBean
     ChannelService channelService;
     @MockBean
-    PersonalTopicService personalTopicService;
+    DirectMessageService directMessageService;
     @MockBean
     TopicMapper topicMapper;
 
@@ -55,7 +55,7 @@ class ChannelControllerTest {
 
 
         // Creating instance of controller
-        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService, personalTopicService);
+        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService);
         TopicEntity topicEntity = new TopicEntity();
         topicEntity.setId(1);
         // Performing test
@@ -81,7 +81,7 @@ class ChannelControllerTest {
         when(memberService.getMemberChannelRole(anyString(), anyInt())).thenReturn("user");
 
         // Creating instance of controller
-        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService, personalTopicService);
+        ChannelController controller = new ChannelController(channelService, topicService, messageService, memberService);
 
         // Performing test
         ResponseEntity<TopicDto> response = controller.createNewTopic(123, new TopicDto(), auth);

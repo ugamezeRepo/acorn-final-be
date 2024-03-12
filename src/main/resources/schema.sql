@@ -1,100 +1,97 @@
-create table member
-(
-    id       number primary key,
-    email    varchar2(100) not null unique,
-    nickname varchar2(30)  not null,
-    hashtag  number(4)     not null,
-    status   varchar2(100) null
+CREATE TABLE MEMBER (
+    ID NUMBER PRIMARY KEY,
+    EMAIL VARCHAR2(100) NOT NULL UNIQUE,
+    NICKNAME VARCHAR2(30) NOT NULL,
+    HASHTAG NUMBER(4) NOT NULL,
+    STATUS VARCHAR2(100) NULL
 );
 
-create table channel
-(
-    id          number primary key,
-    name        varchar2(100) not null,
-    thumbnail   clob          null,
-    invite_code varchar2(100) not null
+CREATE TABLE CHANNEL (
+    ID NUMBER PRIMARY KEY,
+    NAME VARCHAR2(100) NOT NULL,
+    THUMBNAIL CLOB NULL,
+    INVITE_CODE VARCHAR2(100) NOT NULL
 );
 
-create table channel_member
-(
-    id         number primary key,
-    channel_id number not null,
-    member_id  number not null,
-    role       varchar2(20) default 'guest' check (role in ('owner', 'manager', 'guest')),
-    constraint channel_member_channel_id_fk foreign key (channel_id) references channel (id),
-    constraint channel_member_member_id_fk foreign key (member_id) references member (id)
+CREATE TABLE CHANNEL_MEMBER (
+    ID NUMBER PRIMARY KEY,
+    CHANNEL_ID NUMBER NOT NULL,
+    MEMBER_ID NUMBER NOT NULL,
+    ROLE VARCHAR2(20) DEFAULT 'guest' CHECK (ROLE IN ('owner', 'manager', 'guest')),
+    CONSTRAINT CHANNEL_MEMBER_CHANNEL_ID_FK FOREIGN KEY (CHANNEL_ID) REFERENCES CHANNEL (ID),
+    CONSTRAINT CHANNEL_MEMBER_MEMBER_ID_FK FOREIGN KEY (MEMBER_ID) REFERENCES MEMBER (ID)
 );
 
-create table topic
-(
-    id         number primary key,
-    title      varchar2(100) not null,
---     topic_group varchar2(100),
-    channel_id number        not null, -- id of the channel that references topic
-    constraint topic_channel_id_fk foreign key (channel_id) references channel (id)
+CREATE TABLE TOPIC (
+    ID NUMBER PRIMARY KEY,
+    TITLE VARCHAR2(100) NOT NULL,
+ --     topic_group varchar2(100),
+    CHANNEL_ID NUMBER NOT NULL, -- id of the channel that references topic
+    CONSTRAINT TOPIC_CHANNEL_ID_FK FOREIGN KEY (CHANNEL_ID) REFERENCES CHANNEL (ID)
 );
 
-create table refresh_token
-(
-    id          number primary key,
-    email       varchar2(100) not null unique,
-    token       varchar2(255) not null,
-    expire_date date          not null
+CREATE TABLE REFRESH_TOKEN (
+    ID NUMBER PRIMARY KEY,
+    EMAIL VARCHAR2(100) NOT NULL UNIQUE,
+    TOKEN VARCHAR2(255) NOT NULL,
+    EXPIRE_DATE DATE NOT NULL
 );
 
-create table message
-(
-    id         number primary key,
-    author_id  number         not null,
-    content    varchar2(1000) not null,
-
-    channel_id number         not null, -- id of the channel that references message
-    topic_id   number         not null, -- id of the topic that references message
-
-    created_at date           not null,
-    updated_at date           not null,
-    constraint message_author_id_fk foreign key (author_id) references member (id),
-    constraint message_channel_id_fk foreign key (channel_id) references channel (id),
-    constraint message_topic_id_fk foreign key (topic_id) references topic (id)
+CREATE TABLE MESSAGE (
+    ID NUMBER PRIMARY KEY,
+    AUTHOR_ID NUMBER NOT NULL,
+    CONTENT VARCHAR2(1000) NOT NULL,
+    CHANNEL_ID NUMBER NOT NULL, -- id of the channel that references message
+    TOPIC_ID NUMBER NOT NULL, -- id of the topic that references message
+    CREATED_AT DATE NOT NULL,
+    UPDATED_AT DATE NOT NULL,
+    CONSTRAINT MESSAGE_AUTHOR_ID_FK FOREIGN KEY (AUTHOR_ID) REFERENCES MEMBER (ID),
+    CONSTRAINT MESSAGE_CHANNEL_ID_FK FOREIGN KEY (CHANNEL_ID) REFERENCES CHANNEL (ID),
+    CONSTRAINT MESSAGE_TOPIC_ID_FK FOREIGN KEY (TOPIC_ID) REFERENCES TOPIC (ID)
 );
 
-
-create table attachment
-(
-    id      number primary key,
-    content blob
+CREATE TABLE ATTACHMENT (
+    ID NUMBER PRIMARY KEY,
+    CONTENT BLOB
 );
 
-create table personal_topic
-(
-    id         number primary key,
-    member1_id number not null,
-    member2_id number not null,
-    constraint topic_member1_id_fk foreign key (member1_id) references member (id),
-    constraint topic_member2_id_fk foreign key (member2_id) references member (id)
+CREATE TABLE DIRECT_MESSAGE (
+    ID NUMBER PRIMARY KEY,
+    MEMBER_ID NUMBER NOT NULL,
+    ANOTHER_ID NUMBER NOT NULL,
+    ACTIVE NUMBER(1) NOT NULL,
+    CONSTRAINT TOPIC_MEMBER1_ID_FK FOREIGN KEY (MEMBER_ID) REFERENCES MEMBER (ID),
+    CONSTRAINT TOPIC_MEMBER2_ID_FK FOREIGN KEY (ANOTHER_ID) REFERENCES MEMBER (ID)
 );
 
-create table request_friend
-(
-    id      number primary key,
-    from_id number,
-    to_id   number
+CREATE TABLE REQUEST_FRIEND (
+    ID NUMBER PRIMARY KEY,
+    FROM_ID NUMBER,
+    TO_ID NUMBER
 );
 
-create table friend
-(
-    id        number primary key,
-    my_id     number,
-    friend_id number
+CREATE TABLE FRIEND (
+    ID NUMBER PRIMARY KEY,
+    MY_ID NUMBER,
+    FRIEND_ID NUMBER
 );
 
-create sequence member_seq start with 10000;
-create sequence channel_seq start with 10000;
-create sequence channel_member_seq start with 10000;
-create sequence topic_seq start with 10000;
-create sequence message_seq start with 10000;
-create sequence attachment_seq start with 10000;
-create sequence token_seq start with 10000;
-create sequence personal_topic_seq start with 10000;
-create sequence request_friend_seq start with 10000;
-create sequence friend_seq start with 10000;
+CREATE SEQUENCE MEMBER_SEQ START WITH 10000;
+
+CREATE SEQUENCE CHANNEL_SEQ START WITH 10000;
+
+CREATE SEQUENCE CHANNEL_MEMBER_SEQ START WITH 10000;
+
+CREATE SEQUENCE TOPIC_SEQ START WITH 10000;
+
+CREATE SEQUENCE MESSAGE_SEQ START WITH 10000;
+
+CREATE SEQUENCE ATTACHMENT_SEQ START WITH 10000;
+
+CREATE SEQUENCE TOKEN_SEQ START WITH 10000;
+
+CREATE SEQUENCE DIRECT_MESSAGE_SEQ START WITH 10000;
+
+CREATE SEQUENCE REQUEST_FRIEND_SEQ START WITH 10000;
+
+CREATE SEQUENCE FRIEND_SEQ START WITH 10000;
