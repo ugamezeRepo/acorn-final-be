@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/direct-messge")
+@RequestMapping("/direct-message")
 @RequiredArgsConstructor
 public class DirectMessageController {
     private final DirectMessageService directMessageService;
