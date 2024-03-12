@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RefreshTokenEntity {
     private Integer id;
-    private String email;
+    private Integer memberId;
     private String token;
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)

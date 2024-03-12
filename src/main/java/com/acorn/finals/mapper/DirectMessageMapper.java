@@ -1,8 +1,9 @@
 package com.acorn.finals.mapper;
 
 import com.acorn.finals.model.entity.DirectMessageEntity;
-import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 @Mapper
 public interface DirectMessageMapper {
@@ -13,7 +14,7 @@ public interface DirectMessageMapper {
 
     int insert(DirectMessageEntity entity);
 
-    int activateDM(DirectMessageEntity entity);
+    int changeDirectMessageActivation(DirectMessageEntity entity);
 
     int deleteById(int id);
 

@@ -51,8 +51,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
         AcornJwt accessToken = AcornJwt.fromJws(accessTokenJws, tokenPropertiesConfig.getAccessToken().getSecret());
         if (accessToken != null && !accessToken.isExpired()) {
-            var email = accessToken.getSubject();
-            UserDetails ud = new User(email, "", List.of());
+            var id = accessToken.getSubject();
+            UserDetails ud = new User(id, "", List.of());
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(ud, null, ud.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

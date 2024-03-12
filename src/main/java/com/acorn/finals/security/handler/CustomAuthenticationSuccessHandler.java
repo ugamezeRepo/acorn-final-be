@@ -40,6 +40,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     private final FrontendPropertiesConfig frontendPropertiesConfig;
     private final MemberService memberService;
 
+
+    private MemberEntity createRandomMemberFromEmail(String email) {
+        var rand = new Random();
+        var adjectiveIndex = rand.nextInt(0, 20);
+        var nounIndex = rand.nextInt(0, 20);
+        var nickname = String.join(" ", adjectives[adjectiveIndex], nouns[nounIndex]);
+        var hashtag = rand.nextInt(1000, 10000);
+        return new MemberEntity(null, email, nickname, hashtag, "online");
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         if (authentication instanceof OAuth2AuthenticationToken oauthToken) {
@@ -48,8 +58,34 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             Map<String, Object> attributes = user.getAttributes();
             String email = (String) attributes.get("email");
 
-            String accessToken = tokenService.createAccessTokenFromEmail(email);
-            String refreshToken = tokenService.createRefreshTokenFromEmail(email);
+            var member = memberMapper.findOneByEmail(email);
+            if (member == null) {
+                boolean userCreated = false;
+                final int maxFallback = 5;
+                int currentFallback = 0;
+                while (true) {
+                    var newMember = createRandomMemberFromEmail(email);
+                    var result = memberService.signup(newMember);
+                    currentFallback += 1;
+                    if (result || currentFallback > maxFallback) {
+                        userCreated = result;
+                        member = new MemberEntity();
+                        member.setId(newMember.getId());
+                        break;
+                    }
+                }
+                if (!userCreated) {
+                    throw new RuntimeException("user creation failed");
+                }
+            }
+            // set-header http only refresh token
+            // Oauth 로그인 후 Security 에서 부여되는 userName 을 다시 이메일로 지정하기 위한 로직
+            UserDetails ud = new User(member.getId().toString(), "", List.of());
+            Authentication auth = new UsernamePasswordAuthenticationToken(ud, ud.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            String accessToken = tokenService.createAccessTokenFromMemberId(member.getId());
+            String refreshToken = tokenService.createRefreshTokenFromMemberId(member.getId());
 
             Cookie accessTokenCookie = new Cookie("Authorization", "Bearer+" + accessToken);
             accessTokenCookie.setMaxAge(tokenPropertiesConfig.getAccessToken().getExpiration());
@@ -65,39 +101,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             response.addCookie(accessTokenCookie);
             response.addCookie(refreshTokenCookie);
 
-            // set-header http only refresh token
-            // Oauth 로그인 후 Security 에서 부여되는 userName 을 다시 이메일로 지정하기 위한 로직
-            UserDetails ud = new User(email, "", List.of());
-            Authentication auth = new UsernamePasswordAuthenticationToken(ud, ud.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
-
-
-            if (memberMapper.findOneByEmail(email) == null) {
-                boolean userCreated = false;
-                final int maxFallback = 5;
-                int currentFallback = 0;
-                while (true) {
-                    var rand = new Random();
-                    var adjectiveIndex = rand.nextInt(0, 20);
-                    var nounIndex = rand.nextInt(0, 20);
-                    var nickname = String.join(" ", adjectives[adjectiveIndex], nouns[nounIndex]);
-                    var hashtag = rand.nextInt(1000, 10000);
-                    var result = memberService.signup(new MemberEntity(null, email, nickname, hashtag, "online"));
-                    currentFallback += 1;
-                    if (result || currentFallback > maxFallback) {
-                        userCreated = result;
-                        break;
-                    }
-                }
-
-                if (!userCreated) {
-                    throw new RuntimeException("user creation failed");
-                }
-//                response.sendRedirect(frontendPropertiesConfig.getUrl() + "/signup");
-//                return;
-            }
             response.sendRedirect(frontendPropertiesConfig.getUrl() + "/channel/@me");
-
         } else {
             // 다른 인증 방식인 경우 다른 처리를 수행할 수 있습니다.
             throw new RuntimeException("Unreachable!");

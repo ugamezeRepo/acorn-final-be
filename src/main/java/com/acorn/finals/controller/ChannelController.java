@@ -1,7 +1,10 @@
 package com.acorn.finals.controller;
 
 import com.acorn.finals.model.dto.*;
-import com.acorn.finals.service.*;
+import com.acorn.finals.service.ChannelService;
+import com.acorn.finals.service.MemberService;
+import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +68,7 @@ public class ChannelController {
 
     /**
      * 채널에 들어갑니다
+     *
      * @param code(inviteCode)
      * @return ResponserEntity<ChannelDto>
      */
@@ -73,12 +77,14 @@ public class ChannelController {
         if (auth == null) {
             return ResponseEntity.badRequest().build();
         }
-        var channelInfo = channelService.joinMember(auth.getName(), code, "guest");
+        var memberId = Integer.parseInt(auth.getName());
+        var channelInfo = channelService.joinMember(memberId, code, "guest");
         return ResponseEntity.ok(channelInfo);
     }
 
     /**
      * 채널에서의 권한을 변경합니다. 단 채널 관리 권한이 존재해야합니다.
+     *
      * @param dto
      * @param authentication
      * @param channelId
@@ -86,7 +92,8 @@ public class ChannelController {
      */
     @PatchMapping("{channelId}/role")
     public boolean changeRole(@RequestBody ChangeRoleRequestDto dto, Authentication authentication, @PathVariable("channelId") int channelId) {
-        dto.setOwnerEmail(authentication.getName());
+        var ownerId = Integer.parseInt(authentication.getName());
+        dto.setOwnerId(ownerId);
         dto.setChannelId(channelId);
         return channelService.changeRole(dto);
     }
@@ -105,13 +112,14 @@ public class ChannelController {
 
     /**
      * 채널을 삭제합니다. 단 채널 관리 권한이 존재해야합니다
+     *
      * @param channelId id of the channel
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{channelId}")
     public ResponseEntity<Void> deleteChannel(@PathVariable int channelId, Authentication auth) {
-        var email = auth.getName();
-        var role = memberService.getMemberChannelRole(email, channelId);
+        var memberId = Integer.parseInt(auth.getName());
+        var role = memberService.getMemberChannelRole(memberId, channelId);
         if (!"owner".equals(role)) {
             return ResponseEntity.badRequest().build();
         }
@@ -155,8 +163,8 @@ public class ChannelController {
      */
     @PostMapping("/{channelId}/topic")
     public ResponseEntity<TopicDto> createNewTopic(@PathVariable int channelId, @RequestBody TopicDto topicCreateRequest, Authentication auth) {
-        var email = auth.getName();
-        var role = memberService.getMemberChannelRole(email, channelId);
+        var memberId = Integer.parseInt(auth.getName());
+        var role = memberService.getMemberChannelRole(memberId, channelId);
         if (!"owner".equals(role) && !"manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -166,6 +174,7 @@ public class ChannelController {
 
     /**
      * 토픽을 삭제합니다. 단 채널의 토픽 삭제 권한이 있어야합니다
+     *
      * @param channelId id of channel that refrences topic
      * @param topicId   id of topic
      * @param auth
@@ -173,8 +182,8 @@ public class ChannelController {
      */
     @DeleteMapping("/{channelId}/topic/{topicId}")
     public ResponseEntity<Void> removeTopic(@PathVariable int channelId, @PathVariable int topicId, Authentication auth) {
-        var email = auth.getName();
-        var role = memberService.getMemberChannelRole(email, channelId);
+        var memberId = Integer.parseInt(auth.getName());
+        var role = memberService.getMemberChannelRole(memberId, channelId);
         if (!"owner".equals(role) && !"manager".equals(role)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
@@ -194,8 +203,8 @@ public class ChannelController {
      */
     @PatchMapping("/{channelId}/topic/{topicId}")
     public ResponseEntity<TopicDto> updateTopic(@PathVariable int channelId, @PathVariable int topicId, @RequestBody TopicDto topicUpdateRequest, Authentication auth) {
-        String email = auth.getName();
-        String role = memberService.getMemberChannelRole(email, channelId);
+        var memberId = Integer.parseInt(auth.getName());
+        String role = memberService.getMemberChannelRole(memberId, channelId);
 
         if (!role.equals("owner") && !role.equals("manager")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

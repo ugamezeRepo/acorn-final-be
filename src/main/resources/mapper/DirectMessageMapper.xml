@@ -19,7 +19,7 @@
         values (#{id}, #{memberId}, #{anotherId}, #{active})
     </insert>
 
-    <update id="activateDM" parameterType="directMessageEntity">
+    <update id="changeDirectMessageActivation" parameterType="directMessageEntity">
         update direct_message
         set active = #{active}
         where id = #{id}

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ChangeRoleRequestDto {
     Integer id;
-    String ownerEmail;
+    Integer ownerId;
     Integer channelId;
     Integer memberId;
     String newRole;

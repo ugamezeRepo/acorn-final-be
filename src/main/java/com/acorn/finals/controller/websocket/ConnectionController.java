@@ -8,14 +8,15 @@ import com.acorn.finals.model.WebSocketSessionInfo;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.socket.WebSocketSession;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @WebSocketController("/connection")
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class ConnectionController {
 
     @WebSocketMapping("/ping")
     public void connect(@RequestBody MemberDto myInfo, WebSocketSession session, WebSocketSessionInfo sessionInfo) {
-        MemberDto member = memberService.findMemberByEmail(myInfo.getEmail());
+        MemberDto member = memberService.findMemberById(myInfo.getId());
         sessionMemberIdMapping.put(session, member.getId());
         member.setStatus("online");
         memberService.updateStatus(member);

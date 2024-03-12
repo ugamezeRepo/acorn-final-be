@@ -4,8 +4,8 @@ import com.acorn.finals.mapper.ChannelMapper;
 import com.acorn.finals.mapper.ChannelMemberMapper;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.mapper.TopicMapper;
-import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.ChangeRoleRequestDto;
+import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.ChannelMemberEntity;
@@ -58,8 +58,8 @@ public class ChannelService {
         var channelEntity = channelDto.toEntity(null);
         channelMapper.insert(channelEntity);
 
-        var memberEntity = memberMapper.findOneByEmail(auth.getName());
-        var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberEntity.getId(), "owner");
+        var memberId = Integer.parseInt(auth.getName());
+        var channelMemberEntity = new ChannelMemberEntity(null, channelEntity.getId(), memberId, "owner");
         channelMemberMapper.insert(channelMemberEntity);
 
         var topicEntity = new TopicEntity();
@@ -89,20 +89,21 @@ public class ChannelService {
                 .collect(Collectors.toList());
     }
 
-    public ChannelDto joinMember(String email, String code, String role) {
-        var member = memberMapper.findOneByEmail(email);
+    public ChannelDto joinMember(Integer memberId, String code, String role) {
+        var member = memberMapper.findOneById(memberId);
         var channel = channelMapper.findOneByInviteCode(code);
 
         var entity = new ChannelMemberEntity(null, channel.getId(), member.getId(), role);
         channelMemberMapper.insert(entity);
         return channel.toDto();
     }
+
     @Transactional
     public boolean changeRole(ChangeRoleRequestDto dto) {
         boolean isSuccess = false;
-        String ownerRole= memberService.getMemberChannelRole(dto.getOwnerEmail(),dto.getChannelId());
+        String ownerRole = memberService.getMemberChannelRole(dto.getOwnerId(), dto.getChannelId());
 
-        if(ownerRole.equals("owner")){
+        if (ownerRole.equals("owner")) {
             return isSuccess;
         }
         ChannelMemberEntity channelMemberEntity = dto.toEntity();

@@ -10,9 +10,7 @@ public interface MemberMapper {
     List<MemberEntity> findAll();
 
     MemberEntity findOneById(int id);
-
-    MemberEntity findOneByNicknameAndHashtag(String nickname, int hashtag);
-
+    
     MemberEntity findOneByEmail(String email);
 
     List<MemberEntity> findAllByChannelId(int channelId);
@@ -22,6 +20,4 @@ public interface MemberMapper {
     int update(MemberEntity entity);
 
     int deleteById(int id);
-
-    int logoutStatus(String email);
 }

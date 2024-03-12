@@ -4,23 +4,13 @@ import ch.qos.logback.core.status.Status;
 import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.dto.DirectMessageDto;
 import com.acorn.finals.service.DirectMessageService;
-import com.acorn.finals.service.MemberService;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/direct-message")
@@ -36,7 +26,8 @@ public class DirectMessageController {
      */
     @GetMapping
     public List<DirectMessageDto> listAllActiveDM(Authentication auth) {
-        return directMessageService.findAllActiveDM(auth.getName());
+        var memberId = Integer.parseInt(auth.getName());
+        return directMessageService.findAllActiveDM(memberId);
     }
 
     /**
@@ -64,17 +55,18 @@ public class DirectMessageController {
     }
 
     /**
-     *  DM을 목록에서 보이지 않도록 비활성화합니다.
+     * DM을 목록에서 보이지 않도록 비활성화합니다.
      *
      * @param id id of the direct message topic
      * @return HTTP STATUS 200 on success
      */
     @PutMapping("/{id}")
     public ResponseEntity<DirectMessageDto> activateDM(@PathVariable int id,
-            @RequestBody DirectMessageDto directMessageDMActivateRequest, Authentication auth) {
-        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
-        if (memberId != directMessageService.findOneById(id).getMemberId()) {
-            return ResponseEntity.status(Status.WARN).build();
+                                                       @RequestBody DirectMessageDto directMessageDMActivateRequest, Authentication auth) {
+        int memberId = Integer.parseInt(auth.getName());
+        var dm = directMessageService.findOneById(id);
+        if (memberId != dm.getMemberId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         DirectMessageDto updatedDM = directMessageService.activateDM(id, directMessageDMActivateRequest);
 
@@ -82,14 +74,14 @@ public class DirectMessageController {
     }
 
     /**
-     *  DM을 삭제합니다.
+     * DM을 삭제합니다.
      *
      * @param id id of the direct message topic
      * @return HTTP STATUS 200 on success
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDM(@PathVariable int id, Authentication auth) {
-        int memberId = memberMapper.findOneByEmail(auth.getName()).getId();
+        int memberId = Integer.parseInt(auth.getName());
         if (memberId != directMessageService.findOneById(id).getMemberId()) {
             return ResponseEntity.status(Status.WARN).build();
         }
