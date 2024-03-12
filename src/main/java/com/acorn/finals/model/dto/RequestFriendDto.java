@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class RequestFriendDto {
     int fromId;
     int toId;
+    String answer;
 
     public RequestFriendEntity toEntity() {
         return new RequestFriendEntity(null, fromId, toId);

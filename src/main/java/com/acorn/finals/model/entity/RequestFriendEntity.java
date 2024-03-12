@@ -16,6 +16,6 @@ public class RequestFriendEntity {
     private int toId;
 
     public RequestFriendDto toDto() {
-        return new RequestFriendDto(fromId, toId);
+        return new RequestFriendDto(fromId, toId, null);
     }
 }

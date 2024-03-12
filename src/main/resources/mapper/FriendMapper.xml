@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.acorn.finals.mapper.FriendMapper">
-    <insert id="friendRequestAdd" parameterType="requestFriendEntity">
+    <insert id="friendRequestAdd" parameterType="RequestFriendEntity">
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select request_friend_seq.nextval from dual
         </selectKey>
@@ -9,9 +9,11 @@
         VALUES (#{id}, #{fromId},#{toId} )
     </insert>
 
-    <select id="friendRequestList" parameterType="int" resultType="RequestFriendEntity">
-        select from request_friend
-        where to_id = #{toId}
+    <select id="friendRequestList" parameterType="int" resultType="memberEntity">
+        select * from member
+        where id
+        in (select to_id from request_friend
+        where to_id = #{toId})
     </select>
 
     <delete id="deleteRequest" parameterType="RequestFriendEntity">
@@ -22,5 +24,41 @@
     <select id="isExistedRequest" parameterType="RequestFriendEntity" resultType="RequestFriendEntity">
         select * from request_friend
         WHERE from_id = #{fromId} and to_id =#{toId}
+    </select>
+
+    <insert id="addFriend" parameterType="requestfriendentity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select friend_seq.nextval from dual
+        </selectKey>
+        insert into friend (id, my_id, friend_id)
+        values (#{id},#{fromId}, #{toId})
+    </insert>
+
+    <insert id="reverseAddFriend" parameterType="requestfriendentity">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select friend_seq.nextval from dual
+        </selectKey>
+        insert into friend (id, my_id, friend_id)
+        values (#{id},#{toId}, #{fromId})
+    </insert>
+
+    <select id="friendAllList" parameterType="int" resultType="memberEntity">
+        select m.id,m.nickname , m.hashtag , m.status
+        from MEMBER m
+        join friend f on m.id = f.friend_id
+        where f.MY_ID = #{myId};
+    </select>
+
+    <select id="findNewFriendWithoutFriend" parameterType="map" resultType="memberEntity">
+        SELECT *
+        FROM member
+        WHERE nickname LIKE '%'{keyword}'%'
+        AND id NOT IN (
+        SELECT m.id
+        FROM member m
+        JOIN friend f ON m.id = f.friend_id
+        WHERE f.my_id = {my_id}
+        )
+        AND id != {my_id} ;
     </select>
 </mapper>

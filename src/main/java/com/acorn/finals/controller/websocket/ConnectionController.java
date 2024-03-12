@@ -8,70 +8,48 @@ import com.acorn.finals.model.WebSocketSessionInfo;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @WebSocketController("/connection")
 @RequiredArgsConstructor
 @Slf4j
 public class ConnectionController {
-    private static final Map<WebSocketSession, MemberDto> activeConnection = new HashMap<>();
+    private static final Map<WebSocketSession, Integer> sessionMemberIdMapping = new HashMap<>();
+    private static final Map<Integer, Integer> activeConnectionCount = new HashMap<>();
     private final MemberService memberService;
-
     private final ObjectMapper objectMapper;
-    private final Map<String, Integer> currentConnectionAmount = new HashMap<>();
-    private String email;
 
     @WebSocketMapping("/ping")
     public void connect(@RequestBody MemberDto myInfo, WebSocketSession session, WebSocketSessionInfo sessionInfo) {
-        email = myInfo.getEmail();
-
-//        if (!myInfo.getStatus().equals("offline")) {
-//            int connectionAmount = currentConnectionAmount.get(myInfo.getEmail());
-//            currentConnectionAmount.replace(myInfo.getEmail(), connectionAmount + 1);
-//        } else {
-//            currentConnectionAmount.put(myInfo.getEmail(), 1);
-            myInfo.setStatus("online");
-            memberService.updateStatus(myInfo);
-            activeConnection.put(session, myInfo);
-            var channelIds = memberService.findAllJoinedChannelIdByMember(myInfo);
-
-            channelIds.forEach(id -> sessionInfo.sendAll(
-                String.format("/connection/channel/%d/members", id),
-                memberService.findAllMemberByChannelId(id),
-                objectMapper)
-            );
-//        }
+        MemberDto member = memberService.findMemberByEmail(myInfo.getEmail());
+        sessionMemberIdMapping.put(session, member.getId());
+        member.setStatus("online");
+        memberService.updateStatus(member);
+        var channelIds = memberService.findAllJoinedChannelIdByMember(myInfo);
+        channelIds.forEach(id -> sessionInfo.sendAll(String.format("/connection/channel/%d/members", id),
+                memberService.findAllMemberByChannelId(id), objectMapper));
     }
 
     @WebSocketOnClose("/ping")
     public void onClose(WebSocketSession session, WebSocketSessionInfo sessionInfo) {
-        var userInfo = activeConnection.remove(session);
-        if (userInfo == null) return;
+        var memberId = sessionMemberIdMapping.get(session);
+        var result = activeConnectionCount.computeIfPresent(memberId, (k, v) -> v - 1);
+        if (result == null || result == 0) {
+            var member = memberService.findMemberById(memberId);
+            member.setStatus("offline");
+            memberService.updateStatus(member);
 
-//        if (currentConnectionAmount.get(email) - 1 > 0) {
-//            int connectionAmount = currentConnectionAmount.get(email);
-//            currentConnectionAmount.replace(email, connectionAmount - 1);
-//        } else {
-//            currentConnectionAmount.remove(email);
-
-            userInfo.setStatus("offline");
-            memberService.updateStatus(userInfo);
-
-            var channelIds = memberService.findAllJoinedChannelIdByMember(userInfo);
-            channelIds.forEach(id -> sessionInfo.sendAll(
-                String.format("/connection/channel/%d/members", id),
-                memberService.findAllMemberByChannelId(id),
-                objectMapper)
-            );
-//        }
+            var channelIds = memberService.findAllJoinedChannelIdByMemberId(memberId);
+            channelIds.forEach(id -> sessionInfo.sendAll(String.format("/connection/channel/%d/members", id),
+                    memberService.findAllMemberByChannelId(id), objectMapper));
+        }
     }
 
     @WebSocketOnConnect("/channel/{channelId}/members")

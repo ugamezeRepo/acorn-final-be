@@ -7,14 +7,13 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +24,10 @@ public class MemberService {
     private final TokenService tokenService;
     private final ChannelMapper channelMapper;
 
+    public MemberDto findMemberById(int id) {
+        var memberEntity = memberMapper.findOneById(id);
+        return memberEntity.toDto();
+    }
 
     public MemberDto findMemberByEmail(String email) {
         var memberEntity = memberMapper.findOneByEmail(email);
@@ -32,7 +35,8 @@ public class MemberService {
     }
 
     public List<MemberDto> findAllMemberByChannelId(int channelId) {
-        return memberMapper.findAllByChannelId(channelId).stream().map(MemberEntity::toDto).collect(Collectors.toList());
+        return memberMapper.findAllByChannelId(channelId).stream().map(MemberEntity::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -50,6 +54,13 @@ public class MemberService {
     }
 
     @Transactional
+    public List<Integer> findAllJoinedChannelIdByMemberId(int memberId) {
+        return channelMemberMapper.findAllChannelByMemberId(memberId).stream()
+                .map(ChannelEntity::getId)
+                .toList();
+    }
+
+    @Transactional
     public List<Integer> findAllJoinedChannelIdByMember(MemberDto dto) {
         if (dto.getNickname() == null || dto.getHashtag() == null) {
             return List.of();
@@ -58,7 +69,8 @@ public class MemberService {
         if (memberEntity == null) {
             return List.of();
         }
-        return channelMemberMapper.findAllChannelByMemberId(memberEntity.getId()).stream().map(ChannelEntity::getId).toList();
+        return channelMemberMapper.findAllChannelByMemberId(memberEntity.getId()).stream().map(ChannelEntity::getId)
+                .toList();
     }
 
     @Transactional
