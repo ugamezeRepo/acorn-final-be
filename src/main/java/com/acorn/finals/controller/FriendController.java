@@ -53,7 +53,7 @@ public class FriendController {
      * @param requestDto answer 이란 값으로 yes or no 를 보내 주세요 fromId, toId
      * @return 요청에 대한 처리의 성공여부를 응답합니다
      */
-    @DeleteMapping("/request")
+    @PostMapping("/answer")
     public ResponseEntity<Boolean> requestAnswerAndDelete(@RequestBody RequestFriendDto requestDto) {
         Boolean result = friendService.friendListAnswerAndDelete(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(result);
