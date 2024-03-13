@@ -12,7 +12,7 @@
     <select id="friendRequestList" parameterType="int" resultType="memberEntity">
         select * from member
         where id
-        in (select to_id from request_friend
+        in (select from_id from request_friend
         where to_id = #{toId})
     </select>
 
@@ -54,10 +54,10 @@
         FROM member
         WHERE dissect_nickname LIKE '%' || #{keyword} || '%'
         AND id NOT IN (
-            SELECT m.id
-            FROM member m
-            JOIN friend f ON m.id = f.friend_id
-            WHERE f.my_id = #{my_id}
+        SELECT m.id
+        FROM member m
+        JOIN friend f ON m.id = f.friend_id
+        WHERE f.my_id = #{my_id}
         )
         AND id != #{my_id}
     </select>
