@@ -20,7 +20,6 @@ public class ChatWebSocketController {
     private final MessageChannelService messageChannelService;
     private final MessageDMService messageDMService;
 
-
     @WebSocketMapping("/dm/{dmId}")
     public ResponseEntity<MessageReqDto> handleChatOnDM(@PathVariable int dmId,
         @RequestBody MessageReqDto messageReqDto) {

@@ -24,6 +24,7 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
     private final String[] whiteList = {
+            "/chat/dm/*",
             "/chat/channel/*/topic/*",
             "/connection/ping",
             "/connection/channel/*/members"

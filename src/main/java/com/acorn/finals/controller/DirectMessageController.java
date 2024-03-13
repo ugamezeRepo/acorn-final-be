@@ -2,7 +2,9 @@ package com.acorn.finals.controller;
 
 import ch.qos.logback.core.status.Status;
 import com.acorn.finals.model.dto.DirectMessageDto;
+import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.service.DirectMessageService;
+import com.acorn.finals.service.MessageDMService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 @Slf4j
 public class DirectMessageController {
     private final DirectMessageService directMessageService;
+    private final MessageDMService messageDMService;
 
     /**
      * DM토픽 목록을 불러옵니다.
@@ -104,5 +107,17 @@ public class DirectMessageController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+
+    /**
+     * DM의 토픽에 있는 모든 메시지들을  불러옵니다. 단 DM에 참여 중이여야 합니다.
+     *
+     * @param id   id of the topic that references message
+     * @return list of the messages of the topic
+     */
+    @GetMapping("/{id}/message")
+    public List<MessageDto> listAllMessages(@PathVariable int id) {
+        return messageDMService.findAllByDMId(id);
     }
 }

@@ -17,5 +17,5 @@ public class MessageDMEntity extends BaseEntity {
     Integer id;
     Integer authorId;
     String content;
-    Integer topicId;
+    Integer dmId;
 }
