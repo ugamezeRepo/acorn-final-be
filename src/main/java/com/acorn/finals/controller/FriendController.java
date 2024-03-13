@@ -74,7 +74,7 @@ public class FriendController {
      */
     @GetMapping("/search")
     public ResponseEntity<List<MemberDto>> searchFriend(Authentication auth, @RequestParam("keyword") String keyword) {
-        if (keyword.length() == 0) {
+        if (keyword.isEmpty()) {
             return ResponseEntity.ok(List.of());
         }
 
