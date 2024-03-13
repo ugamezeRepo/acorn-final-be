@@ -6,6 +6,7 @@ import com.acorn.finals.mapper.MemberMapper;
 import com.acorn.finals.model.entity.MemberEntity;
 import com.acorn.finals.service.MemberService;
 import com.acorn.finals.service.TokenService;
+import com.acorn.finals.util.HangulUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         var nounIndex = rand.nextInt(0, 20);
         var nickname = String.join(" ", adjectives[adjectiveIndex], nouns[nounIndex]);
         var hashtag = rand.nextInt(1000, 10000);
-        return new MemberEntity(null, email, nickname, hashtag, "online");
+        return new MemberEntity(null, email, nickname, hashtag, "online", HangulUtils.dissectHangul(nickname));
     }
 
     @Override

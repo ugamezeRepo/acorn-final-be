@@ -4,6 +4,7 @@ import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.RequestFriendDto;
 import com.acorn.finals.service.FriendService;
 import com.acorn.finals.service.MemberService;
+import com.acorn.finals.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,7 +82,7 @@ public class FriendController {
         var memberId = Integer.parseInt(auth.getName());
         Map<String, Object> map = new HashMap<>();
         map.put("my_id", memberId);
-        map.put("keyword", keyword);
+        map.put("keyword", HangulUtils.dissectHangul(keyword));
 
         List<MemberDto> requestDto = friendService.findNewFriend(map);
         return ResponseEntity.status(HttpStatus.OK).body(requestDto);
