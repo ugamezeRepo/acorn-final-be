@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.acorn.finals.mapper.MessageDMMapper">
+    <select id="findAllMessageByDMId" resultType="com.acorn.finals.model.entity.MessageDMEntity">
+        select * from message_dm
+        where dm_id = #{dmId}
+    </select>
+
+    <select  id="findOneById" resultType="com.acorn.finals.model.entity.MessageDMEntity" parameterType="int">
+        select * from message_dm
+        where id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="messageDMEntity" useGeneratedKeys="true" keyColumn="id">
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select message_seq.nextval from dual
+        </selectKey>
+        insert into message_dm (id, author_id, content, dm_id, created_at, updated_at)
+        values (#{id}, #{authorId}, #{content}, #{dmId}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="messageDMEntity">
+        update message_dm
+        set author_id = #{authorId}, content = #{content}, dm_id = #{dmId}, created_at = #{createdAt}, updated_at = #{updatedAt}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="int">
+        delete from message_dm
+        where id = #{id}
+    </delete>
+
+</mapper>

@@ -3,7 +3,7 @@ package com.acorn.finals.controller;
 import com.acorn.finals.model.dto.*;
 import com.acorn.finals.service.ChannelService;
 import com.acorn.finals.service.MemberService;
-import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.MessageChannelService;
 import com.acorn.finals.service.TopicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.List;
 public class ChannelController {
     private final ChannelService channelService;
     private final TopicService topicService;
-    private final MessageService messageService;
+    private final MessageChannelService messageChannelService;
     private final MemberService memberService;
 
     /**
@@ -225,6 +225,6 @@ public class ChannelController {
      */
     @GetMapping("/{channelId}/topic/{topicId}/message")
     public List<MessageDto> listAllMessages(@PathVariable int channelId, @PathVariable int topicId) {
-        return messageService.findAllByChannelIdAndTopicId(channelId, topicId);
+        return messageChannelService.findAllByChannelIdAndTopicId(channelId, topicId);
     }
 }
