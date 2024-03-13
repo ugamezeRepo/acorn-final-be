@@ -5,7 +5,11 @@
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select attachment_seq.nextval from dual
         </selectKey>
-        <!--        TODO: insert query 짜기-->
-        insert into attachment(id)
+        insert into attachment(id, content)
+        values (#{id}, #{content})
     </insert>
+    <select id="contentCode" parameterType="int" resultType="imageEntity">
+        select * from attachment
+        where id = #{id}
+    </select>
 </mapper>

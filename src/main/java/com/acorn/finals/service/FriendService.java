@@ -20,13 +20,11 @@ public class FriendService {
 
     @Transactional
     public boolean addFriendRequest(RequestFriendEntity entity) {
-        boolean isSuccess = false;
-        if (friendMapper.isExistedRequest(entity) != null) {
-            return isSuccess;
+        if (!friendMapper.isExistedRequest(entity).isEmpty()) {
+            return false;
         }
         friendMapper.friendRequestAdd(entity);
-        isSuccess = true;
-        return isSuccess;
+        return true;
     }
 
     public List<MemberDto> friendRequestList(RequestFriendDto dto) {
