@@ -227,4 +227,5 @@ public class ChannelController {
     public List<MessageDto> listAllMessages(@PathVariable int channelId, @PathVariable int topicId) {
         return messageChannelService.findAllByChannelIdAndTopicId(channelId, topicId);
     }
+
 }
