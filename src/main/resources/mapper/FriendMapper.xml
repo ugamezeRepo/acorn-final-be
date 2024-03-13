@@ -46,19 +46,19 @@
         select m.id,m.nickname , m.hashtag , m.status
         from MEMBER m
         join friend f on m.id = f.friend_id
-        where f.MY_ID = #{myId};
+        where f.MY_ID = #{myId}
     </select>
 
     <select id="findNewFriendWithoutFriend" parameterType="map" resultType="memberEntity">
         SELECT *
         FROM member
-        WHERE nickname LIKE '%'{keyword}'%'
+        WHERE dissect_nickname LIKE '%' || #{keyword} || '%'
         AND id NOT IN (
-        SELECT m.id
-        FROM member m
-        JOIN friend f ON m.id = f.friend_id
-        WHERE f.my_id = {my_id}
+            SELECT m.id
+            FROM member m
+            JOIN friend f ON m.id = f.friend_id
+            WHERE f.my_id = #{my_id}
         )
-        AND id != {my_id} ;
+        AND id != #{my_id}
     </select>
 </mapper>

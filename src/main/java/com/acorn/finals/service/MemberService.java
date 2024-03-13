@@ -7,6 +7,7 @@ import com.acorn.finals.model.dto.ChannelDto;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.entity.ChannelEntity;
 import com.acorn.finals.model.entity.MemberEntity;
+import com.acorn.finals.util.HangulUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -61,12 +62,13 @@ public class MemberService {
 
     @Transactional
     public MemberDto changeNickandTag(MemberDto dto) {
-        var memberEntity = memberMapper.findOneByEmail(dto.getEmail());
+        var memberEntity = memberMapper.findOneById(dto.getId());
         if (memberEntity == null) {
             return new MemberDto();
         }
         if (dto.getNickname() != null) {
             memberEntity.setNickname(dto.getNickname());
+            memberEntity.setDissectNickname(HangulUtils.dissectHangul(dto.getNickname()));
         }
         if (dto.getHashtag() != null) {
             memberEntity.setHashtag(dto.getHashtag());
@@ -93,10 +95,6 @@ public class MemberService {
         boolean isSuccess = false;
         try {
             // TODO: 중복 닉 + 해시태그는 막도록 하기
-//
-//            if (memberMapper.findOneById(entity.getId()) != null) {
-//                throw new RuntimeException("중복된 아이디 존재");
-//            }
             if (memberMapper.findOneByEmail(entity.getEmail()) == null) {
                 memberMapper.insert(entity);
                 isSuccess = true;
