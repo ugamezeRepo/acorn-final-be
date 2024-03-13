@@ -52,7 +52,7 @@
     <select id="findNewFriendWithoutFriend" parameterType="map" resultType="memberEntity">
         SELECT *
         FROM member
-        WHERE nickname LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        WHERE nickname LIKE '%' || #{keyword} || '%'
         AND id NOT IN (
             SELECT m.id
             FROM member m
