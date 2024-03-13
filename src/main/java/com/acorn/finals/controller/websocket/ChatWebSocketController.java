@@ -4,7 +4,7 @@ import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.dto.MessageReqDto;
-import com.acorn.finals.service.MessageService;
+import com.acorn.finals.service.MessageChannelService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 @Slf4j
 public class ChatWebSocketController {
-    private final MessageService service;
+    private final MessageChannelService service;
 
     /**
      * client 가 websocket 으로 메시지를 보냈을때 할 처리
