@@ -7,7 +7,6 @@ import com.acorn.finals.model.dto.MessageReqDto;
 import com.acorn.finals.service.MessageChannelService;
 import com.acorn.finals.service.MessageDMService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @WebSocketController("/chat")
 @RequiredArgsConstructor
-@Slf4j
 public class ChatWebSocketController {
     private final MessageChannelService messageChannelService;
     private final MessageDMService messageDMService;
@@ -31,10 +29,14 @@ public class ChatWebSocketController {
                 messageReqDto.setMessageDto(messageDto);
                 return ResponseEntity.status(HttpStatus.OK).body(messageReqDto);
             case "update":
-                messageDMService.updateMsg(messageDto);
+                if (messageDMService.updateMsg(messageDto) == -1) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageReqDto);
+                }
                 return ResponseEntity.status(HttpStatus.OK).body(messageReqDto);
             case "delete":
-                messageDMService.deleteMsg(messageDto);
+                if (messageDMService.deleteMsg(messageDto) == -1) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageReqDto);
+                }
                 return ResponseEntity.status(HttpStatus.OK).body(messageReqDto);
             default:
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageReqDto);
@@ -55,15 +57,19 @@ public class ChatWebSocketController {
             case "insert":
                 messageDto = messageChannelService.insertMsg(messageDto, channelId, topicId);
                 messageReqDto.setMessageDto(messageDto);
-                return ResponseEntity.ok(messageReqDto);
+                return ResponseEntity.status(HttpStatus.OK).body(messageReqDto);
             case "update":
-                messageChannelService.updateMsg(messageDto);
-                return ResponseEntity.ok(messageReqDto);
+                if (messageChannelService.updateMsg(messageDto) == -1) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageReqDto);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(messageReqDto);
             case "delete":
-                messageChannelService.deleteMsg(messageDto);
-                return ResponseEntity.ok(messageReqDto);
+                if (messageChannelService.deleteMsg(messageDto) == -1) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageReqDto);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(messageReqDto);
             default:
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageReqDto);
         }
     }
 
