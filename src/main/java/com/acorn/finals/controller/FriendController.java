@@ -42,7 +42,7 @@ public class FriendController {
      */
 
     @GetMapping("/request")
-    public ResponseEntity<List<MemberDto>> requestFriendList(@RequestBody RequestFriendDto requestDto) {
+    public ResponseEntity<List<MemberDto>> requestFriendList(RequestFriendDto requestDto) {
 
         List<MemberDto> responseDto = friendService.friendRequestList(requestDto);
 
