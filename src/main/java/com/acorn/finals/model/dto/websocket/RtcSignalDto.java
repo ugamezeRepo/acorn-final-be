@@ -1,10 +1,11 @@
 package com.acorn.finals.model.dto.websocket;
 
+import java.util.Map;
 import lombok.Data;
 
 @Data
 public class RtcSignalDto {
-    private String type;
-    private String dest;
-    private String data;
+    private Map<String, Object> candidate;
+    private Map<String, Object> desc;
+    private String uuid;
 }

@@ -8,15 +8,14 @@ import com.acorn.finals.model.WebSocketSessionInfo;
 import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.socket.WebSocketSession;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @WebSocketController("/connection")
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class ConnectionController {
     public void onClose(WebSocketSession session, WebSocketSessionInfo sessionInfo) {
         var memberId = sessionMemberIdMapping.get(session);
         var result = activeConnectionCount.computeIfPresent(memberId, (k, v) -> v - 1);
-        if (result == null || result == 0) {
+        if (result != null && result == 0) {
             var member = memberService.findMemberById(memberId);
             member.setStatus("offline");
             memberService.updateStatus(member);

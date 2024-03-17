@@ -27,7 +27,8 @@ public class SecurityConfig {
             "/chat/dm/*",
             "/chat/channel/*/topic/*",
             "/connection/ping",
-            "/connection/channel/*/members"
+            "/connection/channel/*/members",
+            "/webrtc/signal/*"
     };
 
     @Bean
