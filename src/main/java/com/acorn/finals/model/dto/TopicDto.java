@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 public class TopicDto {
     int id;
     String title;
-    boolean isRtcChannel;
+    Boolean isRtcChannel;
 
     public TopicEntity toEntity(Integer channelId) {
         return TopicEntity.builder()
