@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 public class TopicDto {
     int id;
     String title;
+    boolean isRtcChannel;
 
     public TopicEntity toEntity(Integer channelId) {
         return TopicEntity.builder()
                 .id(id)
                 .title(title)
                 .channelId(channelId)
+                .isRtcChannel(isRtcChannel ? 1 : 0)
                 .build();
     }
 }

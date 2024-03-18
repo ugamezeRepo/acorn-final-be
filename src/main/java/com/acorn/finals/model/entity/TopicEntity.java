@@ -14,8 +14,8 @@ public class TopicEntity extends BaseEntity {
     private Integer id;
     private String title;
     private Integer channelId;
-
+    private Integer isRtcChannel;
     public TopicDto toDto() {
-        return new TopicDto(id, title);
+        return new TopicDto(id, title, !isRtcChannel.equals(0));
     }
 }

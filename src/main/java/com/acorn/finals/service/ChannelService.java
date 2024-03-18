@@ -65,6 +65,7 @@ public class ChannelService {
         var topicEntity = new TopicEntity();
         topicEntity.setTitle("일반");
         topicEntity.setChannelId(channelEntity.getId());
+        topicEntity.setIsRtcChannel(0);
         topicMapper.insert(topicEntity);
 
         return channelEntity.toDto();

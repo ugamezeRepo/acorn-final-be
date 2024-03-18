@@ -32,6 +32,7 @@ CREATE TABLE TOPIC
     TITLE      VARCHAR2(100) NOT NULL,
     --     topic_group varchar2(100),
     CHANNEL_ID NUMBER        NOT NULL, -- id of the channel that references topic
+    IS_RTC_CHANNEL NUMBER NOT NULL, -- 0 for text topic channel else rtc channel
     CONSTRAINT TOPIC_CHANNEL_ID_FK FOREIGN KEY (CHANNEL_ID) REFERENCES CHANNEL (ID) ON DELETE CASCADE
 );
 
