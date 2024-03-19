@@ -38,7 +38,7 @@ public class RtcSignalController {
     }
 
     @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
-    public RtcSignalDto handleTopicSignal(@RequestBody RtcSignalDto dto, @PathVariable int channelId, int topicId, WebSocketSession ws) {
+    public RtcSignalDto handleTopicSignal(@RequestBody RtcSignalDto dto, @PathVariable int channelId, @PathVariable int topicId, WebSocketSession ws) {
         var roomInfo = new RoomInfo(channelId, topicId);
         participantUUIDs.computeIfAbsent(roomInfo, (k) -> new HashMap<>()).put(ws, dto.getUuid());
         return dto;
