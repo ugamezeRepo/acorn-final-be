@@ -45,8 +45,9 @@ public class RtcSignalController {
     }
 
     @WebSocketOnClose("/channel/{channelId}/topic/{topicId}")
-    public void handleTopicClose(@PathVariable int channelId, @PathVariable int topicId, WebSocketSession ws) {
+    public RtcSignalDto handleTopicClose(@PathVariable int channelId, @PathVariable int topicId, WebSocketSession ws) {
         var roomInfo = new RoomInfo(channelId, topicId);
-        participantUUIDs.computeIfAbsent(roomInfo, (k) -> new HashMap<>()).remove(ws);
+        var uuid = participantUUIDs.computeIfAbsent(roomInfo, (k) -> new HashMap<>()).remove(ws);
+        return new RtcSignalDto(null, Map.of("type", "remove"), uuid);
     }
 }
