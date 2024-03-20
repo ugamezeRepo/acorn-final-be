@@ -45,20 +45,6 @@ public class RtcSignalController {
         return dto;
     }
 
-    @WebSocketOnConnect("/channel/{channelId}/topic/{topicId}")
-    public void handleTopicConnect(@PathVariable int channelId, @PathVariable int topicId, WebSocketSession session) {
-        var roomInfo = new RoomInfo(channelId, topicId);
-        participantUUIDs.computeIfAbsent(roomInfo, k -> new HashMap<>()).values().forEach(uuid -> {
-            try {
-                var signal = new RtcSignalDto(null, null, uuid);
-                var serialized = objectMapper.writeValueAsString(signal);
-                session.sendMessage(new TextMessage(serialized));
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-        });
-    }
-
     @WebSocketMapping("/channel/{channelId}/topic/{topicId}")
     public RtcSignalDto handleTopicSignal(@RequestBody RtcSignalDto dto, @PathVariable int channelId, @PathVariable int topicId, WebSocketSession ws) {
         var roomInfo = new RoomInfo(channelId, topicId);
