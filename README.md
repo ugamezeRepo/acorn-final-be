@@ -31,7 +31,7 @@ Springboot && React 를 활용한 메신저 사이트
 
 ## DB 아키텍처
 
-<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/f7123806-4187-4b8a-b42c-d66cc47b35b9" width="85%"/>
+<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/f7123806-4187-4b8a-b42c-d66cc47b35b9" width="70%"/>
  
 
 ## 배포 서버 아키텍처
