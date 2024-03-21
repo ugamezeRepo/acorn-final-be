@@ -27,18 +27,19 @@ Springboot && React 를 활용한 메신저 사이트
 - 메세지 수정 및 삭제 기능 구현
 - 서버 및 채널 생성 및 삭제 기능 구현
 - 이모지 API 활용
-- 채팅 파일 업로드 구현
 - Swagger 이용한 API 공유
-
-## DB 아키텍처
-
-<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/038cdc4a-e043-4c51-a327-16c287173c01"  width="85%"/> 
+- WebRtc를 활용한 음성 영상 기능 구현
 
 ## 배포 서버 아키텍처
 
-<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/dc9a0c38-bf19-4ee7-96c1-a93b8ce429d7" width="85%">
+<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/dc9a0c38-bf19-4ee7-96c1-a93b8ce429d7" width="70%">
 
 ## Swagger API 명세서
 
-<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/1c6473d6-e0db-4db8-b4bb-851fcfddb761" width="85%">
+<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/1c6473d6-e0db-4db8-b4bb-851fcfddb761" width="70%">
+
+## DB 아키텍처
+
+<img src="https://github.com/Higangssh/acorn-final-be/assets/149052256/f7123806-4187-4b8a-b42c-d66cc47b35b9" width="70%"/>
+ 
 
