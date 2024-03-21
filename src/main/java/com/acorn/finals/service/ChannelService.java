@@ -89,12 +89,16 @@ public class ChannelService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ChannelDto joinMember(Integer memberId, String code, String role) {
-        var member = memberMapper.findOneById(memberId);
         var channel = channelMapper.findOneByInviteCode(code);
+        int channelId = channel.getId();
+        var entity = new ChannelMemberEntity(null, channelId, memberId, role);
+        int result = channelMemberMapper.checkUserExists(entity);
 
-        var entity = new ChannelMemberEntity(null, channel.getId(), member.getId(), role);
-        channelMemberMapper.insert(entity);
+        if (result == 0) {
+            channelMemberMapper.insert(entity);
+        }
         return channel.toDto();
     }
 

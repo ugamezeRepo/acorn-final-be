@@ -31,7 +31,7 @@ public class TokenService {
     }
 
     /**
-     * create access token from email email data will be inserted into jwt subject field (sub) expiration time can be
+     * create access token from email , email data will be inserted into jwt subject field (sub) expiration time can be
      * configured in application-token.properties
      *
      * @param memberId
@@ -51,7 +51,7 @@ public class TokenService {
     /**
      * delete RefreshToken by Email when user logout
      *
-     * @param email
+     * @param memberId
      * @return delete RefreshToken
      */
     public boolean deleteRefreshTokenByMemberId(Integer memberId) {
