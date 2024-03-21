@@ -30,7 +30,7 @@
         where id = #{id}
     </update>
 
-    <delete id="deleteById" parameterType="channelEntity">
+    <delete id="deleteById" parameterType="int">
         delete from channel
         where id = #{id}
     </delete>

@@ -26,4 +26,6 @@ public interface ChannelMemberMapper {
     String findRoleByMemberIdAndChannelId(int memberId, int channelId);
 
     int deleteByChannelIdAndMemberId(int channelId, int memberId);
+
+    int checkUserExists(ChannelMemberEntity entity);
 }
