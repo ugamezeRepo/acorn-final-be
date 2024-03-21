@@ -2,6 +2,7 @@ package com.acorn.finals.controller.websocket;
 
 import com.acorn.finals.annotation.WebSocketController;
 import com.acorn.finals.annotation.WebSocketMapping;
+import com.acorn.finals.annotation.WebSocketOnClose;
 import com.acorn.finals.model.dto.websocket.RtcSignalDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
@@ -44,10 +45,10 @@ public class RtcSignalController {
         return dto;
     }
 
-//    @WebSocketOnClose("/channel/{channelId}/topic/{topicId}")
-//    public RtcSignalDto handleTopicClose(@PathVariable int channelId, @PathVariable int topicId, WebSocketSession ws) {
-//        var roomInfo = new RoomInfo(channelId, topicId);
-//        var uuid = participantUUIDs.computeIfAbsent(roomInfo, (k) -> new HashMap<>()).remove(ws);
-//        return new RtcSignalDto(null, Map.of("type", "remove"), uuid);
-//    }
+    @WebSocketOnClose("/channel/{channelId}/topic/{topicId}")
+    public RtcSignalDto handleTopicClose(@PathVariable int channelId, @PathVariable int topicId, WebSocketSession ws) {
+        var roomInfo = new RoomInfo(channelId, topicId);
+        var uuid = participantUUIDs.computeIfAbsent(roomInfo, (k) -> new HashMap<>()).remove(ws);
+        return new RtcSignalDto(null, Map.of("type", "remove"), uuid);
+    }
 }
