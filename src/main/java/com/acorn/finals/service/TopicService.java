@@ -24,7 +24,7 @@ public class TopicService {
         var topicEntity = topicCreateRequest.toEntity(channelId);
         topicMapper.insert(topicEntity);
         int id = topicEntity.getId();
-        return new TopicDto(id, topicCreateRequest.getTitle());
+        return new TopicDto(id, topicCreateRequest.getTitle(), topicCreateRequest.getIsRtcChannel());
     }
 
     public boolean removeTopic(int channelId, int topicId) {

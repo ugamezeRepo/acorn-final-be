@@ -6,6 +6,7 @@ import com.acorn.finals.model.dto.MemberDto;
 import com.acorn.finals.model.dto.MessageDto;
 import com.acorn.finals.model.entity.MessageChannelEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessageChannelService {
     private final MemberMapper memberMapper;
     private final MessageChannelMapper messageChannelMapper;
@@ -26,6 +28,12 @@ public class MessageChannelService {
                     return new MessageDto(entity.getId(), author, entity.getContent(), entity.getCreatedAt());
                 })
                 .collect(Collectors.toList());
+    }
+
+    public MessageDto findOneById(int id) {
+        var entity = messageChannelMapper.findOneById(id);
+        MemberDto author = memberMapper.findOneById(entity.getAuthorId()).toDto();
+        return new MessageDto(entity.getId(), author, entity.getContent(), entity.getCreatedAt());
     }
 
     @Transactional
@@ -41,6 +49,14 @@ public class MessageChannelService {
     @Transactional
     public int updateMsg(MessageDto dto) {
         var messageEntity = messageChannelMapper.findOneById(dto.getId());
+
+        int requestAuthorId = dto.getAuthor().getId();
+        int messageAuthorId = messageEntity.getAuthorId();
+        if (requestAuthorId != messageAuthorId) {
+            log.info("메세지 수정 권한 없음! 메세지 작성자가 아닙니다.");
+            return -1;
+        }
+
         messageEntity.setContent(dto.getContent());
         dto.setCreatedAt(messageEntity.getCreatedAt());
         return messageChannelMapper.update(messageEntity);
@@ -48,6 +64,13 @@ public class MessageChannelService {
 
     @Transactional
     public int deleteMsg(MessageDto dto) {
+        int requestAuthorId = dto.getAuthor().getId();
+        int messageAuthorId = messageChannelMapper.findOneById(dto.getId()).getAuthorId();
+        if (requestAuthorId != messageAuthorId) {
+            log.info("메세지 삭제 권한 없음! 메세지 작성자가 아닙니다.");
+            return -1;
+        }
+
         return messageChannelMapper.deleteById(dto.getId());
     }
 }

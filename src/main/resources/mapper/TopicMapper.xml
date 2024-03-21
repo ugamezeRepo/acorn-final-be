@@ -19,8 +19,8 @@
         <selectKey keyProperty="id" resultType="int" order="BEFORE">
             select topic_seq.nextval from dual
         </selectKey>
-        insert into topic (id, title, channel_id)
-        values (#{id}, #{title}, #{channelId})
+        insert into topic (id, title, channel_id, is_rtc_channel)
+        values (#{id}, #{title}, #{channelId}, #{isRtcChannel})
     </insert>
 
     <update id="update" parameterType="topicEntity">

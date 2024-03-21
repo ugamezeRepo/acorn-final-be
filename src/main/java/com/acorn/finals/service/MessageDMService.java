@@ -8,11 +8,13 @@ import com.acorn.finals.model.entity.MessageDMEntity;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MessageDMService {
     private final MemberMapper memberMapper;
     private final MessageDMMapper messageDMMapper;
@@ -41,6 +43,13 @@ public class MessageDMService {
     @Transactional
     public int updateMsg(MessageDto dto) {
         var messageEntity = messageDMMapper.findOneById(dto.getId());
+
+        int requestAuthorId = dto.getAuthor().getId();
+        int messageAuthorId = messageEntity.getAuthorId();
+        if (requestAuthorId != messageAuthorId) {
+            log.info("메세지 수정 권한 없음! 메세지 작성자가 아닙니다.");
+            return -1;
+        }
         messageEntity.setContent(dto.getContent());
         dto.setCreatedAt(messageEntity.getCreatedAt());
 
@@ -49,6 +58,13 @@ public class MessageDMService {
 
     @Transactional
     public int deleteMsg(MessageDto dto) {
+        int requestAuthorId = dto.getAuthor().getId();
+        int messageAuthorId = messageDMMapper.findOneById(dto.getId()).getAuthorId();
+        if (requestAuthorId != messageAuthorId) {
+            log.info("메세지 삭제 권한 없음! 메세지 작성자가 아닙니다.");
+            return -1;
+        }
+
         return messageDMMapper.deleteById(dto.getId());
     }
 }
