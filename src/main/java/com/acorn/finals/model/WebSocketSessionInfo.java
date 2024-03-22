@@ -15,7 +15,9 @@ public class WebSocketSessionInfo extends HashMap<String, Set<WebSocketSession>>
             var sessions = this.get(uri);
             if (sessions != null) {
                 for (var sess : sessions) {
-                    sess.sendMessage(msg);
+                    synchronized (sess) {
+                        sess.sendMessage(msg);
+                    }
                 }
             }
         } catch (Exception e) {

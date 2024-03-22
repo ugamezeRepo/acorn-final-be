@@ -8,7 +8,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class RtcSignalDto {
-    private Map<String, Object> candidate;
-    private Map<String, Object> desc;
+    private String type;
     private String uuid;
+    private String target;
+    private Map<String, Object> payload;
 }
