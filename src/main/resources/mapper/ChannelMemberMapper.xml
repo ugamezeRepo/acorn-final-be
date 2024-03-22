@@ -18,6 +18,12 @@
         order by id
     </select>
 
+    <select id="checkUserExists" parameterType="channelmemberEntity" resultType="int">
+        SELECT count(*)
+        FROM channel_member
+        WHERE member_id = #{memberId} AND channel_id = #{channelId}
+    </select>
+
     <select id="findAllMemberByChannelId" parameterType="int" resultType="memberEntity">
         select * from member
         join
@@ -27,10 +33,13 @@
     </select>
 
     <select id="findRoleByMemberIdAndChannelId" resultType="String">
+        select * from (
         select role
         from channel_member
         where member_id = #{memberId}
         and channel_id = #{channelId}
+        )
+        where rownum = 1
     </select>
 
     <insert id="insert" parameterType="channelMemberEntity">

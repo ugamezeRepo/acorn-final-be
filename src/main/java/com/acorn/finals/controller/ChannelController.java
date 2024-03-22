@@ -73,10 +73,7 @@ public class ChannelController {
      * @return ResponserEntity<ChannelDto>
      */
     @PostMapping("/join/{code}")
-    public ResponseEntity<ChannelDto> joinChannel(@PathVariable String code, Authentication auth) {
-        if (auth == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<ChannelDto> joinChannel(@PathVariable("code") String code, Authentication auth) {
         var memberId = Integer.parseInt(auth.getName());
         var channelInfo = channelService.joinMember(memberId, code, "guest");
         return ResponseEntity.ok(channelInfo);
@@ -128,6 +125,7 @@ public class ChannelController {
         }
         return ResponseEntity.ok().build();
     }
+
 
     /**
      * 채널에 있는 모든 멤버 목록을 불러옵니다. 단 채널에 참여중이여야합니다

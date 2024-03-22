@@ -40,6 +40,7 @@ public class ConnectionController {
     @WebSocketOnClose("/ping")
     public void onClose(WebSocketSession session, WebSocketSessionInfo sessionInfo) {
         var memberId = sessionMemberIdMapping.get(session);
+        if (memberId == null) return;
         var result = activeConnectionCount.computeIfPresent(memberId, (k, v) -> v - 1);
         if (result != null && result == 0) {
             var member = memberService.findMemberById(memberId);
