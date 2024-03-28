@@ -1,3 +1,5 @@
+update member set status = 'offline';
+
 -- add dummy users
 insert into MEMBER(ID, EMAIL, NICKNAME, HASHTAG)
 values (1, 'admin@admin.com', 'admin', 7777);
