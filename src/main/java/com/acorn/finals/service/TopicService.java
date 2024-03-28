@@ -32,10 +32,8 @@ public class TopicService {
     }
 
     public boolean updateTopic(int channelId, int topicId, TopicDto topicUpdateRequest) {
-        TopicEntity entity = topicMapper.findOneById(topicId);
-        topicUpdateRequest.setIsRtcChannel(entity.getIsRtcChannel() == 1);
-        var topicEntity = topicUpdateRequest.toEntity(channelId);
-        topicEntity.setId(topicId);
+        TopicEntity topicEntity = topicMapper.findOneById(topicId);
+        topicEntity.setTitle(topicUpdateRequest.getTitle()); 
         return topicMapper.update(topicEntity) > 0;
     }
 }
